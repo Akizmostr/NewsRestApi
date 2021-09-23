@@ -12,6 +12,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
@@ -29,8 +30,8 @@ public class NewsapiApplication {
     @Bean
     public CommandLineRunner run(RestTemplate restTemplate , NewsRepository repo) throws Exception {
         return args -> {
-            /*News news = new News();
-            repo.save(news);*/
+            News news = new News(6,new Date(), "text", "title", null);
+            repo.save(news);
             Iterable<News>  newsList = repo.findAll();
             for (News news1: newsList) {
                 System.out.println(news1.getId());

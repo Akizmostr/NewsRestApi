@@ -11,7 +11,7 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
 
     private Date date;
     private String text;
