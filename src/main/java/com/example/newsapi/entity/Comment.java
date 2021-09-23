@@ -3,7 +3,7 @@ package com.example.newsapi.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Entity
@@ -11,9 +11,10 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue
-    private int id;
+    private long id;
 
-    private Date date;
+    @Column(name = "creation_date")
+    private LocalDate date;
     private String text;
     private String username;
 

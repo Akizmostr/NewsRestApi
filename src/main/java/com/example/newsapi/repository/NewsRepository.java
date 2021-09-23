@@ -1,8 +1,8 @@
 package com.example.newsapi.repository;
 
 import com.example.newsapi.entity.News;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface NewsRepository extends CrudRepository<News, Long> {
+public interface NewsRepository extends JpaRepository<News, Long> {
 
 }
