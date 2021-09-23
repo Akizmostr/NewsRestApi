@@ -1,4 +1,4 @@
-CREATE TABLE news(
+CREATE TABLE IF NOT EXISTS news(
     id INT PRIMARY KEY AUTO_INCREMENT,
     creation_date DATE,
     text VARCHAR(20000),
