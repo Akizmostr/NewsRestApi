@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "news")
 public class News {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue//(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "creation_date")
@@ -26,4 +26,14 @@ public class News {
 
     @OneToMany(mappedBy = "news")
     List<Comment> comments;
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", date=" + date +
+                ", text='" + text + '\'' +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

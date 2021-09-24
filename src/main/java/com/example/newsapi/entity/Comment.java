@@ -21,4 +21,14 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name="news_id")
     private News news;
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + id +
+                ", date=" + date +
+                ", text='" + text + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

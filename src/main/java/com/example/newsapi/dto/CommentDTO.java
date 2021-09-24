@@ -1,6 +1,5 @@
 package com.example.newsapi.dto;
 
-import com.example.newsapi.entity.News;
 import lombok.Data;
 
 

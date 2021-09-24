@@ -1,6 +1,5 @@
 package com.example.newsapi.dto;
 
-import com.example.newsapi.entity.Comment;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -12,4 +11,5 @@ public class NewsDTO {
     private LocalDate date;
     private String text;
     private String title;
+    private List<CommentDTO> comments;
 }
