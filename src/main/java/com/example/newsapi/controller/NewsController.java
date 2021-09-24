@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/news")
 public class NewsController {
 
     private final NewsService newsService;
@@ -15,12 +16,12 @@ public class NewsController {
         this.newsService = newsService;
     }
 
-    @GetMapping("/news")
+    @GetMapping()
     List<NewsDTO> getAllNews() {
         return newsService.getAllNews();
     }
 
-    @PostMapping("/news")
+    @PostMapping()
     NewsDTO saveNews(@RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
@@ -30,8 +31,13 @@ public class NewsController {
         return newsService.getNewsById(id);
     }
 
-    @PutMapping("/news/{id}")
+    @PutMapping("/{id}")
     NewsDTO updateNews(@RequestBody NewsDTO news, @PathVariable long id) {
-        return newsService.replaceNews(news, id);
+        return newsService.updateNews(news, id);
+    }
+
+    @DeleteMapping("/{id}")
+    void deleteNews(@PathVariable long id){
+        newsService.deleteById(id);
     }
 }

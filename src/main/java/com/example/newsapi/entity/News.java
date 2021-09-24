@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "news")
 public class News {
     @Id
-    //@GeneratedValue//(strategy = GenerationType.IDENTITY)
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "creation_date")

@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Table(name = "comments")
 public class Comment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "creation_date")

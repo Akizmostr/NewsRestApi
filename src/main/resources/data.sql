@@ -1,19 +1,19 @@
 CREATE TABLE IF NOT EXISTS news(
-    id INT PRIMARY KEY,
-    creation_date DATE,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    creation_date DATE DEFAULT current_date(),
     title VARCHAR(150),
     text VARCHAR(20000)
 );
 
 CREATE TABLE IF NOT EXISTS comments(
-    id INT PRIMARY KEY,
-    creation_date DATE,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    creation_date DATE DEFAULT CURRENT_DATE(),
     text VARCHAR(2000),
     username VARCHAR(100),
     news_id INT,
     FOREIGN KEY (news_id) REFERENCES news(id) ON DELETE CASCADE
 );
-/*
+
 INSERT INTO news (id, creation_date, title, text) VALUES
 (1, '2021-09-22', 'Unvaccinated children will catch Covid, says Whitty', 'Children who do not get vaccinated will catch Covid-19 at some point because waning immunity means the virus will never stop circulating, Chris Whitty has said.'),
 (2, '2021-09-23', 'US Haiti envoy quits over ''inhumane'' deportations', 'The US special envoy for Haiti has resigned in protest over the deportation of Haitian migrants.'),
@@ -37,5 +37,5 @@ INSERT INTO comments(id, creation_date, text, username, news_id) VALUES
 (5, '2021-09-23', 'I hate migrants', 'uslover51', 2),
 (6, '2021-09-25', 'deport them all!', 'uslover51', 2),
 (7, '2021-09-18', 'future is here :)', 'ltech22', 3),
-(8, '2021-09-24', 'шутник', 'kolyain1995', 12);*/
+(8, '2021-09-24', 'шутник', 'kolyain1995', 12);
 

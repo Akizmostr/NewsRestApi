@@ -3,6 +3,7 @@ package com.example.newsapi.service;
 import com.example.newsapi.config.TestDatasourceConfig;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.exception.NewsNotFoundException;
 import com.example.newsapi.repository.NewsRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -33,11 +34,11 @@ public class NewsService {
     }
 
     public NewsDTO getNewsById(long id){
-        return modelMapper.map(newsRepository.findById(id).orElseThrow(()->new RuntimeException("da")),NewsDTO.class);
+        return modelMapper.map(newsRepository.findById(id).orElseThrow(()->new NewsNotFoundException(id)),NewsDTO.class);
     }
 
-    public NewsDTO replaceNews(NewsDTO newNewsDTO, long id){
-        News newsToUpdate = newsRepository.findById(id).orElseThrow(()->new RuntimeException(("fer")));
+    public NewsDTO updateNews(NewsDTO newNewsDTO, long id){
+        News newsToUpdate = newsRepository.findById(id).orElseThrow(()->new NewsNotFoundException(id));
 
         News newNews = modelMapper.map(newNewsDTO, News.class);
         newsToUpdate.setTitle(newNews.getTitle());
@@ -45,6 +46,11 @@ public class NewsService {
         newsToUpdate.setDate(newNews.getDate());
         newsToUpdate.setComments(newNews.getComments());
 
-        return modelMapper.map(newsToUpdate, NewsDTO.class);
+        return modelMapper.map(newsRepository.save(modelMapper.map(newsToUpdate, News.class)), NewsDTO.class);
+    }
+
+    public void deleteById(long id){
+        newsRepository.findById(id).orElseThrow(()-> new NewsNotFoundException(id));
+        newsRepository.deleteById(id);
     }
 }
