@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/news/{id}")
 public class CommentController {
     private final CommentService commentService;
 
@@ -15,8 +14,8 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/comments")
-    public List<CommentDTO> getCommentsByNews(@PathVariable long id){
-
+    @GetMapping("/news/{id}/comments")
+    public List<CommentDTO> getAllCommentsByNews(@PathVariable long id){
+        return commentService.getAllComments(id);
     }
 }
