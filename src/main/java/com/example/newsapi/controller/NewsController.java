@@ -2,6 +2,7 @@ package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.service.NewsService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +17,27 @@ public class NewsController {
     }
 
     @GetMapping("/news")
-    List<NewsDTO> getAllNews() {
+    public CollectionModel<NewsDTO> getAllNews() {
         return newsService.getAllNews();
     }
 
     @PostMapping("/news")
-    NewsDTO saveNews(@RequestBody NewsDTO news){
+    public NewsDTO saveNews(@RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
 
     @GetMapping("/news/{id}")
-    NewsDTO getNewsById(@PathVariable(name = "id") long id){
+    public NewsDTO getNewsById(@PathVariable(name = "id") long id){
         return newsService.getNewsById(id);
     }
 
     @PutMapping("/news/{id}")
-    NewsDTO updateNews(@RequestBody NewsDTO news, @PathVariable long id) {
+    public NewsDTO updateNews(@RequestBody NewsDTO news, @PathVariable long id) {
         return newsService.updateNews(news, id);
     }
 
     @DeleteMapping("/news/{id}")
-    void deleteNews(@PathVariable long id){
+    public void deleteNews(@PathVariable long id){
         newsService.deleteById(id);
     }
 }

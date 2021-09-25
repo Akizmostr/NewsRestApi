@@ -1,5 +1,6 @@
 package com.example.newsapi;
 
+import com.example.newsapi.modelassembler.NewsModelAssembler;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,18 +1,18 @@
 package com.example.newsapi.service;
 
-import com.example.newsapi.config.TestDatasourceConfig;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
-import com.example.newsapi.exception.NewsNotFoundException;
+import com.example.newsapi.exception.ResourceNotFoundException;
+import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +23,14 @@ public class NewsService {
     private static final Logger log = LoggerFactory.getLogger(NewsService.class);
 
     @Autowired
+    NewsModelAssembler newsModelAssembler;
+
+    @Autowired
     ModelMapper modelMapper;
 
-    public List<NewsDTO> getAllNews(){
-        return newsRepository.findAll().stream().map(news -> modelMapper.map(news, NewsDTO.class)).collect(Collectors.toList());
+    public CollectionModel<NewsDTO> getAllNews(){
+       // return newsRepository.findAll().stream().map(news -> modelMapper.map(news, NewsDTO.class)).collect(Collectors.toList());
+        return newsModelAssembler.toCollectionModel(newsRepository.findAll());
     }
 
     public NewsDTO createNews(NewsDTO news){
@@ -34,11 +38,11 @@ public class NewsService {
     }
 
     public NewsDTO getNewsById(long id){
-        return modelMapper.map(newsRepository.findById(id).orElseThrow(()->new NewsNotFoundException(id)),NewsDTO.class);
+        return modelMapper.map(newsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id)),NewsDTO.class);
     }
 
     public NewsDTO updateNews(NewsDTO newNewsDTO, long id){
-        News newsToUpdate = newsRepository.findById(id).orElseThrow(()->new NewsNotFoundException(id));
+        News newsToUpdate = newsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id));
 
         News newNews = modelMapper.map(newNewsDTO, News.class);
         newsToUpdate.setTitle(newNews.getTitle());
@@ -50,7 +54,7 @@ public class NewsService {
     }
 
     public void deleteById(long id){
-        newsRepository.findById(id).orElseThrow(()-> new NewsNotFoundException(id));
+        newsRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id));
         newsRepository.deleteById(id);
     }
 }

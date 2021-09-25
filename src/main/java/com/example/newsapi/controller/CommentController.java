@@ -14,8 +14,10 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/news/{id}/comments")
-    public List<CommentDTO> getAllCommentsByNews(@PathVariable long id){
-        return commentService.getAllComments(id);
+    @GetMapping("/news/{newsId}/comments")
+    public List<CommentDTO> getAllCommentsByNews(@PathVariable long newsId){
+        return commentService.getAllComments(newsId);
     }
+
+    //@GetMapping("/news/{newsId}/comments/{commentId}")
 }
