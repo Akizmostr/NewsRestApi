@@ -1,6 +1,5 @@
 package com.example.newsapi.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
@@ -11,11 +10,11 @@ import java.util.List;
 
 @Getter
 @Setter
-@Relation(collectionRelation = "news")
-public class NewsDTO extends RepresentationModel<NewsDTO> {
+@Relation(collectionRelation = "news with comments")
+public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
     private long id;
     private LocalDate date;
     private String text;
     private String title;
-    //private List<CommentDTO> comments;
+    private List<CommentDTO> comments;
 }

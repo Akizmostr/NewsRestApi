@@ -1,12 +1,18 @@
 package com.example.newsapi.dto;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 
 import java.time.LocalDate;
 
-@Data
-public class CommentDTO {
+@Getter
+@Setter
+@Relation(collectionRelation = "comments")
+public class CommentDTO extends RepresentationModel<CommentDTO> {
     private long id;
     private LocalDate date;
     private String text;

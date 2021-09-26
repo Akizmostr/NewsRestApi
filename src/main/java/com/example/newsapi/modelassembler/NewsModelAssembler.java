@@ -1,5 +1,6 @@
 package com.example.newsapi.modelassembler;
 
+import com.example.newsapi.controller.CommentController;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
@@ -24,20 +25,31 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
 
         Link selfLink = linkTo(methodOn(NewsController.class).getNewsById(news.getId())).withSelfRel();
         newsDto.add(selfLink);
+        newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(news.getId())).withRel("comments"));
+        newsDto.add(linkTo(methodOn(NewsController.class).getAllNews()).withRel("news"));
         return newsDto;
     }
 
     @Override
     public CollectionModel<NewsDTO> toCollectionModel(Iterable<? extends News> newsList) {
         ModelMapper modelMapper = new ModelMapper();
-        List<NewsDTO> newsDTOS = new ArrayList<>();
+        List<NewsDTO> news = new ArrayList<>();
 
-        newsList.forEach(news -> {
-            NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
+        newsList.forEach(pieceOfNews -> {
+            NewsDTO newsDto = modelMapper.map(pieceOfNews, NewsDTO.class);
             newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(newsDto.getId())).withSelfRel());
-            newsDTOS.add(newsDto);
+            newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(newsDto.getId())).withRel("comments"));
+            newsDto.add(linkTo(methodOn(NewsController.class).getAllNews()).withRel("news"));
+            news.add(newsDto);
         });
 
-        return CollectionModel.of(newsDTOS);
+        return CollectionModel.of(news);
+    }
+
+    public News toEntity(NewsDTO newsDto){
+        ModelMapper modelMapper = new ModelMapper();
+        News news = modelMapper.map(newsDto, News.class);
+
+        return news;
     }
 }

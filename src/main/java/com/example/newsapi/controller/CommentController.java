@@ -2,6 +2,7 @@ package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.service.CommentService;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +16,12 @@ public class CommentController {
     }
 
     @GetMapping("/news/{newsId}/comments")
-    public List<CommentDTO> getAllCommentsByNews(@PathVariable long newsId){
-        return commentService.getAllComments(newsId);
+    public CollectionModel<CommentDTO> getAllCommentsByNews(@PathVariable long newsId){
+        return commentService.getAllCommentsByNews(newsId);
     }
 
-    //@GetMapping("/news/{newsId}/comments/{commentId}")
+    @GetMapping("/news/{newsId}/comments/{commentId}")
+    public CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId){
+        return commentService.getCommentById(newsId, commentId);
+    }
 }

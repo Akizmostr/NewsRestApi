@@ -3,9 +3,9 @@ package com.example.newsapi.controller;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.service.NewsService;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class NewsController {
@@ -37,6 +37,7 @@ public class NewsController {
     }
 
     @DeleteMapping("/news/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteNews(@PathVariable long id){
         newsService.deleteById(id);
     }

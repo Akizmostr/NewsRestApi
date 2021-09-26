@@ -2,6 +2,7 @@ package com.example.newsapi.service;
 
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.exception.ResourceAlreadyExistsException;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
@@ -12,49 +13,62 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 public class NewsService {
-    @Autowired
     private NewsRepository newsRepository;
 
     private static final Logger log = LoggerFactory.getLogger(NewsService.class);
 
-    @Autowired
-    NewsModelAssembler newsModelAssembler;
+    NewsModelAssembler assembler;
 
-    @Autowired
-    ModelMapper modelMapper;
+    public NewsService(NewsRepository newsRepository, NewsModelAssembler assembler) {
+        this.newsRepository = newsRepository;
+        this.assembler = assembler;
+    }
 
     public CollectionModel<NewsDTO> getAllNews(){
-       // return newsRepository.findAll().stream().map(news -> modelMapper.map(news, NewsDTO.class)).collect(Collectors.toList());
-        return newsModelAssembler.toCollectionModel(newsRepository.findAll());
+        return assembler.toCollectionModel(
+                newsRepository.findAll()
+        );
     }
 
     public NewsDTO createNews(NewsDTO news){
-        return modelMapper.map(newsRepository.save(modelMapper.map(news, News.class)), NewsDTO.class);
+        if(newsRepository.existsById(news.getId()))
+            throw new ResourceAlreadyExistsException("News with id " + news.getId() + " already exists");
+
+        return assembler.toModel(
+                newsRepository.save(assembler.toEntity(news))
+        );
     }
 
     public NewsDTO getNewsById(long id){
-        return modelMapper.map(newsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id)),NewsDTO.class);
+        return assembler.toModel(
+                newsRepository
+                        .findById(id)
+                        .orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id))
+        );
     }
 
     public NewsDTO updateNews(NewsDTO newNewsDTO, long id){
-        News newsToUpdate = newsRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id));
+        News newsToUpdate = newsRepository
+                .findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id));
 
-        News newNews = modelMapper.map(newNewsDTO, News.class);
+        News newNews = assembler.toEntity(newNewsDTO);
         newsToUpdate.setTitle(newNews.getTitle());
         newsToUpdate.setText(newNews.getText());
         newsToUpdate.setDate(newNews.getDate());
-        newsToUpdate.setComments(newNews.getComments());
 
-        return modelMapper.map(newsRepository.save(modelMapper.map(newsToUpdate, News.class)), NewsDTO.class);
+        return assembler.toModel(
+                newsRepository.save(newsToUpdate)
+        );
     }
 
     public void deleteById(long id){
-        newsRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id));
+        newsRepository
+                .findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id));
+
         newsRepository.deleteById(id);
     }
 }

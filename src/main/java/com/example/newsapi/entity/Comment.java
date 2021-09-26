@@ -31,4 +31,8 @@ public class Comment {
                 ", username='" + username + '\'' +
                 '}';
     }
+
+    /*public long getNewsId(){
+        return news.getId();
+    }*/
 }
