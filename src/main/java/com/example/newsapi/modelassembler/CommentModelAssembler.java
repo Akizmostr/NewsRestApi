@@ -7,6 +7,7 @@ import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -26,7 +27,7 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
 
         Link selfLink = linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel();
         commentDto.add(selfLink);
-        commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getId())).withRel("news"));
+        commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getId(), Pageable.unpaged())).withRel("news"));
 
         return commentDto;
     }
@@ -39,7 +40,7 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
         entities.forEach((comment -> {
             CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
             commentDto.add(linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
-            commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getId())).withRel("news"));
+            commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getId(), Pageable.unpaged())).withRel("news"));
             comments.add(commentDto);
         }));
 

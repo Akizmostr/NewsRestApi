@@ -1,8 +1,11 @@
 package com.example.newsapi.controller;
 
+import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.service.NewsCommentsService;
 import com.example.newsapi.service.NewsService;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,15 +13,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class NewsController {
 
+    private final NewsCommentsService newsCommentsService;
     private final NewsService newsService;
 
-    public NewsController(NewsService newsService) {
+    public NewsController(NewsCommentsService newsCommentsService, NewsService newsService) {
+        this.newsCommentsService = newsCommentsService;
         this.newsService = newsService;
     }
 
     @GetMapping("/news")
-    public CollectionModel<NewsDTO> getAllNews() {
-        return newsService.getAllNews();
+    public PagedModel<NewsDTO> getAllNews(Pageable pageable) {
+        return newsService.getAllNews(pageable);
     }
 
     @PostMapping("/news")
@@ -26,9 +31,14 @@ public class NewsController {
         return newsService.createNews(news);
     }
 
-    @GetMapping("/news/{id}")
+    /*@GetMapping("/news/{id}")
     public NewsDTO getNewsById(@PathVariable(name = "id") long id){
         return newsService.getNewsById(id);
+    }*/
+
+    @GetMapping("/news/{id}")
+    public PagedModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
+        return newsCommentsService.getNewsCommentsById(id, pageable);
     }
 
     @PutMapping("/news/{id}")

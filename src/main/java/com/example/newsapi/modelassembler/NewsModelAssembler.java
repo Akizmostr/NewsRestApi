@@ -5,6 +5,7 @@ import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -23,10 +24,9 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
         ModelMapper modelMapper = new ModelMapper();
         NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
 
-        Link selfLink = linkTo(methodOn(NewsController.class).getNewsById(news.getId())).withSelfRel();
-        newsDto.add(selfLink);
+        newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
         newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(news.getId())).withRel("comments"));
-        newsDto.add(linkTo(methodOn(NewsController.class).getAllNews()).withRel("news"));
+        //newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
         return newsDto;
     }
 
@@ -37,9 +37,9 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
 
         newsList.forEach(pieceOfNews -> {
             NewsDTO newsDto = modelMapper.map(pieceOfNews, NewsDTO.class);
-            newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(newsDto.getId())).withSelfRel());
+            newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(newsDto.getId(),Pageable.unpaged())).withSelfRel());
             newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(newsDto.getId())).withRel("comments"));
-            newsDto.add(linkTo(methodOn(NewsController.class).getAllNews()).withRel("news"));
+            //newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
             news.add(newsDto);
         });
 

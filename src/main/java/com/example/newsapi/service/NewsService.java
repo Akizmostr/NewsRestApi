@@ -6,11 +6,13 @@ import com.example.newsapi.exception.ResourceAlreadyExistsException;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,17 +21,18 @@ public class NewsService {
 
     private static final Logger log = LoggerFactory.getLogger(NewsService.class);
 
-    NewsModelAssembler assembler;
+    private NewsModelAssembler assembler;
+
+    @Autowired
+    private PagedResourcesAssembler<News> pagedAssembler;
 
     public NewsService(NewsRepository newsRepository, NewsModelAssembler assembler) {
         this.newsRepository = newsRepository;
         this.assembler = assembler;
     }
 
-    public CollectionModel<NewsDTO> getAllNews(){
-        return assembler.toCollectionModel(
-                newsRepository.findAll()
-        );
+    public PagedModel<NewsDTO> getAllNews(Pageable pageable){
+        return pagedAssembler.toModel(newsRepository.findAll(pageable), assembler);
     }
 
     public NewsDTO createNews(NewsDTO news){
