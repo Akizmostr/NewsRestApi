@@ -1,5 +1,6 @@
 package com.example.newsapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,9 +14,10 @@ import java.util.List;
 @Setter
 @Relation(collectionRelation = "news")
 public class NewsDTO extends RepresentationModel<NewsDTO> {
+    @JsonIgnore
     private long id;
+
     private LocalDate date;
     private String text;
     private String title;
-    //private List<CommentDTO> comments;
 }

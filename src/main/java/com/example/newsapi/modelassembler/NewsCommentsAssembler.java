@@ -35,19 +35,12 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
 
     @Override
     public CollectionModel<NewsCommentsDTO> toCollectionModel(Iterable<? extends News> entities) {
-        ModelMapper modelMapper = new ModelMapper();
-        //CommentModelAssembler commentAssembler = new CommentModelAssembler();
-        List<NewsCommentsDTO> newsCommentsDtos = new ArrayList<>();
+        List<NewsCommentsDTO> newsCommentsList = new ArrayList<>();
 
         entities.forEach(entity->{
-            NewsCommentsDTO newsCommentsDto = modelMapper.map(entity, NewsCommentsDTO.class);
-            Link selfLink = linkTo(methodOn(NewsController.class).getNewsById(entity.getId(),Pageable.unpaged())).withSelfRel();
-            newsCommentsDto.add(selfLink);
-            newsCommentsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(entity.getId())).withRel("comments"));
-            newsCommentsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
-            //newsCommentsDto.getComments().stream().map(commentAssembler.toModel());
+            newsCommentsList.add(toModel(entity));
         });
 
-        return CollectionModel.of(newsCommentsDtos);
+        return CollectionModel.of(newsCommentsList);
     }
 }

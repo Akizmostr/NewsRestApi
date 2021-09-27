@@ -26,21 +26,16 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
 
         newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
         newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(news.getId())).withRel("comments"));
-        //newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
+        newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
         return newsDto;
     }
 
     @Override
-    public CollectionModel<NewsDTO> toCollectionModel(Iterable<? extends News> newsList) {
-        ModelMapper modelMapper = new ModelMapper();
+    public CollectionModel<NewsDTO> toCollectionModel(Iterable<? extends News> entities) {
         List<NewsDTO> news = new ArrayList<>();
 
-        newsList.forEach(pieceOfNews -> {
-            NewsDTO newsDto = modelMapper.map(pieceOfNews, NewsDTO.class);
-            newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(newsDto.getId(),Pageable.unpaged())).withSelfRel());
-            newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(newsDto.getId())).withRel("comments"));
-            //newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
-            news.add(newsDto);
+        entities.forEach(entity -> {
+            news.add(toModel(entity));
         });
 
         return CollectionModel.of(news);

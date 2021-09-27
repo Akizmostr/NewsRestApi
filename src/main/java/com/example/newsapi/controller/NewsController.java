@@ -27,17 +27,12 @@ public class NewsController {
     }
 
     @PostMapping("/news")
-    public NewsDTO saveNews(@RequestBody NewsDTO news){
+    public NewsDTO createNews(@RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
 
-    /*@GetMapping("/news/{id}")
-    public NewsDTO getNewsById(@PathVariable(name = "id") long id){
-        return newsService.getNewsById(id);
-    }*/
-
     @GetMapping("/news/{id}")
-    public PagedModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
+    public NewsCommentsDTO getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
         return newsCommentsService.getNewsCommentsById(id, pageable);
     }
 
@@ -49,6 +44,6 @@ public class NewsController {
     @DeleteMapping("/news/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteNews(@PathVariable long id){
-        newsService.deleteById(id);
+        newsService.deleteNewsById(id);
     }
 }

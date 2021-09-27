@@ -1,7 +1,10 @@
 package com.example.newsapi.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.domain.Page;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -12,9 +15,11 @@ import java.util.List;
 @Setter
 @Relation(collectionRelation = "news with comments")
 public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
+    @JsonIgnore
     private long id;
+
     private LocalDate date;
     private String text;
     private String title;
-    private List<CommentDTO> comments;
+    private Page<CommentDTO> comments;
 }

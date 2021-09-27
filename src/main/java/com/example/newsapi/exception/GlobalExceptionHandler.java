@@ -18,9 +18,5 @@ public class GlobalExceptionHandler {
         return new ErrorInfo(HttpStatus.NOT_FOUND.value(), LocalDateTime.now(), ex.getMessage(), req.getDescription(false));
     }
 
-    @ExceptionHandler(value = ResourceAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorInfo resourceAlreadyExists(WebRequest req, ResourceAlreadyExistsException ex){
-        return new ErrorInfo(HttpStatus.CONFLICT.value(), LocalDateTime.now(), ex.getMessage(), req.getDescription(false));
-    }
+
 }
