@@ -18,6 +18,10 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Service
@@ -43,9 +47,16 @@ public class CommentService {
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
-        return pagedAssembler.toModel(
-                commentRepository.findAllByNewsId(spec, newsId, pageable), assembler
-        );
+        if (spec != null) {
+            spec.and((Specification<Comment>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("id"), newsId));
+            return pagedAssembler.toModel(
+                    commentRepository.findAll(spec, pageable), assembler);
+        }
+        else {
+            return pagedAssembler.toModel(
+                    commentRepository.findAllByNewsId(newsId, pageable), assembler
+            );
+        }
     }
 
     public CommentDTO getCommentById(long newsId, long commentId){
