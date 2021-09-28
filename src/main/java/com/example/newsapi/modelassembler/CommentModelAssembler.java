@@ -27,7 +27,7 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
 
         commentDto.add(linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
         commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
-        commentDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(comment.getNews().getId())).withRel("comments"));
+        commentDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
 
         return commentDto;
     }

@@ -27,8 +27,8 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
 
         Link selfLink = linkTo(methodOn(NewsController.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel();
         newsCommentsDto.add(selfLink);
-        newsCommentsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(entity.getId())).withRel("comments"));
-        newsCommentsDto.add(linkTo(methodOn(NewsController.class).getAllNews(Pageable.unpaged())).withRel("news"));
+        newsCommentsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, entity.getId(), Pageable.unpaged())).withRel("comments"));
+        newsCommentsDto.add(linkTo(methodOn(NewsController.class).getAllNews(null, Pageable.unpaged())).withRel("news"));
 
         return newsCommentsDto;
     }

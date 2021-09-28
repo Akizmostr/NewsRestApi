@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,8 @@ public class NewsService {
         this.assembler = assembler;
     }
 
-    public PagedModel<NewsDTO> getAllNews(Pageable pageable){
-        return pagedAssembler.toModel(newsRepository.findAll(pageable), assembler);
+    public PagedModel<NewsDTO> getAllNews(Specification<News> spec, Pageable pageable){
+        return pagedAssembler.toModel(newsRepository.findAll(spec, pageable), assembler);
     }
 
     public NewsDTO createNews(NewsDTO news){
