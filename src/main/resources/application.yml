@@ -20,3 +20,9 @@ spring:
     console:
       path: /h2-console
       enabled: true
+
+logging:
+  level:
+    org.springframework.web: INFO
+    com.example.newsapi: DEBUG
+    org.hibernate: ERROR
