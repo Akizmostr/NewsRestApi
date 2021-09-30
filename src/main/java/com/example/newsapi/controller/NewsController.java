@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 
+
 @RestController
 public class NewsController {
 
@@ -32,7 +33,8 @@ public class NewsController {
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "title", params = "title", spec = Like.class)
-            })Specification<News> spec, Pageable pageable) {
+            })Specification<News> spec,
+            Pageable pageable) {
         return newsService.getAllNews(spec, pageable);
     }
 
@@ -41,8 +43,11 @@ public class NewsController {
         return newsService.createNews(news);
     }
 
+    //!!!!!
+    //Pagination on comments doesn't work
     @GetMapping("/news/{id}")
     public NewsCommentsDTO getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
+        //Using NewsCommentsDTO and corresponding service to return view of the news and comments
         return newsCommentsService.getNewsCommentsById(id, pageable);
     }
 

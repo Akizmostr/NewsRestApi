@@ -22,9 +22,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class CommentModelAssembler implements RepresentationModelAssembler<Comment, CommentDTO> {
     @Override
     public CommentDTO toModel(Comment comment) {
+        //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
         CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
 
+        //Add links
         commentDto.add(linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
         commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
         commentDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
@@ -37,13 +39,14 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
         List<CommentDTO> comments = new ArrayList<>();
 
         entities.forEach((comment -> {
-            comments.add(toModel(comment));
+            comments.add(toModel(comment)); //converting each entity to dto with links and adding to the list
         }));
 
         return CollectionModel.of(comments);
     }
 
     public Comment toEntity(CommentDTO commentDto){
+        //convert dto to entity
         ModelMapper modelMapper = new ModelMapper();
         Comment comment = modelMapper.map(commentDto, Comment.class);
 

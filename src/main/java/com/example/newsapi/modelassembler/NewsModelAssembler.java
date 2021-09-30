@@ -22,9 +22,11 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
 
     @Override
     public NewsDTO toModel(News news) {
+        //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
         NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
 
+        //Add links
         newsDto.add(linkTo(methodOn(NewsController.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
         newsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
         newsDto.add(linkTo(methodOn(NewsController.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
@@ -36,13 +38,14 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
         List<NewsDTO> news = new ArrayList<>();
 
         entities.forEach(entity -> {
-            news.add(toModel(entity));
+            news.add(toModel(entity)); //converting each entity to dto with links and adding to the list
         });
 
         return CollectionModel.of(news);
     }
 
     public News toEntity(NewsDTO newsDto){
+        //convert dto to entity
         ModelMapper modelMapper = new ModelMapper();
         News news = modelMapper.map(newsDto, News.class);
 

@@ -17,7 +17,7 @@ public class NewsDTO extends RepresentationModel<NewsDTO> {
     @JsonIgnore
     private long id;
 
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
     private String text;
     private String title;
 }

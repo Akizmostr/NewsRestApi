@@ -18,7 +18,7 @@ public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
     @JsonIgnore
     private long id;
 
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
     private String text;
     private String title;
     private Page<CommentDTO> comments;

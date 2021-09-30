@@ -20,8 +20,13 @@ public class NewsService {
 
     private static final Logger log = LoggerFactory.getLogger(NewsService.class);
 
-    private NewsModelAssembler assembler;
+    private NewsModelAssembler assembler; //assembler used to convert from entity to dto with links and vice versa
 
+    /*
+    Assembler used to convert News entity to PagedModel.
+    pagedAssembler.toModel() accepts NewsModelAssembler as parameter
+    in order to convert entity to dto while creating PagedModel
+    */
     @Autowired
     private PagedResourcesAssembler<News> pagedAssembler;
 
@@ -31,7 +36,9 @@ public class NewsService {
     }
 
     public PagedModel<NewsDTO> getAllNews(Specification<News> spec, Pageable pageable){
-        return pagedAssembler.toModel(newsRepository.findAll(spec, pageable), assembler);
+        return pagedAssembler.toModel(
+                newsRepository.findAll(spec, pageable), assembler
+        );
     }
 
     public NewsDTO createNews(NewsDTO news){
@@ -50,10 +57,10 @@ public class NewsService {
     public NewsDTO updateNews(NewsDTO requestedNewsDto, long id){
         return assembler.toModel(
                 newsRepository.findById(id).map(news -> {
+                    //change news properties found in repository
                     news.setTitle(requestedNewsDto.getTitle());
                     news.setText(requestedNewsDto.getText());
-                    news.setDate(requestedNewsDto.getDate());
-                    return newsRepository.save(news);
+                    return newsRepository.save(news); //repository.save() also works as update
                 }).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id))
         );
     }

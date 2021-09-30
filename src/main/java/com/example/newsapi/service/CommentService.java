@@ -30,8 +30,13 @@ public class CommentService {
 
     private NewsRepository newsRepository;
 
-    private CommentModelAssembler assembler;
+    private CommentModelAssembler assembler; //assembler used to convert from entity to dto with links and vice versa
 
+    /*
+    Assembler used to convert Comment entity to PagedModel.
+    pagedAssembler.toModel() accepts CommentModelAssembler as parameter
+    in order to convert entity to dto while creating PagedModel
+    */
     @Autowired
     private PagedResourcesAssembler<Comment> pagedAssembler;
 
@@ -47,12 +52,20 @@ public class CommentService {
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
+        /*
+        Spring data jpa doesn't support using both Specification and Projection
+        That's why if search specifications are present we need to manually
+        Add another Specification in order to find comments by corresponding news id
+        */
         if (spec != null) {
+            //Specification for searching comments by news id
             Specification<Comment> specId = (Specification<Comment>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("news").get("id"), newsId);
             return pagedAssembler.toModel(
-                    commentRepository.findAll(Specification.where(spec).and(specId), pageable), assembler);
+                    commentRepository.findAll(Specification.where(spec).and(specId), pageable), assembler
+            );
         }
         else {
+            //Suppose Jpa Projection is more efficient when Specification is not provided
             return pagedAssembler.toModel(
                     commentRepository.findAllByNewsId(newsId, pageable), assembler
             );
@@ -63,20 +76,20 @@ public class CommentService {
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
-        return commentRepository.findAllByNewsId(newsId).get()
+        return commentRepository.findAllByNewsId(newsId).get() //returns all comments of the news
                 .stream()
-                .filter(comment -> comment.getId()==commentId)
+                .filter(comment -> comment.getId()==commentId) //filter comments with requested id
                 .findFirst()
-                .map(assembler::toModel)
+                .map(assembler::toModel) //map found entity to dto
                 .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId));
     }
 
     public CommentDTO createComment(CommentDTO commentDto, long newsId){
         return assembler.toModel(
                 newsRepository.findById(newsId).map(news -> {
-                    Comment comment = assembler.toEntity(commentDto);
-                    comment.setNews(news);
-                    return commentRepository.save(comment);
+                    Comment comment = assembler.toEntity(commentDto); //create Comment object from dto
+                    comment.setNews(news); //connect new Comment entity with found news
+                    return commentRepository.save(comment); //save constructed Comment entity
                 }).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + newsId))
         );
     }
@@ -87,9 +100,10 @@ public class CommentService {
 
         return assembler.toModel(
                 commentRepository.findById(commentId).map(comment -> {
+                    //change Comment properties
                     comment.setText(requestedCommentDto.getText());
-                    return commentRepository.save(comment);
-                }).orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId))
+                    return commentRepository.save(comment); //repository.save() also works as update
+                }).orElseThrow(() -> new ResourceNotFoundException("Not found Comment with id " + commentId))
         );
     }
 

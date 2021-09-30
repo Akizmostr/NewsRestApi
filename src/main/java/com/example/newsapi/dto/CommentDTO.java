@@ -17,7 +17,7 @@ public class CommentDTO extends RepresentationModel<CommentDTO> {
     @JsonIgnore
     private long id;
 
-    private LocalDate date;
+    private LocalDate date = LocalDate.now();
     private String text;
     private String username;
 }

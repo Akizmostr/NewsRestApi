@@ -22,11 +22,12 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
 
     @Override
     public NewsCommentsDTO toModel(News entity) {
+        //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
         NewsCommentsDTO newsCommentsDto = modelMapper.map(entity, NewsCommentsDTO.class);
 
-        Link selfLink = linkTo(methodOn(NewsController.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel();
-        newsCommentsDto.add(selfLink);
+        //add links
+        newsCommentsDto.add(linkTo(methodOn(NewsController.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel());
         newsCommentsDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, entity.getId(), Pageable.unpaged())).withRel("comments"));
         newsCommentsDto.add(linkTo(methodOn(NewsController.class).getAllNews(null, Pageable.unpaged())).withRel("news"));
 
@@ -38,7 +39,7 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
         List<NewsCommentsDTO> newsCommentsList = new ArrayList<>();
 
         entities.forEach(entity->{
-            newsCommentsList.add(toModel(entity));
+            newsCommentsList.add(toModel(entity)); //converting each entity to dto with links and adding to the list
         });
 
         return CollectionModel.of(newsCommentsList);
