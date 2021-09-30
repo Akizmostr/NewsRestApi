@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -67,6 +66,6 @@ public class LoggingHandler {
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
         log.error("An exception has been thrown in {}.{}()", className, methodName);
-        log.error("Message : " + ex.getMessage());
+        log.error("Message : {}", ex.getMessage());
     }
 }

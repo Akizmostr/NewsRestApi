@@ -17,9 +17,18 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Class that converts News entities to NewsCommentsDTO objects with links and vice versa
+ */
 @Component
 public class NewsCommentsAssembler implements RepresentationModelAssembler<News, NewsCommentsDTO> {
 
+    /**
+     * Converts single News entity to NewsCommentDTO object and adds corresponding links
+     *
+     * @param entity News entity
+     * @return Representation of NewsComment
+     */
     @Override
     public NewsCommentsDTO toModel(News entity) {
         //Convert entity to DTO
@@ -34,6 +43,12 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
         return newsCommentsDto;
     }
 
+    /**
+     * Converts iterable collection of News entities into CollectionModel of NewsCommentsDTO objects
+     *
+     * @param entities Iterable collection of News entities
+     * @return Collection Model of NewsCommentsDTO
+     */
     @Override
     public CollectionModel<NewsCommentsDTO> toCollectionModel(Iterable<? extends News> entities) {
         List<NewsCommentsDTO> newsCommentsList = new ArrayList<>();

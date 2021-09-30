@@ -3,13 +3,10 @@ package com.example.newsapi.modelassembler;
 import com.example.newsapi.controller.CommentController;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
-import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
-import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +15,17 @@ import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
+/**
+ * Class that converts Comment entities to CommentDTO objects with links and vice versa
+ */
 @Component
 public class CommentModelAssembler implements RepresentationModelAssembler<Comment, CommentDTO> {
+    /**
+     * Converts single Comment entity to DTO object and adds corresponding links
+     *
+     * @param comment Comment entity
+     * @return Representation of comment
+     */
     @Override
     public CommentDTO toModel(Comment comment) {
         //Convert entity to DTO
@@ -34,6 +40,12 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
         return commentDto;
     }
 
+    /**
+     * Converts iterable collection of Comment entities into CollectionModel
+     *
+     * @param entities Iterable collection of Comment entities
+     * @return CollectionModel of Comment
+     */
     @Override
     public CollectionModel<CommentDTO> toCollectionModel(Iterable<? extends Comment> entities) {
         List<CommentDTO> comments = new ArrayList<>();
@@ -45,6 +57,12 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
         return CollectionModel.of(comments);
     }
 
+    /**
+     * Converts CommentDTO object to Comment entity
+     *
+     * @param commentDto commentDTO object to convert
+     * @return Comment entity
+     */
     public Comment toEntity(CommentDTO commentDto){
         //convert dto to entity
         ModelMapper modelMapper = new ModelMapper();

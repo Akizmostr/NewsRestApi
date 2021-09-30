@@ -3,6 +3,7 @@ package com.example.newsapi.controller;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
+import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.service.CommentService;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
@@ -21,6 +22,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+/**
+ * Rest controller responsible for Comment resource
+ */
 @RestController
 public class CommentController {
     private final CommentService commentService;
@@ -29,6 +33,14 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    /**
+     * Finds all comments of a specific news
+     *
+     * @param spec Specification which contains criteria for search
+     * @param newsId id property of the news
+     * @param pageable Pageable object with pagination information
+     * @return PagedModel of CommentDTO
+     */
     @GetMapping("/news/{newsId}/comments")
     public PagedModel<CommentDTO> getAllCommentsByNews(
             @And({
@@ -40,21 +52,49 @@ public class CommentController {
         return commentService.getAllCommentsByNews(spec, newsId, pageable);
     }
 
+    /**
+     * Saves provided comment
+     *
+     * @param comment CommentDTO object which contains properties to save
+     * @param newsId id property of the news
+     * @return Representation of currently saved comment
+     */
     @PostMapping("/news/{newsId}/comments")
     public CommentDTO createComment(@RequestBody CommentDTO comment, @PathVariable long newsId){
         return commentService.createComment(comment, newsId);
     }
 
+    /**
+     * Finds specific comment of corresponding news
+     *
+     * @param newsId id property of the news
+     * @param commentId id property of the comment to find
+     * @return Representation of found comment
+     */
     @GetMapping("/news/{newsId}/comments/{commentId}")
     public CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId){
         return commentService.getCommentById(newsId, commentId);
     }
 
+    /**
+     * Updates comment
+     *
+     * @param comment CommentDTO object containing new properties to update
+     * @param newsId id property of the news
+     * @param commentId id property of the comment to update
+     * @return Representation of currently updated comment
+     */
     @PutMapping("/news/{newsId}/comments/{commentId}")
     public CommentDTO updateNews(@RequestBody CommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
         return commentService.updateComment(comment, newsId, commentId);
     }
 
+    /**
+     * Deletes comment of a specific news
+     *
+     * @param newsId id property of the news
+     * @param commentId id property of the comment to delete
+     */
     @DeleteMapping("/news/{newsId}/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable long newsId, @PathVariable long commentId){
