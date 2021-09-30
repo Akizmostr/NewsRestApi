@@ -13,7 +13,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "creation_date")
+    @Column(name = "creation_date", columnDefinition = "DATE DEFAULT CURRENT_DATE")
     private LocalDate date;
     private String text;
     private String username;

@@ -1,6 +1,12 @@
 spring:
   profiles:
-    active: "test"
+    active: "prod"
+
+logging:
+  level:
+    org.springframework.web: INFO
+    com.example.newsapi: DEBUG
+    org.hibernate: ERROR
 
 ---
 spring:
@@ -21,8 +27,16 @@ spring:
       path: /h2-console
       enabled: true
 
-logging:
-  level:
-    org.springframework.web: INFO
-    com.example.newsapi: DEBUG
-    org.hibernate: ERROR
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/newsapi
+    username: postgres
+    password: 6871
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update

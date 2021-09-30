@@ -48,9 +48,9 @@ public class CommentService {
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
         if (spec != null) {
-            spec.and((Specification<Comment>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("id"), newsId));
+            Specification<Comment> specId = (Specification<Comment>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("news").get("id"), newsId);
             return pagedAssembler.toModel(
-                    commentRepository.findAll(spec, pageable), assembler);
+                    commentRepository.findAll(Specification.where(spec).and(specId), pageable), assembler);
         }
         else {
             return pagedAssembler.toModel(
