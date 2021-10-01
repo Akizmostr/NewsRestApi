@@ -1,9 +1,7 @@
 package com.example.newsapi.logging;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;

@@ -7,6 +7,8 @@ logging:
     org.springframework.web: INFO
     com.example.newsapi: DEBUG
     org.hibernate: ERROR
+  file:
+    name: mylog.log
 
 ---
 spring:
