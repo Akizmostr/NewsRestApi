@@ -32,6 +32,7 @@ public class LoggingHandler {
 
     @Before("controller()")
     public void logRequest(JoinPoint joinPoint){
+        //get request
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = servletRequestAttributes.getRequest();
 
@@ -40,7 +41,8 @@ public class LoggingHandler {
         String arguments = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
+            mapper.registerModule(new JavaTimeModule()); //register module for using LocalDate with jackson
+            //read arguments to string using jackson json, every argument must be mapped to String to avoid json exception(if the argument cannot be serialized)
             arguments = mapper.writeValueAsString(Arrays.stream(joinPoint.getArgs()).map(String::valueOf).collect(Collectors.toList()));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -88,7 +90,7 @@ public class LoggingHandler {
         if(result != null)
             returnValue = result.toString();
 
-        log.debug(joinPoint.getSignature() + " returned value : " + returnValue);
+        log.debug("Return value of {} : {}", joinPoint.getSignature(), returnValue);
     }
 
     @AfterThrowing(pointcut = "controller() || service() || repository()", throwing = "ex")
