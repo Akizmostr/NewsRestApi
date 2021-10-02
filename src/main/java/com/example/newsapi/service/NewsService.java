@@ -94,10 +94,23 @@ public class NewsService {
                     //change news properties found in repository
                     String newTitle = requestedNewsDto.getTitle();
                     String newText = requestedNewsDto.getText();
+                    //None of fields is provided
+                    if(newTitle == null && newText == null)
+                        throw new IllegalArgumentException("Title or text is required");
+
+                    //if field is null, it is ignored, otherwise it needs to be validated
                     if(newTitle != null)
-                        news.setTitle(newTitle);
+                        if(!newTitle.isBlank())
+                            news.setTitle(newTitle);
+                        else
+                            throw new IllegalArgumentException("Title is not valid");
+
                     if(newText != null)
-                        news.setText(requestedNewsDto.getText());
+                        if(!newText.isBlank())
+                            news.setText(newText);
+                        else
+                            throw new IllegalArgumentException("Text is not valid");
+
                     return newsRepository.save(news); //repository.save() also works as update
                 }).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id))
         );
@@ -114,5 +127,7 @@ public class NewsService {
             throw new ResourceNotFoundException("Not found News with id " + id);
 
         newsRepository.deleteById(id);
+
+        log.info("News with id {} was successfully deleted", id);
     }
 }

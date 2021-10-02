@@ -1,9 +1,7 @@
 package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.CommentDTO;
-import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
-import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.service.CommentService;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
@@ -11,16 +9,12 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.List;
+import javax.validation.Valid;
+
 
 /**
  * Rest controller responsible for Comment resource
@@ -60,7 +54,7 @@ public class CommentController {
      * @return Representation of currently saved comment
      */
     @PostMapping("/news/{newsId}/comments")
-    public CommentDTO createComment(@RequestBody CommentDTO comment, @PathVariable long newsId){
+    public CommentDTO createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId){
         return commentService.createComment(comment, newsId);
     }
 

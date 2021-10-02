@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.List;
 
 @Getter
 @Setter
@@ -21,7 +20,11 @@ public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
     private long id;
 
     private LocalDate date = LocalDate.now();
+    @NotBlank(message = "The text is required")
     private String text;
+
+    @NotBlank(message = "The title is required")
     private String title;
+
     private Page<CommentDTO> comments;
 }

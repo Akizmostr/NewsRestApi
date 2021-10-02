@@ -1,8 +1,6 @@
 package com.example.newsapi.entity;
 
-import com.sun.istack.NotNull;
 import lombok.Data;
-import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -21,7 +19,6 @@ public class Comment {
 
     private String text;
 
-    @NotNull
     private String username;
 
     @ManyToOne
@@ -37,8 +34,4 @@ public class Comment {
                 ", username='" + username + '\'' +
                 '}';
     }
-
-    /*public long getNewsId(){
-        return news.getId();
-    }*/
 }

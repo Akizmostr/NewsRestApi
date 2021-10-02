@@ -39,6 +39,7 @@ public class LoggingHandler {
         String requestURL = request.getRequestURL().toString();
         String methodType = request.getMethod();
         String arguments = null;
+        //get arguments
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule()); //register module for using LocalDate with jackson

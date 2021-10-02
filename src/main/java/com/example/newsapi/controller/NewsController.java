@@ -3,7 +3,6 @@ package com.example.newsapi.controller;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
-import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.service.NewsCommentsService;
 import com.example.newsapi.service.NewsService;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
@@ -15,6 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 
 /**
@@ -55,7 +56,7 @@ public class NewsController {
      * @return Representation of currently saved news
      */
     @PostMapping("/news")
-    public NewsDTO createNews(@RequestBody NewsDTO news){
+    public NewsDTO createNews(@Valid @RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
 

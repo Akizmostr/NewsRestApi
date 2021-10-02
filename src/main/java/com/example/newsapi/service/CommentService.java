@@ -133,8 +133,12 @@ public class CommentService {
                 commentRepository.findById(commentId).map(comment -> {
                     //change Comment properties
                     String newText = requestedCommentDto.getText();
-                    if(newText != null)
+                    //validation
+                    if(newText != null && !newText.isBlank())
                         comment.setText(newText);
+                    else
+                        throw new IllegalArgumentException("Text is not valid");
+
                     return commentRepository.save(comment); //repository.save() also works as update
                 }).orElseThrow(() -> new ResourceNotFoundException("Not found Comment with id " + commentId))
         );
@@ -155,5 +159,8 @@ public class CommentService {
             throw new ResourceNotFoundException("Not found Comment with id " + commentId);
 
         commentRepository.deleteById(commentId);
+
+        log.info("Comment with id {} was successfully deleted", commentId);
+        log.info("News id : {}", newsId);
     }
 }
