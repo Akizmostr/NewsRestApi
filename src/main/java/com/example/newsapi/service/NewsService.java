@@ -1,6 +1,7 @@
 package com.example.newsapi.service;
 
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 /**
  * Service class for News
@@ -88,28 +90,18 @@ public class NewsService {
      * @return Representation of currently updated news
      * @throws ResourceNotFoundException if news was not found
      */
-    public NewsDTO updateNews(NewsDTO requestedNewsDto, long id){
+    public NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id, BindingResult bindingResult){
         return assembler.toModel(
                 newsRepository.findById(id).map(news -> {
                     //change news properties found in repository
                     String newTitle = requestedNewsDto.getTitle();
                     String newText = requestedNewsDto.getText();
-                    //None of fields is provided
-                    if(newTitle == null && newText == null)
-                        throw new IllegalArgumentException("Title or text is required");
 
-                    //if field is null, it is ignored, otherwise it needs to be validated
-                    if(newTitle != null)
-                        if(!newTitle.isBlank())
-                            news.setTitle(newTitle);
-                        else
-                            throw new IllegalArgumentException("Title is not valid");
+                    if(!bindingResult.hasFieldErrors("title"))
+                        news.setTitle(newTitle);
 
-                    if(newText != null)
-                        if(!newText.isBlank())
-                            news.setText(newText);
-                        else
-                            throw new IllegalArgumentException("Text is not valid");
+                    if(!bindingResult.hasFieldErrors("text"))
+                        news.setText(newText);
 
                     return newsRepository.save(news); //repository.save() also works as update
                 }).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id))

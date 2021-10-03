@@ -1,6 +1,7 @@
 package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.service.CommentService;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
@@ -79,7 +80,7 @@ public class CommentController {
      * @return Representation of currently updated comment
      */
     @PutMapping("/news/{newsId}/comments/{commentId}")
-    public CommentDTO updateNews(@RequestBody CommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
+    public CommentDTO updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
         return commentService.updateComment(comment, newsId, commentId);
     }
 

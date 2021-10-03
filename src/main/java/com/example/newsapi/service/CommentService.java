@@ -1,6 +1,7 @@
 package com.example.newsapi.service;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.CommentModelAssembler;
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 /**
  * Service class for Comments
@@ -125,20 +127,15 @@ public class CommentService {
      * @param commentId id property of the comment to update
      * @return Representation of currently updated comment
      */
-    public CommentDTO updateComment(CommentDTO requestedCommentDto, long newsId, long commentId){
+    public CommentDTO updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
         return assembler.toModel(
                 commentRepository.findById(commentId).map(comment -> {
-                    //change Comment properties
                     String newText = requestedCommentDto.getText();
-                    //validation
-                    if(newText != null && !newText.isBlank())
-                        comment.setText(newText);
-                    else
-                        throw new IllegalArgumentException("Text is not valid");
-
+                    //change Comment properties
+                    comment.setText(newText);
                     return commentRepository.save(comment); //repository.save() also works as update
                 }).orElseThrow(() -> new ResourceNotFoundException("Not found Comment with id " + commentId))
         );

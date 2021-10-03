@@ -22,20 +22,17 @@ public class GlobalExceptionHandler {
         return new ErrorInfo(HttpStatus.NOT_FOUND.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
     }
 
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class, IllegalArgumentException.class})
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorInfo resourceNotValid(HttpServletRequest req, Exception ex){
         String message = null;
-        if (ex instanceof MethodArgumentNotValidException)
-            //create pretty message from binding result
-            message = ((MethodArgumentNotValidException) ex).getBindingResult()
-                    .getFieldErrors()
-                    .stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.toList())
-                    .toString();
-        if (ex instanceof IllegalArgumentException)
-            message = ex.getMessage();
+        //create pretty message from binding result
+        message = ((MethodArgumentNotValidException) ex).getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList())
+                .toString();
         return new ErrorInfo(HttpStatus.UNPROCESSABLE_ENTITY.value(), LocalDateTime.now(), message, req.getRequestURL().toString());
     }
 }
