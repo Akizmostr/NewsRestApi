@@ -3463,3 +3463,6 @@ java.lang.IllegalArgumentException: Text is not valid
 2021-10-03 18:48:57.396  INFO 14644 --- [http-nio-8080-exec-5] c.e.newsapi.logging.LoggingHandler       : Response body: {"date":[2021,9,23],"text":"as","username":"uslover51","links":[{"rel":"self","href":"http://localhost:8080/news/2/comments/5"},{"rel":"news","href":"http://localhost:8080/news/2"},{"rel":"comments","href":"http://localhost:8080/news/2/comments"}]}
 2021-10-03 18:48:57.396  INFO 14644 --- [http-nio-8080-exec-5] c.e.newsapi.logging.LoggingHandler       : --- response information end --------
 2021-10-03 18:49:00.581  WARN 14644 --- [http-nio-8080-exec-6] .w.s.m.s.DefaultHandlerExceptionResolver : Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' not supported]
+2021-10-03 20:20:18.092  INFO 14644 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-10-03 20:20:18.105  INFO 14644 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-10-03 20:20:18.109  INFO 14644 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
