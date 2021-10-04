@@ -6,6 +6,8 @@ import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.service.NewsCommentsService;
 import com.example.newsapi.service.NewsService;
+import com.example.newsapi.service.impl.NewsCommentsServiceImpl;
+import com.example.newsapi.service.impl.NewsServiceImpl;
 import com.example.newsapi.validation.UpdateNewsValidator;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
@@ -34,7 +36,7 @@ public class NewsController {
    /* @Autowired
     private UpdateNewsValidator updateValidator;*/
 
-    public NewsController(NewsCommentsService newsCommentsService, NewsService newsService) {
+    public NewsController(NewsCommentsServiceImpl newsCommentsService, NewsServiceImpl newsService) {
         this.newsCommentsService = newsCommentsService;
         this.newsService = newsService;
     }

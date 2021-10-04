@@ -4,6 +4,7 @@ import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.service.CommentService;
+import com.example.newsapi.service.impl.CommentServiceImpl;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
@@ -24,7 +25,7 @@ import javax.validation.Valid;
 public class CommentController {
     private final CommentService commentService;
 
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentServiceImpl commentService) {
         this.commentService = commentService;
     }
 

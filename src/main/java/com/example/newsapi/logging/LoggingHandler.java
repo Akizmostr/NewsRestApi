@@ -24,7 +24,7 @@ public class LoggingHandler {
     @Pointcut("within(com.example.newsapi.controller.*)")
     public void controller() {}
 
-    @Pointcut("within(com.example.newsapi.service.*)")
+    @Pointcut("within(com.example.newsapi.service.impl.*)")
     public void service() {}
 
     @Pointcut("within(@org.springframework.stereotype.Repository *)")
