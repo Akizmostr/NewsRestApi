@@ -53,17 +53,21 @@ class NewsServiceImplTest {
         news.setTitle("test title");
         news.setComments(null);
 
-        when(newsRepository.save(news)).thenReturn(news);
-
         NewsDTO newsDto = new NewsDTO();
         newsDto.setDate(LocalDate.parse("2021-09-09"));
         newsDto.setId(1);
         newsDto.setText("test text");
         newsDto.setTitle("test title");
 
+        when(newsRepository.save(any(News.class))).thenReturn(news);
+        when(assembler.toEntity(any(NewsDTO.class))).thenReturn(news);
+        when(assembler.toModel(any(News.class))).thenReturn(newsDto);
+
         NewsDTO savedNewsDto = newsService.createNews(newsDto);
 
         assertNotNull(savedNewsDto);
-        //assertEquals();
+        assertEquals(savedNewsDto, newsDto);
+
+        verify(newsRepository, times(1)).save(any(News.class));
     }
 }
