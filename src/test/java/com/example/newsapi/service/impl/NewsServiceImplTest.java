@@ -1,6 +1,7 @@
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +54,7 @@ class NewsServiceImplTest {
 
     @Test
     void whenUpdateNewsNotFound_thenNotFoundException(){
-        assertThrows(ResourceNotFoundException.class, () -> newsService.updateNews(null, 1, null));
+        assertThrows(ResourceNotFoundException.class, () -> newsService.updateNews(null, 1));
     }
 
     @Test
@@ -122,7 +122,7 @@ class NewsServiceImplTest {
     void whenGetNewsById_thenSuccess(){
         long id = 1;
         News news = new News(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        NewsDTO newsDto = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
+        NewsDTO newsDto = new NewsDTO(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(news));
         when(assembler.toModel(any(News.class))).thenReturn(newsDto);
@@ -143,6 +143,29 @@ class NewsServiceImplTest {
         newsService.deleteNewsById(id);
 
         verify(newsRepository, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    void whenUpdateNewsAndTextIsNull_thenTextIsNotUpdated(){
+        UpdateNewsDTO requestedNewsDto = new UpdateNewsDTO();
+        requestedNewsDto.setText(null);
+        requestedNewsDto.setTitle("new title");
+        long id = 1;
+
+        News newsToUpdate = new News(id, null, "text", "title", null);
+
+        NewsDTO updatedNewsDto = new NewsDTO(id, null, "text", "new title");
+
+        when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
+        when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
+        when(assembler.toModel(any(News.class))).thenReturn(updatedNewsDto);
+
+        NewsDTO result = newsService.updateNews(requestedNewsDto, 1);
+
+        assertNotNull(result);
+        assertNotNull(newsToUpdate.getText());
+        assertEquals(newsToUpdate.getText(), updatedNewsDto.getText());
+        assertEquals(newsToUpdate.getTitle(), requestedNewsDto.getTitle());
     }
 
 }

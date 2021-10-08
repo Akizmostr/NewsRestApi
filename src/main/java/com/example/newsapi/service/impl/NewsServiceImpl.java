@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 /**
  * Service implementation class for News
@@ -67,22 +66,22 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id, BindingResult bindingResult){
-        return assembler.toModel(
-                newsRepository.findById(id).map(news -> {
-                    //change news properties found in repository
-                    String newTitle = requestedNewsDto.getTitle();
-                    String newText = requestedNewsDto.getText();
+    public NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id){
+        News news = newsRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id));
+        //change news properties found in repository
+        String newTitle = requestedNewsDto.getTitle();
+        String newText = requestedNewsDto.getText();
 
-                    if(!bindingResult.hasFieldErrors("title"))
-                        news.setTitle(newTitle);
+        //all validation is performed by UpdateNewsValidator
+        //null values are allowed but must be ignored
+        //(update only those fields, which are provided by user)
+        if(newTitle != null)
+            news.setTitle(newTitle);
+        if(newText != null)
+            news.setText(newText);
 
-                    if(!bindingResult.hasFieldErrors("text"))
-                        news.setText(newText);
-
-                    return newsRepository.save(news); //repository.save() also works as update
-                }).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id))
-        );
+        News savedNews = newsRepository.save(news); //repository.save() also works as update
+        return assembler.toModel(savedNews);
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.example.newsapi.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.validation.BindingResult;
 
 /**
  * Service interface for News
@@ -47,7 +46,7 @@ public interface NewsService {
      * @return Representation of currently updated news
      * @throws ResourceNotFoundException if news was not found
      */
-    NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id, BindingResult bindingResult);
+    NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id);
 
     /**
      * Deletes news

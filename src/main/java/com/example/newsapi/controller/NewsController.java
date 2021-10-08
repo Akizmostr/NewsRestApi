@@ -93,8 +93,8 @@ public class NewsController {
      * @return Representation of currently updated news
      */
     @PutMapping("/news/{id}")
-    public NewsDTO updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id, BindingResult bindingResult) {
-        return newsService.updateNews(updateNewsDto, id, bindingResult);
+    public NewsDTO updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id) {
+        return newsService.updateNews(updateNewsDto, id);
     }
 
     /**
