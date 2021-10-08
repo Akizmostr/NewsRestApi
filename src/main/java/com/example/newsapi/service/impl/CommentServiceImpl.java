@@ -10,7 +10,6 @@ import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -36,15 +35,15 @@ public class CommentServiceImpl implements CommentService {
      * pagedAssembler.toModel() accepts CommentModelAssembler as parameter
      * in order to convert entity to dto while creating PagedModel
      */
-    @Autowired
     private PagedResourcesAssembler<Comment> pagedAssembler;
 
     private static final Logger log = LoggerFactory.getLogger(NewsServiceImpl.class);
 
-    public CommentServiceImpl(CommentRepository commentRepository, NewsRepository newsRepository, CommentModelAssembler assembler) {
+    public CommentServiceImpl(CommentRepository commentRepository, NewsRepository newsRepository, CommentModelAssembler assembler, PagedResourcesAssembler<Comment> pagedAssembler) {
         this.commentRepository = commentRepository;
         this.newsRepository = newsRepository;
         this.assembler = assembler;
+        this.pagedAssembler = pagedAssembler;
     }
 
 

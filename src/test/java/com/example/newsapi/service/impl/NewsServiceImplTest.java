@@ -146,7 +146,7 @@ class NewsServiceImplTest {
     }
 
     @Test
-    void whenUpdateNewsAndTextIsNull_thenTextIsNotUpdated(){
+    void whenUpdateNewsAndTextIsNotProvided_thenTextIsNotUpdated(){
         UpdateNewsDTO requestedNewsDto = new UpdateNewsDTO();
         requestedNewsDto.setText(null);
         requestedNewsDto.setTitle("new title");
@@ -164,8 +164,33 @@ class NewsServiceImplTest {
 
         assertNotNull(result);
         assertNotNull(newsToUpdate.getText());
-        assertEquals(newsToUpdate.getText(), updatedNewsDto.getText());
-        assertEquals(newsToUpdate.getTitle(), requestedNewsDto.getTitle());
+        //text has not changed
+        assertEquals("text", newsToUpdate.getText());
+        //title has changed
+        assertEquals("new title", newsToUpdate.getTitle());
+    }
+
+    @Test
+    void whenUpdateNewsAndTitleIsNotProvided_thenTitleIsNotUpdated(){
+        UpdateNewsDTO requestedNewsDto = new UpdateNewsDTO();
+        requestedNewsDto.setText("new text");
+        requestedNewsDto.setTitle(null);
+        long id = 1;
+
+        News newsToUpdate = new News(id, null, "text", "title", null);
+
+        NewsDTO updatedNewsDto = new NewsDTO(id, null, "new text", "title");
+
+        when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
+        when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
+        when(assembler.toModel(any(News.class))).thenReturn(updatedNewsDto);
+
+        NewsDTO result = newsService.updateNews(requestedNewsDto, 1);
+
+        assertNotNull(result);
+        assertNotNull(newsToUpdate.getTitle());
+        assertEquals("new text", newsToUpdate.getText());
+        assertEquals("title", newsToUpdate.getTitle());
     }
 
 }
