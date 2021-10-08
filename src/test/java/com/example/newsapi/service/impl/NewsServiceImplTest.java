@@ -10,8 +10,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,6 +36,9 @@ class NewsServiceImplTest {
 
     @Mock
     NewsModelAssembler assembler;
+
+    @Mock
+    PagedResourcesAssembler<News> pagedAssembler;
 
     @Test
     void whenFindNewsNotFound_thenNotFoundException() {
@@ -70,4 +83,66 @@ class NewsServiceImplTest {
 
         verify(newsRepository, times(1)).save(any(News.class));
     }
+
+    @Test
+    void whenGetAllNews_thenSuccess(){
+        News news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
+        News news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null);
+
+        NewsDTO newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
+        NewsDTO newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
+
+        List<News> news = new ArrayList();
+        news.add(news1);
+        news.add(news2);
+
+        List<NewsDTO> newsDto = new ArrayList();
+        newsDto.add(newsDto1);
+        newsDto.add(newsDto2);
+
+        Page<News> newsPage = new PageImpl<>(news);
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(2, 1, 2);
+
+        PagedModel<NewsDTO> newsDtoPagedModel = PagedModel.of(newsDto, pageMetadata);
+
+        when(newsRepository.findAll((Specification<News>) null, Pageable.unpaged())).thenReturn(newsPage);
+        when(pagedAssembler.toModel(any(Page.class), any(NewsModelAssembler.class))).thenReturn(newsDtoPagedModel);
+
+
+        PagedModel<NewsDTO> result = newsService.getAllNews(null, Pageable.unpaged());
+
+
+        assertNotNull(result);
+        assertEquals(2, result.getMetadata().getTotalElements());
+        verify(newsRepository, times(1)).findAll((Specification<News>) null, Pageable.unpaged());
+    }
+
+    @Test
+    void whenGetNewsById_thenSuccess(){
+        long id = 1;
+        News news = new News(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
+        NewsDTO newsDto = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
+
+        when(newsRepository.findById(id)).thenReturn(Optional.of(news));
+        when(assembler.toModel(any(News.class))).thenReturn(newsDto);
+
+        NewsDTO result = newsService.getNewsById(id);
+
+        assertNotNull(result);
+        assertEquals(result.getId(), id);
+        assertEquals(result, newsDto);
+    }
+
+    @Test
+    void deleteNewsById() {
+        long id = 1;
+
+        when(newsRepository.existsById(id)).thenReturn(true);
+
+        newsService.deleteNewsById(id);
+
+        verify(newsRepository, times(1)).deleteById(anyLong());
+    }
+
 }

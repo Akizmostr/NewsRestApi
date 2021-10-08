@@ -9,7 +9,6 @@ import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.NewsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -37,12 +36,12 @@ public class NewsServiceImpl implements NewsService {
      * PagedAssembler.toModel() accepts NewsModelAssembler as parameter
      * in order to convert entity to dto while creating PagedModel
      */
-    @Autowired
     private PagedResourcesAssembler<News> pagedAssembler;
 
-    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler) {
+    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler, PagedResourcesAssembler<News> pagedAssembler) {
         this.newsRepository = newsRepository;
         this.assembler = assembler;
+        this.pagedAssembler = pagedAssembler;
     }
 
     @Override
