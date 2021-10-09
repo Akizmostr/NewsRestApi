@@ -1,18 +1,30 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.entity.Comment;
+import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.CommentModelAssembler;
 import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
+import com.sun.xml.bind.v2.TODO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +46,42 @@ class CommentServiceImplTest {
 
     @Mock
     PagedResourcesAssembler<Comment> pagedAssembler;
+
+    News news1;
+    News news2;
+    Comment comment1;
+    Comment comment2;
+    CommentDTO commentDto1;
+    CommentDTO commentDto2;
+    List<Comment> comments;
+    List<CommentDTO> commentsDto;
+    Page<Comment> commentsPage;
+    PagedModel<CommentDTO> commentsDtoPagedModel;
+
+    @BeforeEach
+    void setup(){
+        MockitoAnnotations.openMocks(this);
+
+        news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
+        news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null);
+
+        comment1 = new Comment(1, LocalDate.parse("2021-09-09"),"text 1", "user 1", news1);
+        comment2 = new Comment(2, LocalDate.parse("2021-09-09"),"text 2", "user 2", news1);
+
+        commentDto1 = new CommentDTO(1, LocalDate.parse("2021-09-09"),"text 1", "user 1");
+        commentDto2 = new CommentDTO(2, LocalDate.parse("2021-09-09"),"text 2", "user 2");
+
+        comments = List.of(comment1, comment2);
+        commentsDto = List.of(commentDto1, commentDto2);
+
+        news1.setComments(comments);
+
+        commentsPage = new PageImpl<>(comments);
+
+        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(2, 0, 2);
+
+        commentsDtoPagedModel = PagedModel.of(commentsDto, pageMetadata);
+    }
 
     @Test
     void whenFindCommentByIdAndNewsNotFound_thenNewsNotFoundException(){
@@ -57,5 +105,61 @@ class CommentServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentById(1, 1));
     }
 
+    @Test
+    void whenGetAllCommentsByNewsAndNewsNotFound_thenNewsNotFoundException(){
+        assertThrows(ResourceNotFoundException.class, () -> commentService.getAllCommentsByNews(null, 1, Pageable.unpaged()));
+    }
 
+    @Test
+    void whenGetAllCommentsByNewsAndSpecificationIsNull_thenFindAllByNewsIdIsInvoked(){
+        when(newsRepository.existsById(1L)).thenReturn(true);
+        when(commentRepository.findAllByNewsId(1, Pageable.unpaged())).thenReturn(commentsPage);
+        when(pagedAssembler.toModel(any(Page.class), any(CommentModelAssembler.class))).thenReturn(commentsDtoPagedModel);
+
+        PagedModel<CommentDTO> result = commentService.getAllCommentsByNews(null, 1, Pageable.unpaged());
+
+        assertNotNull(result);
+        assertEquals(2, result.getMetadata().getTotalElements());
+        verify(commentRepository, times(1)).findAllByNewsId(anyLong(), any(Pageable.class));
+        verify(commentRepository, times(0)).findAll(any(Specification.class), any(Pageable.class));
+    }
+
+    @Test
+    void whenGetAllCommentsByNewsAndSpecificationIsNotNull_thenFindAllWithSpecificationIsInvoked(){
+        long newsId = 1;
+
+        // ???????
+        // how to test if specification is correct
+        Specification<Comment> specId = (Specification<Comment>) (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("news").get("id"), newsId);
+
+        when(newsRepository.existsById(1L)).thenReturn(true);
+        when(commentRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(commentsPage);
+        when(pagedAssembler.toModel(any(Page.class), any(CommentModelAssembler.class))).thenReturn(commentsDtoPagedModel);
+
+        PagedModel<CommentDTO> result = commentService.getAllCommentsByNews(specId, 1, Pageable.unpaged());
+
+        assertNotNull(result);
+        assertEquals(2, result.getMetadata().getTotalElements());
+        verify(commentRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
+        verify(commentRepository, times(0)).findAllByNewsId(anyLong(), any(Pageable.class));
+    }
+
+
+    @Test
+    void createComment() {
+        CommentDTO requestedCommentDto = new CommentDTO(3, LocalDate.parse("2021-09-09"),"text 3", "user 3");
+        Comment comment = new Comment(3, LocalDate.parse("2021-09-09"),"text 3", "user 3", null);
+
+        when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news2));
+        when(assembler.toEntity(requestedCommentDto)).thenReturn(comment);
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+        when(assembler.toModel(any(Comment.class))).thenReturn(requestedCommentDto);
+
+        CommentDTO result = commentService.createComment(requestedCommentDto, 2);
+
+        assertNotNull(result);
+        assertNotNull(comment.getNews());
+        assertEquals(comment.getNews(), news2);
+
+    }
 }

@@ -1,9 +1,7 @@
 package com.example.newsapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
@@ -14,6 +12,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Relation(collectionRelation = "comments")
 public class CommentDTO extends RepresentationModel<CommentDTO> {
     @JsonIgnore
