@@ -1,7 +1,7 @@
 package com.example.newsapi.modelassembler;
 
-import com.example.newsapi.controller.CommentController;
-import com.example.newsapi.controller.NewsController;
+import com.example.newsapi.controller.impl.CommentControllerImpl;
+import com.example.newsapi.controller.impl.NewsControllerImpl;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.entity.Comment;
 import org.modelmapper.ModelMapper;
@@ -34,9 +34,9 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
         CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
 
         //Add links
-        commentDto.add(linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
-        commentDto.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
-        commentDto.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
+        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
+        commentDto.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
+        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
 
         return commentDto;
     }

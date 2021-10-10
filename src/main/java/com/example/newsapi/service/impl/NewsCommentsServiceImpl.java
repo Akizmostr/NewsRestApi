@@ -11,7 +11,6 @@ import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.NewsCommentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +36,7 @@ public class NewsCommentsServiceImpl implements NewsCommentsService {
      * pagedAssembler.toModel() accepts ModelAssembler as parameter
      * in order to convert entity to dto while creating PagedModel
      */
-    @Autowired
+
     private PagedResourcesAssembler<News> pagedAssembler;
 
     /**
@@ -50,9 +49,10 @@ public class NewsCommentsServiceImpl implements NewsCommentsService {
      */
     private CommentModelAssembler commentModelAssembler;
 
-    public NewsCommentsServiceImpl(NewsRepository newsRepository, CommentRepository commentRepository, NewsCommentsAssembler newsCommentsAssembler, CommentModelAssembler commentModelAssembler) {
+    public NewsCommentsServiceImpl(NewsRepository newsRepository, CommentRepository commentRepository, PagedResourcesAssembler<News> pagedAssembler, NewsCommentsAssembler newsCommentsAssembler, CommentModelAssembler commentModelAssembler) {
         this.newsRepository = newsRepository;
         this.commentRepository = commentRepository;
+        this.pagedAssembler = pagedAssembler;
         this.newsCommentsAssembler = newsCommentsAssembler;
         this.commentModelAssembler = commentModelAssembler;
     }

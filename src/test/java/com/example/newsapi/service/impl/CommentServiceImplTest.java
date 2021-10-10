@@ -1,6 +1,7 @@
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
@@ -83,6 +84,8 @@ class CommentServiceImplTest {
         commentsDtoPagedModel = PagedModel.of(commentsDto, pageMetadata);
     }
 
+    //getCommentById
+
     @Test
     void whenFindCommentByIdAndNewsNotFound_thenNewsNotFoundException(){
         when(newsRepository.existsById(anyLong())).thenReturn(false);
@@ -100,15 +103,77 @@ class CommentServiceImplTest {
 
     }
 
+    //createComment
+
     @Test
     void whenCreateCommentAndNewsNotFound_thenNewsNotFoundException(){
-        assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentById(1, 1));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.createComment(any(CommentDTO.class), 1));
     }
+
+    @Test
+    void createComment() {
+        CommentDTO requestedCommentDto = new CommentDTO(3, LocalDate.parse("2021-09-09"),"text 3", "user 3");
+        Comment comment = new Comment(3, LocalDate.parse("2021-09-09"),"text 3", "user 3", null);
+
+        when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news2));
+        when(assembler.toEntity(requestedCommentDto)).thenReturn(comment);
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
+        when(assembler.toModel(any(Comment.class))).thenReturn(requestedCommentDto);
+
+        CommentDTO result = commentService.createComment(requestedCommentDto, 2);
+
+        assertNotNull(result);
+        assertNotNull(comment.getNews());
+        assertEquals(news2, comment.getNews());
+        verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
+    //updateComment
+
+    @Test
+    void whenUpdateCommentAndNewsNotFound_thenNewsNotFoundException(){
+        when(newsRepository.existsById(anyLong())).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> commentService.updateComment(any(UpdateCommentDTO.class), 1, 1));
+    }
+
+    @Test
+    void whenUpdateCommentAndCommentNotFound_thenCommentNotFoundException(){
+        when(newsRepository.existsById(anyLong())).thenReturn(true);
+
+        assertThrows(ResourceNotFoundException.class, () -> commentService.updateComment(any(UpdateCommentDTO.class), 1, 1));
+    }
+
+    @Test
+    void updateComment() {
+        long newsId = 1;
+        long commentId = 1;
+        UpdateCommentDTO requestedCommentDto = new UpdateCommentDTO();
+        requestedCommentDto.setText("new text");
+
+        CommentDTO updatedCommentDto = new CommentDTO(commentId, LocalDate.parse("2021-09-09"),"new text", "user 1");
+
+        when(newsRepository.existsById(anyLong())).thenReturn(true);
+        when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment1));
+        when(commentRepository.save(any(Comment.class))).thenReturn(comment1);
+        when(assembler.toModel(any(Comment.class))).thenReturn(updatedCommentDto);
+
+        CommentDTO result = commentService.updateComment(requestedCommentDto, newsId, commentId);
+
+        assertNotNull(result);
+        assertEquals("new text", comment1.getText());
+        verify(commentRepository, times(1)).save(any(Comment.class));
+
+    }
+
+
+    //getAllCommentsByNews
 
     @Test
     void whenGetAllCommentsByNewsAndNewsNotFound_thenNewsNotFoundException(){
         assertThrows(ResourceNotFoundException.class, () -> commentService.getAllCommentsByNews(null, 1, Pageable.unpaged()));
     }
+
 
     @Test
     void whenGetAllCommentsByNewsAndSpecificationIsNull_thenFindAllByNewsIdIsInvoked(){
@@ -144,22 +209,35 @@ class CommentServiceImplTest {
         verify(commentRepository, times(0)).findAllByNewsId(anyLong(), any(Pageable.class));
     }
 
+    //deleteCommentById
 
     @Test
-    void createComment() {
-        CommentDTO requestedCommentDto = new CommentDTO(3, LocalDate.parse("2021-09-09"),"text 3", "user 3");
-        Comment comment = new Comment(3, LocalDate.parse("2021-09-09"),"text 3", "user 3", null);
+    void whenDeleteCommentAndNewsNotFound_thenNewsNotFoundException(){
+        when(newsRepository.existsById(anyLong())).thenReturn(false);
 
-        when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news2));
-        when(assembler.toEntity(requestedCommentDto)).thenReturn(comment);
-        when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(assembler.toModel(any(Comment.class))).thenReturn(requestedCommentDto);
+        assertThrows(ResourceNotFoundException.class, () -> commentService.deleteCommentById(1, 1));
+    }
 
-        CommentDTO result = commentService.createComment(requestedCommentDto, 2);
+    @Test
+    void whenDeleteCommentAndCommentNotFound_thenCommentNotFoundException(){
+        when(newsRepository.existsById(anyLong())).thenReturn(true);
 
-        assertNotNull(result);
-        assertNotNull(comment.getNews());
-        assertEquals(comment.getNews(), news2);
+        assertThrows(ResourceNotFoundException.class, () -> commentService.deleteCommentById(1, 1));
+    }
+
+    @Test
+    void deleteCommentById() {
+        long newsId = 1;
+        long commentId = 1;
+
+        when(newsRepository.existsById(anyLong())).thenReturn(true);
+        when(commentRepository.existsById(anyLong())).thenReturn(true);
+
+        commentService.deleteCommentById(newsId, commentId);
+
+        verify(commentRepository, times(1)).deleteById(anyLong());
 
     }
+
+
 }

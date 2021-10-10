@@ -130,8 +130,8 @@ class NewsServiceImplTest {
         NewsDTO result = newsService.getNewsById(id);
 
         assertNotNull(result);
-        assertEquals(result.getId(), id);
-        assertEquals(result, newsDto);
+        assertEquals(id, result.getId());
+        assertEquals(newsDto, result);
     }
 
     @Test

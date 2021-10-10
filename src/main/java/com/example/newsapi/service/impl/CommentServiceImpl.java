@@ -46,7 +46,6 @@ public class CommentServiceImpl implements CommentService {
         this.pagedAssembler = pagedAssembler;
     }
 
-
     @Override
     public PagedModel<CommentDTO> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable){
         if(!newsRepository.existsById(newsId))

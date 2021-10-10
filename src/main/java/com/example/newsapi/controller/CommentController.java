@@ -3,8 +3,6 @@ package com.example.newsapi.controller;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
-import com.example.newsapi.service.CommentService;
-import com.example.newsapi.service.impl.CommentServiceImpl;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
@@ -17,18 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-
 /**
  * Rest controller responsible for Comment resource
  */
-@RestController
-public class CommentController {
-    private final CommentService commentService;
-
-    public CommentController(CommentServiceImpl commentService) {
-        this.commentService = commentService;
-    }
-
+public interface CommentController {
     /**
      * Finds all comments of a specific news
      *
@@ -38,15 +28,13 @@ public class CommentController {
      * @return PagedModel of CommentDTO
      */
     @GetMapping("/news/{newsId}/comments")
-    public PagedModel<CommentDTO> getAllCommentsByNews(
+    PagedModel<CommentDTO> getAllCommentsByNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "username", params = "user", spec = Like.class)
             }) Specification<Comment> spec,
             @PathVariable long newsId,
-            Pageable pageable){
-        return commentService.getAllCommentsByNews(spec, newsId, pageable);
-    }
+            Pageable pageable);
 
     /**
      * Saves provided comment
@@ -56,9 +44,7 @@ public class CommentController {
      * @return Representation of currently saved comment
      */
     @PostMapping("/news/{newsId}/comments")
-    public CommentDTO createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId){
-        return commentService.createComment(comment, newsId);
-    }
+    CommentDTO createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId);
 
     /**
      * Finds specific comment of corresponding news
@@ -68,9 +54,7 @@ public class CommentController {
      * @return Representation of found comment
      */
     @GetMapping("/news/{newsId}/comments/{commentId}")
-    public CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId){
-        return commentService.getCommentById(newsId, commentId);
-    }
+    CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Updates comment
@@ -81,9 +65,7 @@ public class CommentController {
      * @return Representation of currently updated comment
      */
     @PutMapping("/news/{newsId}/comments/{commentId}")
-    public CommentDTO updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
-        return commentService.updateComment(comment, newsId, commentId);
-    }
+    CommentDTO updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Deletes comment of a specific news
@@ -93,7 +75,5 @@ public class CommentController {
      */
     @DeleteMapping("/news/{newsId}/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable long newsId, @PathVariable long commentId){
-        commentService.deleteCommentById(newsId, commentId);
-    }
+    void deleteComment(@PathVariable long newsId, @PathVariable long commentId);
 }
