@@ -4,16 +4,20 @@ import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.service.impl.NewsCommentsServiceImpl;
 import com.example.newsapi.service.impl.NewsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -33,11 +38,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.hasSize;
 
 @WebMvcTest(NewsControllerImpl.class)
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +55,9 @@ class NewsControllerImplTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    ObjectMapper mapper;
 
     @MockBean
     NewsServiceImpl newsService;
@@ -77,9 +88,10 @@ class NewsControllerImplTest {
         NewsDTO newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
         newsDto = List.of(newsDto1, newsDto2);
 
-        CommentDTO commentDto = new CommentDTO(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1");
+        CommentDTO commentDto1 = new CommentDTO(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1");
+        CommentDTO commentDto2 = new CommentDTO(2, LocalDate.parse("2021-09-09"),"test text 2", "user 2");
 
-        Page<CommentDTO> commentsDtoPage = new PageImpl<CommentDTO>(List.of(commentDto));
+        Page<CommentDTO> commentsDtoPage = new PageImpl<>(List.of(commentDto1, commentDto2));
         newsCommentsDto1 = new NewsCommentsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", commentsDtoPage);
 
     }
@@ -105,9 +117,62 @@ class NewsControllerImplTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.comments.content", hasSize(1)));
+                .andExpect(jsonPath("$.comments.content", hasSize(2)))
+                .andExpect(jsonPath("$.date", is(newsCommentsDto1.getDate().toString())))
+                .andExpect(jsonPath("$.text", is(newsCommentsDto1.getText())))
+                .andExpect(jsonPath("$.title", is(newsCommentsDto1.getTitle())));
 
     }
 
+    @Test
+    void whenGetNewsByIdAndNewsNotFound_thenReturnNotFoundStatus() throws Exception {
+        //when(newsCommentsService.getNewsCommentsById(1, Pageable.unpaged())).thenThrow(new ResourceNotFoundException("Not found News with id 1"));
+        doThrow(new ResourceNotFoundException("Not found News with id 1")).when(newsCommentsService).getNewsCommentsById(1, Pageable.unpaged());
+        mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
+    }
 
+    @Test
+    void createNews() throws Exception {
+        NewsDTO requestedNewsDto = new NewsDTO(3, LocalDate.parse("2021-09-09"), "test text 3", "test title 3");
+        when(newsService.createNews(any(NewsDTO.class))).thenReturn(requestedNewsDto);
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/news")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestedNewsDto));
+
+        mockMvc.perform(mockRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.text", is(requestedNewsDto.getText())))
+                .andExpect(jsonPath("$.title", is(requestedNewsDto.getTitle())))
+                .andExpect(jsonPath("$.date", is(requestedNewsDto.getDate().toString())));
+    }
+
+
+    @Test
+    void updateNews() throws Exception {
+        UpdateNewsDTO requestedNewsDto = new UpdateNewsDTO("new text", "new title");
+        NewsDTO updatedNewsDto = new NewsDTO(1, LocalDate.parse("2021-09-09"), "new text", "new title");
+
+        when(newsService.updateNews(any(UpdateNewsDTO.class), anyLong())).thenReturn(updatedNewsDto);
+
+        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/news/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(requestedNewsDto));
+
+        mockMvc.perform(mockRequest)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.text", is(requestedNewsDto.getText())))
+                .andExpect(jsonPath("$.title", is(requestedNewsDto.getTitle())))
+                .andExpect(jsonPath("$.date", is(updatedNewsDto.getDate().toString())));
+    }
 }
