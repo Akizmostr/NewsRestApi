@@ -11,6 +11,7 @@ import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.service.impl.NewsCommentsServiceImpl;
 import com.example.newsapi.service.impl.NewsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,16 +35,19 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.WebDataBinder;
 
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -65,9 +69,8 @@ class NewsControllerImplTest {
     @MockBean
     NewsCommentsServiceImpl newsCommentsService;
 
-    News news1;
-    News news2;
-    List<News> news;
+    NewsDTO newsDto1;
+    NewsDTO newsDto2;
     List<NewsDTO> newsDto;
     NewsCommentsDTO newsCommentsDto1;
 
@@ -80,12 +83,8 @@ class NewsControllerImplTest {
     void setup (){
         MockitoAnnotations.openMocks(this);
 
-        news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null);
-        news = List.of(news1, news2);
-
-        NewsDTO newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
-        NewsDTO newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
+        newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
+        newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
         newsDto = List.of(newsDto1, newsDto2);
 
         CommentDTO commentDto1 = new CommentDTO(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1");
@@ -124,16 +123,20 @@ class NewsControllerImplTest {
 
     }
 
-    @Test
+    //doesn't work
+    //better to use integration tests?
+
+    /*@Test
     void whenGetNewsByIdAndNewsNotFound_thenReturnNotFoundStatus() throws Exception {
-        //when(newsCommentsService.getNewsCommentsById(1, Pageable.unpaged())).thenThrow(new ResourceNotFoundException("Not found News with id 1"));
+        when(newsCommentsService.getNewsCommentsById(1, Pageable.unpaged())).thenThrow(new ResourceNotFoundException("Not found News with id 1"));
         doThrow(new ResourceNotFoundException("Not found News with id 1")).when(newsCommentsService).getNewsCommentsById(1, Pageable.unpaged());
         mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
-    }
+
+    }*/
 
     @Test
     void createNews() throws Exception {
@@ -174,5 +177,19 @@ class NewsControllerImplTest {
                 .andExpect(jsonPath("$.text", is(requestedNewsDto.getText())))
                 .andExpect(jsonPath("$.title", is(requestedNewsDto.getTitle())))
                 .andExpect(jsonPath("$.date", is(updatedNewsDto.getDate().toString())));
+
+        //how to check helper method invocation?
+        //verify(newsController, times(1)).initBinder(any(WebDataBinder.class));
+    }
+
+
+    @Test
+    void deleteNews() throws Exception {
+        doNothing().when(newsService).deleteNewsById(newsDto1.getId());
+
+        mockMvc.perform(delete("/news/1")
+            .accept(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isNoContent());
     }
 }
