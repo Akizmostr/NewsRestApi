@@ -24,6 +24,7 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
     /**
      * Converts single Comment entity to DTO object and adds corresponding links
      *
+     *
      * @param comment Comment entity
      * @return Representation of comment
      */

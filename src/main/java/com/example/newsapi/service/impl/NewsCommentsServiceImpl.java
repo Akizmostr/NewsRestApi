@@ -63,16 +63,7 @@ public class NewsCommentsServiceImpl implements NewsCommentsService {
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found News with id " + id));
 
-        List<CommentDTO> commentsList = commentRepository.findAllByNewsId(id)
-                .get()
-                .stream()
-                .map(comment -> commentModelAssembler.toModel(comment))
-                .collect(Collectors.toList());
-
-        Page<CommentDTO> commentsPage = new PageImpl<>(commentsList, pageable, commentsList.size()); //create page of CommentDTO
-
-        NewsCommentsDTO newsCommentsDTO = newsCommentsAssembler.toModel(news); //convert news entity to newsCommentDTO
-        newsCommentsDTO.setComments(commentsPage); //set comments manually because newsCommentsAssembler is unable to resolve Page of CommentDTO
+        NewsCommentsDTO newsCommentsDTO = newsCommentsAssembler.toModel(news, pageable); //convert news entity to newsCommentDTO
         return newsCommentsDTO;
     }
 }

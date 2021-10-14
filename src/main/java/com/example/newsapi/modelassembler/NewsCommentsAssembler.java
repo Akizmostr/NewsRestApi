@@ -2,9 +2,14 @@ package com.example.newsapi.modelassembler;
 
 import com.example.newsapi.controller.impl.CommentControllerImpl;
 import com.example.newsapi.controller.impl.NewsControllerImpl;
+import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
+import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -12,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -22,6 +28,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class NewsCommentsAssembler implements RepresentationModelAssembler<News, NewsCommentsDTO> {
 
+    @Autowired
+    CommentModelAssembler commentAssembler;
+
     /**
      * Converts single News entity to NewsCommentDTO object and adds corresponding links
      *
@@ -30,9 +39,24 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
      */
     @Override
     public NewsCommentsDTO toModel(News entity) {
+        return getNewsCommentsModel(entity, Pageable.unpaged());
+    }
+
+    public NewsCommentsDTO toModel(News entity, Pageable pageable) {
         //Convert entity to DTO
+        return getNewsCommentsModel(entity, pageable);
+    }
+
+    private NewsCommentsDTO getNewsCommentsModel(News entity, Pageable pageable){
         ModelMapper modelMapper = new ModelMapper();
         NewsCommentsDTO newsCommentsDto = modelMapper.map(entity, NewsCommentsDTO.class);
+
+        List<Comment> comments = entity.getComments();
+
+        List<CommentDTO> commentsDto = commentAssembler.toCollectionModel(comments).getContent().stream().toList();
+
+        Page<CommentDTO> commentsPage = new PageImpl<>(commentsDto, pageable, commentsDto.size());
+        newsCommentsDto.setComments(commentsPage);
 
         //add links
         newsCommentsDto.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel());
@@ -40,22 +64,5 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
         newsCommentsDto.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null, Pageable.unpaged())).withRel("news"));
 
         return newsCommentsDto;
-    }
-
-    /**
-     * Converts iterable collection of News entities into CollectionModel of NewsCommentsDTO objects
-     *
-     * @param entities Iterable collection of News entities
-     * @return Collection Model of NewsCommentsDTO
-     */
-    @Override
-    public CollectionModel<NewsCommentsDTO> toCollectionModel(Iterable<? extends News> entities) {
-        List<NewsCommentsDTO> newsCommentsList = new ArrayList<>();
-
-        entities.forEach(entity->{
-            newsCommentsList.add(toModel(entity)); //converting each entity to dto with links and adding to the list
-        });
-
-        return CollectionModel.of(newsCommentsList);
     }
 }

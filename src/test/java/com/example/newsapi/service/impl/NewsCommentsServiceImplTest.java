@@ -15,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 
@@ -61,20 +63,20 @@ class NewsCommentsServiceImplTest {
 
         CommentDTO commentDto = new CommentDTO(1, LocalDate.parse("2021-09-09"),"text 1", "user 1");
 
-        //List<CommentDTO> commentsDto = List.of(commentDto);
+        List<CommentDTO> commentsDto = List.of(commentDto);
         List<Comment> comments = List.of(comment);
 
         NewsCommentsDTO newsCommentsDto = new NewsCommentsDTO(1, LocalDate.parse("2021-09-09"), "news text 1", "news title 1", null);
 
+        Page<CommentDTO> commentsPage = new PageImpl<>(commentsDto, Pageable.unpaged(), commentsDto.size());
+        newsCommentsDto.setComments(commentsPage);
+
         when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news));
-        when(commentRepository.findAllByNewsId(anyLong())).thenReturn(Optional.of(comments));
-        when(commentModelAssembler.toModel(comment)).thenReturn(commentDto);
-        when(newsCommentsAssembler.toModel(any(News.class))).thenReturn(newsCommentsDto);
+        when(newsCommentsAssembler.toModel(any(News.class), any(Pageable.class))).thenReturn(newsCommentsDto);
 
         NewsCommentsDTO result = newsCommentsService.getNewsCommentsById(1, Pageable.unpaged());
 
         assertNotNull(result);
-        assertNotNull(result.getComments());
         assertEquals(1, result.getComments().getTotalElements());
     }
 }
