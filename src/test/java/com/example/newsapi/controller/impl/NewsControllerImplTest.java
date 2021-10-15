@@ -101,8 +101,7 @@ class NewsControllerImplTest {
         PagedModel<NewsDTO> newsDtoPagedModel = PagedModel.of(newsDto, pageMetadata);
         when(newsService.getAllNews(any(Specification.class), any(Pageable.class))).thenReturn(newsDtoPagedModel);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/news")
-        .accept(MediaType.ALL))
+        mockMvc.perform(MockMvcRequestBuilders.get("/news"))
         .andDo(print())
         .andExpect(status().isOk())
         //.andExpect(model().size(2));
@@ -126,9 +125,8 @@ class NewsControllerImplTest {
     //doesn't work
     //better to use integration tests?
 
-    /*@Test
+    @Test
     void whenGetNewsByIdAndNewsNotFound_thenReturnNotFoundStatus() throws Exception {
-        when(newsCommentsService.getNewsCommentsById(1, Pageable.unpaged())).thenThrow(new ResourceNotFoundException("Not found News with id 1"));
         doThrow(new ResourceNotFoundException("Not found News with id 1")).when(newsCommentsService).getNewsCommentsById(1, Pageable.unpaged());
         mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
                 .accept(MediaType.APPLICATION_JSON))
@@ -136,7 +134,7 @@ class NewsControllerImplTest {
                 .andDo(print())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 
-    }*/
+    }
 
     @Test
     void createNews() throws Exception {
