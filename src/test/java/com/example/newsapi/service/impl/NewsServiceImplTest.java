@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
 import java.time.LocalDate;
@@ -74,9 +75,9 @@ class NewsServiceImplTest {
 
         when(newsRepository.save(any(News.class))).thenReturn(news);
         when(assembler.toEntity(any(NewsDTO.class))).thenReturn(news);
-        when(assembler.toModel(any(News.class))).thenReturn(newsDto);
+        when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(newsDto));
 
-        NewsDTO savedNewsDto = newsService.createNews(newsDto);
+        NewsDTO savedNewsDto = newsService.createNews(newsDto).getContent();
 
         assertNotNull(savedNewsDto);
         assertEquals(savedNewsDto, newsDto);
@@ -104,16 +105,21 @@ class NewsServiceImplTest {
 
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(2, 1, 2);
 
-        PagedModel<NewsDTO> newsDtoPagedModel = PagedModel.of(newsDto, pageMetadata);
+        List<EntityModel<NewsDTO>> newsModel = newsDto
+                .stream()
+                .map(newsDTO -> EntityModel.of(newsDTO))
+                .toList();
+
+        PagedModel<EntityModel<NewsDTO>> newsDtoPagedModel = PagedModel.of(newsModel, pageMetadata);
 
         when(newsRepository.findAll((Specification<News>) null, Pageable.unpaged())).thenReturn(newsPage);
         when(pagedAssembler.toModel(any(Page.class), any(NewsModelAssembler.class))).thenReturn(newsDtoPagedModel);
 
 
-        PagedModel<NewsDTO> result = newsService.getAllNews(null, Pageable.unpaged());
-
+        PagedModel<EntityModel<NewsDTO>> result = newsService.getAllNews(null, Pageable.unpaged());
 
         assertNotNull(result);
+        assertNotNull(result.getContent());
         assertEquals(2, result.getMetadata().getTotalElements());
         verify(newsRepository, times(1)).findAll((Specification<News>) null, Pageable.unpaged());
     }
@@ -125,9 +131,9 @@ class NewsServiceImplTest {
         NewsDTO newsDto = new NewsDTO(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(news));
-        when(assembler.toModel(any(News.class))).thenReturn(newsDto);
+        when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(newsDto));
 
-        NewsDTO result = newsService.getNewsById(id);
+        NewsDTO result = newsService.getNewsById(id).getContent();
 
         assertNotNull(result);
         assertEquals(id, result.getId());
@@ -158,9 +164,9 @@ class NewsServiceImplTest {
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
         when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
-        when(assembler.toModel(any(News.class))).thenReturn(updatedNewsDto);
+        when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(updatedNewsDto));
 
-        NewsDTO result = newsService.updateNews(requestedNewsDto, 1);
+        NewsDTO result = newsService.updateNews(requestedNewsDto, 1).getContent();
 
         assertNotNull(result);
         assertNotNull(newsToUpdate.getText());
@@ -183,9 +189,9 @@ class NewsServiceImplTest {
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
         when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
-        when(assembler.toModel(any(News.class))).thenReturn(updatedNewsDto);
+        when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(updatedNewsDto));
 
-        NewsDTO result = newsService.updateNews(requestedNewsDto, 1);
+        NewsDTO result = newsService.updateNews(requestedNewsDto, 1).getContent();
 
         assertNotNull(result);
         assertNotNull(newsToUpdate.getTitle());

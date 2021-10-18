@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -64,19 +65,16 @@ class NewsCommentsServiceImplTest {
         CommentDTO commentDto = new CommentDTO(1, LocalDate.parse("2021-09-09"),"text 1", "user 1");
 
         List<CommentDTO> commentsDto = List.of(commentDto);
-        List<Comment> comments = List.of(comment);
 
         NewsCommentsDTO newsCommentsDto = new NewsCommentsDTO(1, LocalDate.parse("2021-09-09"), "news text 1", "news title 1", null);
-
-        Page<CommentDTO> commentsPage = new PageImpl<>(commentsDto, Pageable.unpaged(), commentsDto.size());
-        newsCommentsDto.setComments(commentsPage);
+        newsCommentsDto.setComments(commentsDto);
 
         when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news));
-        when(newsCommentsAssembler.toModel(any(News.class), any(Pageable.class))).thenReturn(newsCommentsDto);
+        when(newsCommentsAssembler.toModel(any(News.class))).thenReturn(EntityModel.of(newsCommentsDto));
 
-        NewsCommentsDTO result = newsCommentsService.getNewsCommentsById(1, Pageable.unpaged());
+        NewsCommentsDTO result = newsCommentsService.getNewsCommentsById(1, Pageable.unpaged()).getContent();
 
         assertNotNull(result);
-        assertEquals(1, result.getComments().getTotalElements());
+        assertEquals(1, result.getComments().size());
     }
 }

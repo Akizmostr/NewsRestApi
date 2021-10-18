@@ -6,6 +6,7 @@ import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
 /**
@@ -19,7 +20,7 @@ public interface NewsService {
      * @param pageable Pageable object with pagination information
      * @return PagedModel of NewsDTO
      */
-    PagedModel<NewsDTO> getAllNews(Specification<News> spec, Pageable pageable);
+    PagedModel<EntityModel<NewsDTO>> getAllNews(Specification<News> spec, Pageable pageable);
 
     /**
      * Saves provided news in repository
@@ -27,7 +28,7 @@ public interface NewsService {
      * @param news NewsDTO object which contains properties to save
      * @return Representation of currently saved news
      */
-    NewsDTO createNews(NewsDTO news);
+    EntityModel<NewsDTO> createNews(NewsDTO news);
 
     /**
      * Finds news by id
@@ -36,7 +37,7 @@ public interface NewsService {
      * @return Representation of found news
      * @throws ResourceNotFoundException if news was not found
      */
-    NewsDTO getNewsById(long id);
+    EntityModel<NewsDTO> getNewsById(long id);
 
     /**
      * Updates news
@@ -46,7 +47,7 @@ public interface NewsService {
      * @return Representation of currently updated news
      * @throws ResourceNotFoundException if news was not found
      */
-    NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id);
+    EntityModel<NewsDTO> updateNews(UpdateNewsDTO requestedNewsDto, long id);
 
     /**
      * Deletes news

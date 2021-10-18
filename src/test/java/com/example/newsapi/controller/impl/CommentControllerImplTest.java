@@ -1,3 +1,4 @@
+/*
 package com.example.newsapi.controller.impl;
 
 import com.example.newsapi.dto.CommentDTO;
@@ -133,4 +134,4 @@ class CommentControllerImplTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
-}
+}*/

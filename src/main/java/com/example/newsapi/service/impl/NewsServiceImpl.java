@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
@@ -44,21 +45,21 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public PagedModel<NewsDTO> getAllNews(Specification<News> spec, Pageable pageable){
+    public PagedModel<EntityModel<NewsDTO>> getAllNews(Specification<News> spec, Pageable pageable){
         return pagedAssembler.toModel(
                 newsRepository.findAll(spec, pageable), assembler
         );
     }
 
     @Override
-    public NewsDTO createNews(NewsDTO news){
+    public EntityModel<NewsDTO> createNews(NewsDTO news){
         return assembler.toModel(
                 newsRepository.save(assembler.toEntity(news))
         );
     }
 
     @Override
-    public NewsDTO getNewsById(long id){
+    public EntityModel<NewsDTO> getNewsById(long id){
         return assembler.toModel(
                 newsRepository.findById(id)
                         .orElseThrow(()->new ResourceNotFoundException("Not found News with id " + id))
@@ -66,7 +67,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public NewsDTO updateNews(UpdateNewsDTO requestedNewsDto, long id){
+    public EntityModel<NewsDTO> updateNews(UpdateNewsDTO requestedNewsDto, long id){
         News news = newsRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Not found News with id " + id));
         //change news properties found in repository
         String newTitle = requestedNewsDto.getTitle();

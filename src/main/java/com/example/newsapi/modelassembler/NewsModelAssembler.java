@@ -7,6 +7,8 @@ import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * Class that converts News entities to NewsDTO objects with links and vice versa
  */
 @Component
-public class NewsModelAssembler implements RepresentationModelAssembler<News, NewsDTO> {
+public class NewsModelAssembler implements RepresentationModelAssembler<News, EntityModel<NewsDTO>> {
 
     /**
      * Converts single News entity to DTO object and adds corresponding links
@@ -28,16 +30,17 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
      * @return Representation of News
      */
     @Override
-    public NewsDTO toModel(News news) {
+    public EntityModel<NewsDTO> toModel(News news) {
         //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
         NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
 
         //Add links
-        newsDto.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
-        newsDto.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
-        newsDto.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
-        return newsDto;
+        EntityModel<NewsDTO> newsModel = EntityModel.of(newsDto);
+        newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
+        newsModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
+        newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
+        return newsModel;
     }
 
 
@@ -48,8 +51,8 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, Ne
      * @return Collection Model of News
      */
     @Override
-    public CollectionModel<NewsDTO> toCollectionModel(Iterable<? extends News> entities) {
-        List<NewsDTO> news = new ArrayList<>();
+    public CollectionModel<EntityModel<NewsDTO>> toCollectionModel(Iterable<? extends News> entities) {
+        List<EntityModel<NewsDTO>> news = new ArrayList<>();
 
         entities.forEach(entity -> {
             news.add(toModel(entity)); //converting each entity to dto with links and adding to the list

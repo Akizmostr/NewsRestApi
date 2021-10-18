@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,68 +31,34 @@ class NewsCommentsAssemblerTest {
     @InjectMocks
     NewsCommentsAssembler assembler;
 
-    @Mock
-    CommentModelAssembler commentAssembler;
-
     @Test
-    void toModelWithPage() {
+    void toModel() {
         News news = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
         Comment comment = new Comment(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1", news);
         news.setComments(List.of(comment));
 
         ModelMapper modelMapper = new ModelMapper();
 
-        CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
-        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
-        commentDto.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
-        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
-
-        when(commentAssembler.toCollectionModel(any(List.class))).thenReturn(CollectionModel.of(List.of(commentDto)));
-
-        NewsCommentsDTO result = assembler.toModel(news, Pageable.unpaged());
+        EntityModel<NewsCommentsDTO> result = assembler.toModel(news);
 
         assertNotNull(result);
-        assertNotNull(result.getComments().getContent());
+        assertNotNull(result.getContent());
+        assertNotNull(result.getContent().getComments());
         assertModelAndEntity(news, result);
     }
 
-    @Test
-    void toModelWithoutPage() {
-        News news = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        Comment comment = new Comment(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1", news);
-        news.setComments(List.of(comment));
+    void assertModelAndEntity(News entity, EntityModel<NewsCommentsDTO> model){
+        NewsCommentsDTO newsCommentsDto = model.getContent();
+        assertEquals(entity.getId(), newsCommentsDto.getId());
+        assertEquals(entity.getDate(), newsCommentsDto.getDate());
+        assertEquals(entity.getText(), newsCommentsDto.getText());
+        assertEquals(entity.getTitle(), newsCommentsDto.getTitle());
 
-        ModelMapper modelMapper = new ModelMapper();
-
-        CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
-        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
-        commentDto.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
-        commentDto.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
-
-        when(commentAssembler.toCollectionModel(any(List.class))).thenReturn(CollectionModel.of(List.of(commentDto)));
-
-        NewsCommentsDTO result = assembler.toModel(news);
-
-        assertNotNull(result);
-        assertNotNull(result.getComments().getContent());
-        assertModelAndEntity(news, result);
-    }
-
-
-    @Test
-    void toCollectionModel() {
-    }
-
-    void assertModelAndEntity(News entity, NewsCommentsDTO model){
-        assertEquals(entity.getId(), model.getId());
-        assertEquals(entity.getDate(), model.getDate());
-        assertEquals(entity.getText(), model.getText());
-        assertEquals(entity.getTitle(), model.getTitle());
 
         ModelMapper modelMapper = new ModelMapper();
 
         List<Comment> commentListOfEntity = entity.getComments();
-        List<Comment> commentsListOfModel = model.getComments().getContent()
+        List<Comment> commentsListOfModel = model.getContent().getComments()
                 .stream()
                 .map(commentDto -> modelMapper.map(commentDto, Comment.class))
                 .collect(Collectors.toList());

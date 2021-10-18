@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Relation(collectionRelation = "comments")
-public class CommentDTO extends RepresentationModel<CommentDTO> {
+public class CommentDTO {
     @JsonIgnore
     private long id;
 

@@ -3,6 +3,7 @@ package com.example.newsapi.service;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.EntityModel;
 
 /**
  * Service interface for operations with CommentNewsDTO
@@ -16,5 +17,5 @@ public interface NewsCommentsService {
      * @return Representation of news and corresponding list of comments
      * @throws ResourceNotFoundException if news was not found
      */
-    NewsCommentsDTO getNewsCommentsById(long id, Pageable pageable);
+    EntityModel<NewsCommentsDTO> getNewsCommentsById(long id, Pageable pageable);
 }

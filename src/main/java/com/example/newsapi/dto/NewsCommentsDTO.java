@@ -8,6 +8,7 @@ import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Relation(collectionRelation = "news with comments")
-public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
+public class NewsCommentsDTO {
     @JsonIgnore
     private long id;
 
@@ -26,5 +27,5 @@ public class NewsCommentsDTO extends RepresentationModel<NewsCommentsDTO> {
     @NotBlank(message = "The title is required")
     private String title;
 
-    private Page<CommentDTO> comments;
+    private List<CommentDTO> comments;
 }

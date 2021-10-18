@@ -1,3 +1,4 @@
+/*
 package com.example.newsapi.controller.impl;
 
 import com.example.newsapi.controller.NewsController;
@@ -74,14 +75,15 @@ class NewsControllerImplTest {
     List<NewsDTO> newsDto;
     NewsCommentsDTO newsCommentsDto1;
 
-    /*@BeforeAll
+    */
+/*@BeforeAll
     static void init(){
         mockMvc = MockMvcBuilders.standaloneSetup(new NewsControllerImpl(newsCommentsService, newsService)).build();
-    }*/
+    }*//*
+
 
     @BeforeEach
     void setup (){
-        MockitoAnnotations.openMocks(this);
 
         newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
         newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
@@ -190,4 +192,4 @@ class NewsControllerImplTest {
             .andDo(print())
             .andExpect(status().isNoContent());
     }
-}
+}*/

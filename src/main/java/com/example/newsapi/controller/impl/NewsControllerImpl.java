@@ -15,6 +15,7 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.WebDataBinder;
@@ -34,7 +35,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
 
     @Override
     @GetMapping("/news")
-    public PagedModel<NewsDTO> getAllNews(
+    public PagedModel<EntityModel<NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "title", params = "title", spec = Like.class)
@@ -45,7 +46,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
 
     @Override
     @PostMapping("/news")
-    public NewsDTO createNews(@Valid @RequestBody NewsDTO news){
+    public EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
 
@@ -53,14 +54,14 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
     //Pagination on comments doesn't work
     @Override
     @GetMapping("/news/{id}")
-    public NewsCommentsDTO getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
+    public EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
         //Using NewsCommentsDTO and corresponding service to return view of the news and comments
         return newsCommentsService.getNewsCommentsById(id, pageable);
     }
 
     @Override
     @PutMapping("/news/{id}")
-    public NewsDTO updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id) {
+    public EntityModel<NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id) {
         return newsService.updateNews(updateNewsDto, id);
     }
 

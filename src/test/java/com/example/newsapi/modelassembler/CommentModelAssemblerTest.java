@@ -5,6 +5,8 @@ import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.junit.jupiter.api.Test;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,9 +22,10 @@ class CommentModelAssemblerTest {
         Comment comment = new Comment(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1", news);
         news.setComments(List.of(comment));
 
-        CommentDTO result = assembler.toModel(comment);
+        EntityModel<CommentDTO> result = assembler.toModel(comment);
 
         assertNotNull(result);
+        assertNotNull(result.getContent());
         assertModelAndEntity(comment, result);
     }
 
@@ -35,11 +38,13 @@ class CommentModelAssemblerTest {
         List<Comment> comments = List.of(comment1, comment2);
         news.setComments(comments);
 
-        List<CommentDTO> result = assembler.toCollectionModel(comments).getContent().stream().toList();
+        CollectionModel<EntityModel<CommentDTO>> result = assembler.toCollectionModel(comments);
+        List<EntityModel<CommentDTO>> models = assembler.toCollectionModel(comments).getContent().stream().toList();
 
         assertNotNull(result);
-        assertModelAndEntity(comment1, result.get(0));
-        assertModelAndEntity(comment2, result.get(1));
+        assertNotNull(models);
+        assertModelAndEntity(comment1, models.get(0));
+        assertModelAndEntity(comment2, models.get(1));
     }
 
     @Test
@@ -55,11 +60,12 @@ class CommentModelAssemblerTest {
         assertEquals(commentDto.getUsername(), result.getUsername());
     }
 
-    void assertModelAndEntity(Comment entity, CommentDTO model){
-        assertEquals(entity.getId(), model.getId());
-        assertEquals(entity.getDate(), model.getDate());
-        assertEquals(entity.getText(), model.getText());
-        assertEquals(entity.getUsername(), model.getUsername());
+    void assertModelAndEntity(Comment entity, EntityModel<CommentDTO> model){
+        CommentDTO comment = model.getContent();
+        assertEquals(entity.getId(), comment.getId());
+        assertEquals(entity.getDate(), comment.getDate());
+        assertEquals(entity.getText(), comment.getText());
+        assertEquals(entity.getUsername(), comment.getUsername());
 
         assertTrue(model.hasLink("self"));
         assertTrue(model.hasLink("news"));

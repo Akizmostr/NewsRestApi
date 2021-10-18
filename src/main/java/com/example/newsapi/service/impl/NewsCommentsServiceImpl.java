@@ -1,6 +1,5 @@
 package com.example.newsapi.service.impl;
 
-import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
@@ -11,14 +10,10 @@ import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.NewsCommentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service class implementation for operations with CommentNewsDTO
@@ -58,12 +53,11 @@ public class NewsCommentsServiceImpl implements NewsCommentsService {
     }
 
     @Override
-    public NewsCommentsDTO getNewsCommentsById(long id, Pageable pageable) {
+    public EntityModel<NewsCommentsDTO> getNewsCommentsById(long id, Pageable pageable) {
         News news = newsRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found News with id " + id));
 
-        NewsCommentsDTO newsCommentsDTO = newsCommentsAssembler.toModel(news, pageable); //convert news entity to newsCommentDTO
-        return newsCommentsDTO;
+        return newsCommentsAssembler.toModel(news); //convert news entity to newsCommentDTO
     }
 }

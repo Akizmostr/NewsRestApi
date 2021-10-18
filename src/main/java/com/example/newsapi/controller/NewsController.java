@@ -10,9 +10,9 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +29,7 @@ public interface NewsController {
      * @return PagedModel of NewsDTO
      */
     @GetMapping("/news")
-    PagedModel<NewsDTO> getAllNews(
+    PagedModel<EntityModel<NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "title", params = "title", spec = Like.class)
@@ -43,7 +43,7 @@ public interface NewsController {
      * @return Representation of currently saved news
      */
     @PostMapping("/news")
-    NewsDTO createNews(@Valid @RequestBody NewsDTO news);
+    EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news);
 
     /**
      * Provides information about specific news and all corresponding comments
@@ -55,7 +55,7 @@ public interface NewsController {
     //!!!!!
     //Pagination on comments doesn't work
     @GetMapping("/news/{id}")
-    NewsCommentsDTO getNewsById(@PathVariable(name = "id") long id, Pageable pageable);
+    EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable);
 
     /**
      * Updates news
@@ -65,7 +65,7 @@ public interface NewsController {
      * @return Representation of currently updated news
      */
     @PutMapping("/news/{id}")
-    NewsDTO updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id);
+    EntityModel<NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id);
 
     /**
      * Deletes news

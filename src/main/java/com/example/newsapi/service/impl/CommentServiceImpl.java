@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public PagedModel<CommentDTO> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable){
+    public PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
@@ -72,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO getCommentById(long newsId, long commentId){
+    public EntityModel<CommentDTO> getCommentById(long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
@@ -85,7 +86,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO createComment(CommentDTO commentDto, long newsId){
+    public EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId){
         return assembler.toModel(
                 newsRepository.findById(newsId).map(news -> {
                     Comment comment = assembler.toEntity(commentDto); //create Comment object from dto
@@ -96,7 +97,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId){
+    public EntityModel<CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 

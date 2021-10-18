@@ -6,6 +6,7 @@ import com.example.newsapi.entity.Comment;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
 /**
@@ -21,7 +22,7 @@ public interface CommentService {
      * @return PagedModel of CommentDTO
      * @throws ResourceNotFoundException if news was not found
      */
-    PagedModel<CommentDTO> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable);
+    PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable);
 
     /**
      * Finds specific comment of corresponding news
@@ -31,7 +32,7 @@ public interface CommentService {
      * @return Representation of found comment
      * @throws ResourceNotFoundException if news or comment was not found
      */
-    CommentDTO getCommentById(long newsId, long commentId);
+    EntityModel<CommentDTO> getCommentById(long newsId, long commentId);
 
     /**
      * Saves provided comment in repository
@@ -41,7 +42,7 @@ public interface CommentService {
      * @return Representation of currently saved comment
      * @throws ResourceNotFoundException if news was not found
      */
-    CommentDTO createComment(CommentDTO commentDto, long newsId);
+    EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId);
 
     /**
      * Updates comment
@@ -51,7 +52,7 @@ public interface CommentService {
      * @param commentId id property of the comment to update
      * @return Representation of currently updated comment
      */
-    CommentDTO updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId);
+    EntityModel<CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId);
 
     /**
      * Deletes comment of a specific news

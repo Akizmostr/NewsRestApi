@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Relation(collectionRelation = "news")
 @EqualsAndHashCode
-public class NewsDTO extends RepresentationModel<NewsDTO> {
+public class NewsDTO {
     @JsonIgnore
     private long id;
 

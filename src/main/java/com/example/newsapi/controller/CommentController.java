@@ -9,6 +9,7 @@ import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public interface CommentController {
      * @return PagedModel of CommentDTO
      */
     @GetMapping("/news/{newsId}/comments")
-    PagedModel<CommentDTO> getAllCommentsByNews(
+    PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "username", params = "user", spec = Like.class)
@@ -44,7 +45,7 @@ public interface CommentController {
      * @return Representation of currently saved comment
      */
     @PostMapping("/news/{newsId}/comments")
-    CommentDTO createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId);
+    EntityModel<CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId);
 
     /**
      * Finds specific comment of corresponding news
@@ -54,7 +55,7 @@ public interface CommentController {
      * @return Representation of found comment
      */
     @GetMapping("/news/{newsId}/comments/{commentId}")
-    CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId);
+    EntityModel<CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Updates comment
@@ -65,7 +66,7 @@ public interface CommentController {
      * @return Representation of currently updated comment
      */
     @PutMapping("/news/{newsId}/comments/{commentId}")
-    CommentDTO updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId);
+    EntityModel<CommentDTO> updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Deletes comment of a specific news
