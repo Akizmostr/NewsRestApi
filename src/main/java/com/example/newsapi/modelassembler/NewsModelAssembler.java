@@ -21,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
  * Class that converts News entities to NewsDTO objects with links and vice versa
  */
 @Component
-public class NewsModelAssembler implements RepresentationModelAssembler<News, EntityModel<NewsDTO>> {
+public class NewsModelAssembler implements RepresentationModelAssembler<News, EntityModel<com.example.newsapi.NewsDTO>> {
 
     /**
      * Converts single News entity to DTO object and adds corresponding links
@@ -30,13 +30,13 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
      * @return Representation of News
      */
     @Override
-    public EntityModel<NewsDTO> toModel(News news) {
+    public EntityModel<com.example.newsapi.NewsDTO> toModel(News news) {
         //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
-        NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
+        com.example.newsapi.NewsDTO newsDto = modelMapper.map(news, com.example.newsapi.NewsDTO.class);
 
         //Add links
-        EntityModel<NewsDTO> newsModel = EntityModel.of(newsDto);
+        EntityModel<com.example.newsapi.NewsDTO> newsModel = EntityModel.of(newsDto);
         newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
         newsModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
         newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
@@ -51,8 +51,8 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
      * @return Collection Model of News
      */
     @Override
-    public CollectionModel<EntityModel<NewsDTO>> toCollectionModel(Iterable<? extends News> entities) {
-        List<EntityModel<NewsDTO>> news = new ArrayList<>();
+    public CollectionModel<EntityModel<com.example.newsapi.NewsDTO>> toCollectionModel(Iterable<? extends News> entities) {
+        List<EntityModel<com.example.newsapi.NewsDTO>> news = new ArrayList<>();
 
         entities.forEach(entity -> {
             news.add(toModel(entity)); //converting each entity to dto with links and adding to the list
@@ -67,7 +67,7 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
      * @param newsDto newsDTO object to convert
      * @return News entity
      */
-    public News toEntity(NewsDTO newsDto){
+    public News toEntity(com.example.newsapi.NewsDTO newsDto){
         //convert dto to entity
         ModelMapper modelMapper = new ModelMapper();
         News news = modelMapper.map(newsDto, News.class);

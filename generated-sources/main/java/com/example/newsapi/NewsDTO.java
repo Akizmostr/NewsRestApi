@@ -4,19 +4,20 @@
 package com.example.newsapi;
 
 /**
- * Protobuf type {@code Msg}
+ * Protobuf type {@code NewsDTO}
  */
-public  final class Msg extends
+public  final class NewsDTO extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:Msg)
-    MsgOrBuilder {
-  // Use Msg.newBuilder() to construct.
-  private Msg(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // @@protoc_insertion_point(message_implements:NewsDTO)
+    NewsDTOOrBuilder {
+  // Use NewsDTO.newBuilder() to construct.
+  private NewsDTO(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private Msg() {
-    foo_ = "";
-    list_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+  private NewsDTO() {
+    date_ = "";
+    text_ = "";
+    title_ = "";
   }
 
   @java.lang.Override
@@ -24,7 +25,7 @@ public  final class Msg extends
   getUnknownFields() {
     return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
   }
-  private Msg(
+  private NewsDTO(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -47,16 +48,19 @@ public  final class Msg extends
           case 10: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            foo_ = s;
+            date_ = s;
             break;
           }
           case 18: {
             java.lang.String s = input.readStringRequireUtf8();
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-              list_ = new com.google.protobuf.LazyStringArrayList();
-              mutable_bitField0_ |= 0x00000002;
-            }
-            list_.add(s);
+
+            text_ = s;
+            break;
+          }
+          case 26: {
+            java.lang.String s = input.readStringRequireUtf8();
+
+            title_ = s;
             break;
           }
         }
@@ -67,86 +71,121 @@ public  final class Msg extends
       throw new com.google.protobuf.InvalidProtocolBufferException(
           e).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
-        list_ = list_.getUnmodifiableView();
-      }
       makeExtensionsImmutable();
     }
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return com.example.newsapi.Dtos.internal_static_Msg_descriptor;
+    return com.example.newsapi.Dtos.internal_static_NewsDTO_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return com.example.newsapi.Dtos.internal_static_Msg_fieldAccessorTable
+    return com.example.newsapi.Dtos.internal_static_NewsDTO_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.example.newsapi.Msg.class, com.example.newsapi.Msg.Builder.class);
+            com.example.newsapi.NewsDTO.class, com.example.newsapi.NewsDTO.Builder.class);
   }
 
-  private int bitField0_;
-  public static final int FOO_FIELD_NUMBER = 1;
-  private volatile java.lang.Object foo_;
+  public static final int DATE_FIELD_NUMBER = 1;
+  private volatile java.lang.Object date_;
   /**
-   * <code>optional string foo = 1;</code>
+   * <code>optional string date = 1;</code>
    */
-  public java.lang.String getFoo() {
-    java.lang.Object ref = foo_;
+  public java.lang.String getDate() {
+    java.lang.Object ref = date_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      foo_ = s;
+      date_ = s;
       return s;
     }
   }
   /**
-   * <code>optional string foo = 1;</code>
+   * <code>optional string date = 1;</code>
    */
   public com.google.protobuf.ByteString
-      getFooBytes() {
-    java.lang.Object ref = foo_;
+      getDateBytes() {
+    java.lang.Object ref = date_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      foo_ = b;
+      date_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
     }
   }
 
-  public static final int LIST_FIELD_NUMBER = 2;
-  private com.google.protobuf.LazyStringList list_;
+  public static final int TEXT_FIELD_NUMBER = 2;
+  private volatile java.lang.Object text_;
   /**
-   * <code>repeated string list = 2;</code>
+   * <code>optional string text = 2;</code>
    */
-  public com.google.protobuf.ProtocolStringList
-      getListList() {
-    return list_;
+  public java.lang.String getText() {
+    java.lang.Object ref = text_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      text_ = s;
+      return s;
+    }
   }
   /**
-   * <code>repeated string list = 2;</code>
-   */
-  public int getListCount() {
-    return list_.size();
-  }
-  /**
-   * <code>repeated string list = 2;</code>
-   */
-  public java.lang.String getList(int index) {
-    return list_.get(index);
-  }
-  /**
-   * <code>repeated string list = 2;</code>
+   * <code>optional string text = 2;</code>
    */
   public com.google.protobuf.ByteString
-      getListBytes(int index) {
-    return list_.getByteString(index);
+      getTextBytes() {
+    java.lang.Object ref = text_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      text_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int TITLE_FIELD_NUMBER = 3;
+  private volatile java.lang.Object title_;
+  /**
+   * <code>optional string title = 3;</code>
+   */
+  public java.lang.String getTitle() {
+    java.lang.Object ref = title_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = 
+          (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      title_ = s;
+      return s;
+    }
+  }
+  /**
+   * <code>optional string title = 3;</code>
+   */
+  public com.google.protobuf.ByteString
+      getTitleBytes() {
+    java.lang.Object ref = title_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b = 
+          com.google.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      title_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   private byte memoizedIsInitialized = -1;
@@ -161,11 +200,14 @@ public  final class Msg extends
 
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (!getFooBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, foo_);
+    if (!getDateBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, date_);
     }
-    for (int i = 0; i < list_.size(); i++) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, list_.getRaw(i));
+    if (!getTextBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 2, text_);
+    }
+    if (!getTitleBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, title_);
     }
   }
 
@@ -174,16 +216,14 @@ public  final class Msg extends
     if (size != -1) return size;
 
     size = 0;
-    if (!getFooBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, foo_);
+    if (!getDateBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, date_);
     }
-    {
-      int dataSize = 0;
-      for (int i = 0; i < list_.size(); i++) {
-        dataSize += computeStringSizeNoTag(list_.getRaw(i));
-      }
-      size += dataSize;
-      size += 1 * getListList().size();
+    if (!getTextBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, text_);
+    }
+    if (!getTitleBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, title_);
     }
     memoizedSize = size;
     return size;
@@ -195,16 +235,18 @@ public  final class Msg extends
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof com.example.newsapi.Msg)) {
+    if (!(obj instanceof com.example.newsapi.NewsDTO)) {
       return super.equals(obj);
     }
-    com.example.newsapi.Msg other = (com.example.newsapi.Msg) obj;
+    com.example.newsapi.NewsDTO other = (com.example.newsapi.NewsDTO) obj;
 
     boolean result = true;
-    result = result && getFoo()
-        .equals(other.getFoo());
-    result = result && getListList()
-        .equals(other.getListList());
+    result = result && getDate()
+        .equals(other.getDate());
+    result = result && getText()
+        .equals(other.getText());
+    result = result && getTitle()
+        .equals(other.getTitle());
     return result;
   }
 
@@ -215,69 +257,69 @@ public  final class Msg extends
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptorForType().hashCode();
-    hash = (37 * hash) + FOO_FIELD_NUMBER;
-    hash = (53 * hash) + getFoo().hashCode();
-    if (getListCount() > 0) {
-      hash = (37 * hash) + LIST_FIELD_NUMBER;
-      hash = (53 * hash) + getListList().hashCode();
-    }
+    hash = (37 * hash) + DATE_FIELD_NUMBER;
+    hash = (53 * hash) + getDate().hashCode();
+    hash = (37 * hash) + TEXT_FIELD_NUMBER;
+    hash = (53 * hash) + getText().hashCode();
+    hash = (37 * hash) + TITLE_FIELD_NUMBER;
+    hash = (53 * hash) + getTitle().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static com.example.newsapi.Msg parseFrom(byte[] data)
+  public static com.example.newsapi.NewsDTO parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static com.example.newsapi.Msg parseFrom(java.io.InputStream input)
+  public static com.example.newsapi.NewsDTO parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static com.example.newsapi.Msg parseDelimitedFrom(java.io.InputStream input)
+  public static com.example.newsapi.NewsDTO parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.Msg parseDelimitedFrom(
+  public static com.example.newsapi.NewsDTO parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.Msg parseFrom(
+  public static com.example.newsapi.NewsDTO parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -289,7 +331,7 @@ public  final class Msg extends
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(com.example.newsapi.Msg prototype) {
+  public static Builder newBuilder(com.example.newsapi.NewsDTO prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -304,25 +346,25 @@ public  final class Msg extends
     return builder;
   }
   /**
-   * Protobuf type {@code Msg}
+   * Protobuf type {@code NewsDTO}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:Msg)
-      com.example.newsapi.MsgOrBuilder {
+      // @@protoc_insertion_point(builder_implements:NewsDTO)
+      com.example.newsapi.NewsDTOOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.example.newsapi.Dtos.internal_static_Msg_descriptor;
+      return com.example.newsapi.Dtos.internal_static_NewsDTO_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.example.newsapi.Dtos.internal_static_Msg_fieldAccessorTable
+      return com.example.newsapi.Dtos.internal_static_NewsDTO_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.example.newsapi.Msg.class, com.example.newsapi.Msg.Builder.class);
+              com.example.newsapi.NewsDTO.class, com.example.newsapi.NewsDTO.Builder.class);
     }
 
-    // Construct using com.example.newsapi.Msg.newBuilder()
+    // Construct using com.example.newsapi.NewsDTO.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -339,41 +381,37 @@ public  final class Msg extends
     }
     public Builder clear() {
       super.clear();
-      foo_ = "";
+      date_ = "";
 
-      list_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000002);
+      text_ = "";
+
+      title_ = "";
+
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return com.example.newsapi.Dtos.internal_static_Msg_descriptor;
+      return com.example.newsapi.Dtos.internal_static_NewsDTO_descriptor;
     }
 
-    public com.example.newsapi.Msg getDefaultInstanceForType() {
-      return com.example.newsapi.Msg.getDefaultInstance();
+    public com.example.newsapi.NewsDTO getDefaultInstanceForType() {
+      return com.example.newsapi.NewsDTO.getDefaultInstance();
     }
 
-    public com.example.newsapi.Msg build() {
-      com.example.newsapi.Msg result = buildPartial();
+    public com.example.newsapi.NewsDTO build() {
+      com.example.newsapi.NewsDTO result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public com.example.newsapi.Msg buildPartial() {
-      com.example.newsapi.Msg result = new com.example.newsapi.Msg(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.foo_ = foo_;
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        list_ = list_.getUnmodifiableView();
-        bitField0_ = (bitField0_ & ~0x00000002);
-      }
-      result.list_ = list_;
-      result.bitField0_ = to_bitField0_;
+    public com.example.newsapi.NewsDTO buildPartial() {
+      com.example.newsapi.NewsDTO result = new com.example.newsapi.NewsDTO(this);
+      result.date_ = date_;
+      result.text_ = text_;
+      result.title_ = title_;
       onBuilt();
       return result;
     }
@@ -405,28 +443,26 @@ public  final class Msg extends
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.example.newsapi.Msg) {
-        return mergeFrom((com.example.newsapi.Msg)other);
+      if (other instanceof com.example.newsapi.NewsDTO) {
+        return mergeFrom((com.example.newsapi.NewsDTO)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.example.newsapi.Msg other) {
-      if (other == com.example.newsapi.Msg.getDefaultInstance()) return this;
-      if (!other.getFoo().isEmpty()) {
-        foo_ = other.foo_;
+    public Builder mergeFrom(com.example.newsapi.NewsDTO other) {
+      if (other == com.example.newsapi.NewsDTO.getDefaultInstance()) return this;
+      if (!other.getDate().isEmpty()) {
+        date_ = other.date_;
         onChanged();
       }
-      if (!other.list_.isEmpty()) {
-        if (list_.isEmpty()) {
-          list_ = other.list_;
-          bitField0_ = (bitField0_ & ~0x00000002);
-        } else {
-          ensureListIsMutable();
-          list_.addAll(other.list_);
-        }
+      if (!other.getText().isEmpty()) {
+        text_ = other.text_;
+        onChanged();
+      }
+      if (!other.getTitle().isEmpty()) {
+        title_ = other.title_;
         onChanged();
       }
       onChanged();
@@ -441,11 +477,11 @@ public  final class Msg extends
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.example.newsapi.Msg parsedMessage = null;
+      com.example.newsapi.NewsDTO parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.example.newsapi.Msg) e.getUnfinishedMessage();
+        parsedMessage = (com.example.newsapi.NewsDTO) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -454,167 +490,210 @@ public  final class Msg extends
       }
       return this;
     }
-    private int bitField0_;
 
-    private java.lang.Object foo_ = "";
+    private java.lang.Object date_ = "";
     /**
-     * <code>optional string foo = 1;</code>
+     * <code>optional string date = 1;</code>
      */
-    public java.lang.String getFoo() {
-      java.lang.Object ref = foo_;
+    public java.lang.String getDate() {
+      java.lang.Object ref = date_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        foo_ = s;
+        date_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string foo = 1;</code>
+     * <code>optional string date = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getFooBytes() {
-      java.lang.Object ref = foo_;
+        getDateBytes() {
+      java.lang.Object ref = date_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        foo_ = b;
+        date_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string foo = 1;</code>
+     * <code>optional string date = 1;</code>
      */
-    public Builder setFoo(
+    public Builder setDate(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      foo_ = value;
+      date_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string foo = 1;</code>
+     * <code>optional string date = 1;</code>
      */
-    public Builder clearFoo() {
+    public Builder clearDate() {
       
-      foo_ = getDefaultInstance().getFoo();
+      date_ = getDefaultInstance().getDate();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string foo = 1;</code>
+     * <code>optional string date = 1;</code>
      */
-    public Builder setFooBytes(
+    public Builder setDateBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      foo_ = value;
+      date_ = value;
       onChanged();
       return this;
     }
 
-    private com.google.protobuf.LazyStringList list_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-    private void ensureListIsMutable() {
-      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
-        list_ = new com.google.protobuf.LazyStringArrayList(list_);
-        bitField0_ |= 0x00000002;
-       }
-    }
+    private java.lang.Object text_ = "";
     /**
-     * <code>repeated string list = 2;</code>
+     * <code>optional string text = 2;</code>
      */
-    public com.google.protobuf.ProtocolStringList
-        getListList() {
-      return list_.getUnmodifiableView();
+    public java.lang.String getText() {
+      java.lang.Object ref = text_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        text_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
-     * <code>repeated string list = 2;</code>
-     */
-    public int getListCount() {
-      return list_.size();
-    }
-    /**
-     * <code>repeated string list = 2;</code>
-     */
-    public java.lang.String getList(int index) {
-      return list_.get(index);
-    }
-    /**
-     * <code>repeated string list = 2;</code>
+     * <code>optional string text = 2;</code>
      */
     public com.google.protobuf.ByteString
-        getListBytes(int index) {
-      return list_.getByteString(index);
+        getTextBytes() {
+      java.lang.Object ref = text_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        text_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
     /**
-     * <code>repeated string list = 2;</code>
+     * <code>optional string text = 2;</code>
      */
-    public Builder setList(
-        int index, java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureListIsMutable();
-      list_.set(index, value);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated string list = 2;</code>
-     */
-    public Builder addList(
+    public Builder setText(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
-  ensureListIsMutable();
-      list_.add(value);
+  
+      text_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>repeated string list = 2;</code>
+     * <code>optional string text = 2;</code>
      */
-    public Builder addAllList(
-        java.lang.Iterable<java.lang.String> values) {
-      ensureListIsMutable();
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(
-          values, list_);
+    public Builder clearText() {
+      
+      text_ = getDefaultInstance().getText();
       onChanged();
       return this;
     }
     /**
-     * <code>repeated string list = 2;</code>
+     * <code>optional string text = 2;</code>
      */
-    public Builder clearList() {
-      list_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000002);
-      onChanged();
-      return this;
-    }
-    /**
-     * <code>repeated string list = 2;</code>
-     */
-    public Builder addListBytes(
+    public Builder setTextBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-      ensureListIsMutable();
-      list_.add(value);
+      
+      text_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object title_ = "";
+    /**
+     * <code>optional string title = 3;</code>
+     */
+    public java.lang.String getTitle() {
+      java.lang.Object ref = title_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs =
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        title_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     * <code>optional string title = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTitleBytes() {
+      java.lang.Object ref = title_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        title_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>optional string title = 3;</code>
+     */
+    public Builder setTitle(
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      title_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string title = 3;</code>
+     */
+    public Builder clearTitle() {
+      
+      title_ = getDefaultInstance().getTitle();
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>optional string title = 3;</code>
+     */
+    public Builder setTitleBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      title_ = value;
       onChanged();
       return this;
     }
@@ -629,39 +708,39 @@ public  final class Msg extends
     }
 
 
-    // @@protoc_insertion_point(builder_scope:Msg)
+    // @@protoc_insertion_point(builder_scope:NewsDTO)
   }
 
-  // @@protoc_insertion_point(class_scope:Msg)
-  private static final com.example.newsapi.Msg DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:NewsDTO)
+  private static final com.example.newsapi.NewsDTO DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new com.example.newsapi.Msg();
+    DEFAULT_INSTANCE = new com.example.newsapi.NewsDTO();
   }
 
-  public static com.example.newsapi.Msg getDefaultInstance() {
+  public static com.example.newsapi.NewsDTO getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<Msg>
-      PARSER = new com.google.protobuf.AbstractParser<Msg>() {
-    public Msg parsePartialFrom(
+  private static final com.google.protobuf.Parser<NewsDTO>
+      PARSER = new com.google.protobuf.AbstractParser<NewsDTO>() {
+    public NewsDTO parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Msg(input, extensionRegistry);
+        return new NewsDTO(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<Msg> parser() {
+  public static com.google.protobuf.Parser<NewsDTO> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<Msg> getParserForType() {
+  public com.google.protobuf.Parser<NewsDTO> getParserForType() {
     return PARSER;
   }
 
-  public com.example.newsapi.Msg getDefaultInstanceForType() {
+  public com.example.newsapi.NewsDTO getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

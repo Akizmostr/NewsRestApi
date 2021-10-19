@@ -29,7 +29,7 @@ public interface NewsController {
      * @return PagedModel of NewsDTO
      */
     @GetMapping("/news")
-    PagedModel<EntityModel<NewsDTO>> getAllNews(
+    PagedModel<EntityModel<com.example.newsapi.NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "title", params = "title", spec = Like.class)
@@ -43,7 +43,7 @@ public interface NewsController {
      * @return Representation of currently saved news
      */
     @PostMapping("/news")
-    EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news);
+    EntityModel<com.example.newsapi.NewsDTO> createNews(@Valid @RequestBody com.example.newsapi.NewsDTO news);
 
     /**
      * Provides information about specific news and all corresponding comments
@@ -65,7 +65,7 @@ public interface NewsController {
      * @return Representation of currently updated news
      */
     @PutMapping("/news/{id}")
-    EntityModel<NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id);
+    EntityModel<com.example.newsapi.NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id);
 
     /**
      * Deletes news

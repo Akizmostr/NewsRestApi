@@ -7,6 +7,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
+
+import java.time.LocalDate;
 
 @SpringBootApplication
 public class NewsapiApplication {
@@ -16,8 +20,10 @@ public class NewsapiApplication {
         return new ModelMapper();
     }
 
-    /*@Bean
-    public PagedResourcesAssembler<News> pagedResourcesAssembler() {return new PagedResourcesAssembler<>(null, null);}*/
+    @Bean
+    ProtobufJsonFormatHttpMessageConverter ProtobufJsonFormatHttpMessageConverter() {
+        return new ProtobufJsonFormatHttpMessageConverter();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(NewsapiApplication.class, args);

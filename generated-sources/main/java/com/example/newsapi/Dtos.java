@@ -15,10 +15,10 @@ public final class Dtos {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_Msg_descriptor;
+    internal_static_NewsDTO_descriptor;
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_Msg_fieldAccessorTable;
+      internal_static_NewsDTO_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -28,8 +28,9 @@ public final class Dtos {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\ndtos.proto\" \n\003Msg\022\013\n\003foo\030\001 \001(\t\022\014\n\004list" +
-      "\030\002 \003(\tB\027\n\023com.example.newsapiP\001b\006proto3"
+      "\n\ndtos.proto\"4\n\007NewsDTO\022\014\n\004date\030\001 \001(\t\022\014\n" +
+      "\004text\030\002 \001(\t\022\r\n\005title\030\003 \001(\tB\027\n\023com.exampl" +
+      "e.newsapiP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -43,12 +44,12 @@ public final class Dtos {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_Msg_descriptor =
+    internal_static_NewsDTO_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_Msg_fieldAccessorTable = new
+    internal_static_NewsDTO_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_Msg_descriptor,
-        new java.lang.String[] { "Foo", "List", });
+        internal_static_NewsDTO_descriptor,
+        new java.lang.String[] { "Date", "Text", "Title", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -35,7 +35,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
 
     @Override
     @GetMapping("/news")
-    public PagedModel<EntityModel<NewsDTO>> getAllNews(
+    public PagedModel<EntityModel<com.example.newsapi.NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "title", params = "title", spec = Like.class)
@@ -46,7 +46,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
 
     @Override
     @PostMapping("/news")
-    public EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news){
+    public EntityModel<com.example.newsapi.NewsDTO> createNews(@Valid @RequestBody com.example.newsapi.NewsDTO news){
         return newsService.createNews(news);
     }
 
@@ -61,7 +61,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
 
     @Override
     @PutMapping("/news/{id}")
-    public EntityModel<NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id) {
+    public EntityModel<com.example.newsapi.NewsDTO> updateNews(@Valid @RequestBody UpdateNewsDTO updateNewsDto, @PathVariable long id) {
         return newsService.updateNews(updateNewsDto, id);
     }
 

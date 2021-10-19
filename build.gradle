@@ -90,6 +90,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.modelmapper:modelmapper:2.4.2'
     implementation 'net.kaczmarzyk:specification-arg-resolver:2.6.2'
+    implementation 'com.googlecode.protobuf-java-format:protobuf-java-format:1.4'
+    implementation 'com.google.protobuf:protobuf-java-util:3.18.1'
     compileOnly 'org.junit.jupiter:junit-jupiter:5.8.1'
     annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
     compileOnly 'org.projectlombok:lombok'

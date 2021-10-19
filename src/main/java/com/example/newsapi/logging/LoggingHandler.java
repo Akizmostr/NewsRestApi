@@ -1,4 +1,4 @@
-package com.example.newsapi.logging;
+/*package com.example.newsapi.logging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,4 +101,4 @@ public class LoggingHandler {
         log.error("An exception has been thrown in {}.{}()", className, methodName);
         log.error("Message : {}", ex.getMessage());
     }
-}
+}*/
