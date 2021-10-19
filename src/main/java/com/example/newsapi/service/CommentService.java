@@ -22,7 +22,7 @@ public interface CommentService {
      * @return PagedModel of CommentDTO
      * @throws ResourceNotFoundException if news was not found
      */
-    PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable);
+    PagedModel<EntityModel<com.example.newsapi.CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable);
 
     /**
      * Finds specific comment of corresponding news
@@ -32,7 +32,7 @@ public interface CommentService {
      * @return Representation of found comment
      * @throws ResourceNotFoundException if news or comment was not found
      */
-    EntityModel<CommentDTO> getCommentById(long newsId, long commentId);
+    com.example.newsapi.CommentDTO getCommentById(long newsId, long commentId);
 
     /**
      * Saves provided comment in repository
@@ -42,7 +42,7 @@ public interface CommentService {
      * @return Representation of currently saved comment
      * @throws ResourceNotFoundException if news was not found
      */
-    EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId);
+    EntityModel<com.example.newsapi.CommentDTO> createComment(CommentDTO commentDto, long newsId);
 
     /**
      * Updates comment
@@ -52,7 +52,7 @@ public interface CommentService {
      * @param commentId id property of the comment to update
      * @return Representation of currently updated comment
      */
-    EntityModel<CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId);
+    EntityModel<com.example.newsapi.CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId);
 
     /**
      * Deletes comment of a specific news

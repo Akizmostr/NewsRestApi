@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable){
+    public PagedModel<EntityModel<com.example.newsapi.CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public EntityModel<CommentDTO> getCommentById(long newsId, long commentId){
+    public com.example.newsapi.CommentDTO getCommentById(long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
@@ -82,11 +82,12 @@ public class CommentServiceImpl implements CommentService {
                 .filter(comment -> comment.getId()==commentId) //filter comments with requested id
                 .findFirst()
                 .map(assembler::toModel) //map found entity to dto
-                .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId));
+                .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId))
+                .getContent();
     }
 
     @Override
-    public EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId){
+    public EntityModel<com.example.newsapi.CommentDTO> createComment(CommentDTO commentDto, long newsId){
         return assembler.toModel(
                 newsRepository.findById(newsId).map(news -> {
                     Comment comment = assembler.toEntity(commentDto); //create Comment object from dto
@@ -97,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public EntityModel<CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId){
+    public EntityModel<com.example.newsapi.CommentDTO> updateComment(UpdateCommentDTO requestedCommentDto, long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 

@@ -1,4 +1,5 @@
-/*package com.example.newsapi.logging;
+/*
+package com.example.newsapi.logging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +8,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,7 +32,8 @@ public class LoggingHandler {
     @Pointcut("within(@org.springframework.stereotype.Repository *)")
     public void repository() {}
 
-    @Before("controller()")
+    */
+/*@Before("controller()")
     public void logRequest(JoinPoint joinPoint){
         //get request
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -73,7 +76,8 @@ public class LoggingHandler {
             e.printStackTrace();
         }
         log.info ("--- response information end --------");
-    }
+    }*//*
+
 
     @Before("service() || repository()")
     public void logBefore(JoinPoint joinPoint) {
@@ -101,4 +105,5 @@ public class LoggingHandler {
         log.error("An exception has been thrown in {}.{}()", className, methodName);
         log.error("Message : {}", ex.getMessage());
     }
-}*/
+}
+*/

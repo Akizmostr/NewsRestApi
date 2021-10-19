@@ -29,7 +29,7 @@ public interface CommentController {
      * @return PagedModel of CommentDTO
      */
     @GetMapping("/news/{newsId}/comments")
-    PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(
+    PagedModel<EntityModel<com.example.newsapi.CommentDTO>> getAllCommentsByNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "username", params = "user", spec = Like.class)
@@ -45,7 +45,7 @@ public interface CommentController {
      * @return Representation of currently saved comment
      */
     @PostMapping("/news/{newsId}/comments")
-    EntityModel<CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId);
+    EntityModel<com.example.newsapi.CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId);
 
     /**
      * Finds specific comment of corresponding news
@@ -55,7 +55,7 @@ public interface CommentController {
      * @return Representation of found comment
      */
     @GetMapping("/news/{newsId}/comments/{commentId}")
-    EntityModel<CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId);
+    com.example.newsapi.CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Updates comment
@@ -66,7 +66,7 @@ public interface CommentController {
      * @return Representation of currently updated comment
      */
     @PutMapping("/news/{newsId}/comments/{commentId}")
-    EntityModel<CommentDTO> updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId);
+    EntityModel<com.example.newsapi.CommentDTO> updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Deletes comment of a specific news

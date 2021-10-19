@@ -4,20 +4,20 @@
 package com.example.newsapi;
 
 /**
- * Protobuf type {@code NewsDTO}
+ * Protobuf type {@code CommentDTO}
  */
-public  final class NewsDTO extends
+public  final class CommentDTO extends
     com.google.protobuf.GeneratedMessageV3 implements
-    // @@protoc_insertion_point(message_implements:NewsDTO)
-    NewsDTOOrBuilder {
-  // Use NewsDTO.newBuilder() to construct.
-  private NewsDTO(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // @@protoc_insertion_point(message_implements:CommentDTO)
+    CommentDTOOrBuilder {
+  // Use CommentDTO.newBuilder() to construct.
+  private CommentDTO(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
-  private NewsDTO() {
+  private CommentDTO() {
     date_ = "";
     text_ = "";
-    title_ = "";
+    username_ = "";
   }
 
   @java.lang.Override
@@ -25,7 +25,7 @@ public  final class NewsDTO extends
   getUnknownFields() {
     return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
   }
-  private NewsDTO(
+  private CommentDTO(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -60,7 +60,7 @@ public  final class NewsDTO extends
           case 26: {
             java.lang.String s = input.readStringRequireUtf8();
 
-            title_ = s;
+            username_ = s;
             break;
           }
         }
@@ -76,14 +76,14 @@ public  final class NewsDTO extends
   }
   public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-    return com.example.newsapi.DTO.internal_static_NewsDTO_descriptor;
+    return com.example.newsapi.DTO.internal_static_CommentDTO_descriptor;
   }
 
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-    return com.example.newsapi.DTO.internal_static_NewsDTO_fieldAccessorTable
+    return com.example.newsapi.DTO.internal_static_CommentDTO_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.example.newsapi.NewsDTO.class, com.example.newsapi.NewsDTO.Builder.class);
+            com.example.newsapi.CommentDTO.class, com.example.newsapi.CommentDTO.Builder.class);
   }
 
   public static final int DATE_FIELD_NUMBER = 1;
@@ -154,34 +154,34 @@ public  final class NewsDTO extends
     }
   }
 
-  public static final int TITLE_FIELD_NUMBER = 3;
-  private volatile java.lang.Object title_;
+  public static final int USERNAME_FIELD_NUMBER = 3;
+  private volatile java.lang.Object username_;
   /**
-   * <code>optional string title = 3;</code>
+   * <code>optional string username = 3;</code>
    */
-  public java.lang.String getTitle() {
-    java.lang.Object ref = title_;
+  public java.lang.String getUsername() {
+    java.lang.Object ref = username_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = 
           (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      title_ = s;
+      username_ = s;
       return s;
     }
   }
   /**
-   * <code>optional string title = 3;</code>
+   * <code>optional string username = 3;</code>
    */
   public com.google.protobuf.ByteString
-      getTitleBytes() {
-    java.lang.Object ref = title_;
+      getUsernameBytes() {
+    java.lang.Object ref = username_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b = 
           com.google.protobuf.ByteString.copyFromUtf8(
               (java.lang.String) ref);
-      title_ = b;
+      username_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -206,8 +206,8 @@ public  final class NewsDTO extends
     if (!getTextBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, text_);
     }
-    if (!getTitleBytes().isEmpty()) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, title_);
+    if (!getUsernameBytes().isEmpty()) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, username_);
     }
   }
 
@@ -222,8 +222,8 @@ public  final class NewsDTO extends
     if (!getTextBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, text_);
     }
-    if (!getTitleBytes().isEmpty()) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, title_);
+    if (!getUsernameBytes().isEmpty()) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, username_);
     }
     memoizedSize = size;
     return size;
@@ -235,18 +235,18 @@ public  final class NewsDTO extends
     if (obj == this) {
      return true;
     }
-    if (!(obj instanceof com.example.newsapi.NewsDTO)) {
+    if (!(obj instanceof com.example.newsapi.CommentDTO)) {
       return super.equals(obj);
     }
-    com.example.newsapi.NewsDTO other = (com.example.newsapi.NewsDTO) obj;
+    com.example.newsapi.CommentDTO other = (com.example.newsapi.CommentDTO) obj;
 
     boolean result = true;
     result = result && getDate()
         .equals(other.getDate());
     result = result && getText()
         .equals(other.getText());
-    result = result && getTitle()
-        .equals(other.getTitle());
+    result = result && getUsername()
+        .equals(other.getUsername());
     return result;
   }
 
@@ -261,65 +261,65 @@ public  final class NewsDTO extends
     hash = (53 * hash) + getDate().hashCode();
     hash = (37 * hash) + TEXT_FIELD_NUMBER;
     hash = (53 * hash) + getText().hashCode();
-    hash = (37 * hash) + TITLE_FIELD_NUMBER;
-    hash = (53 * hash) + getTitle().hashCode();
+    hash = (37 * hash) + USERNAME_FIELD_NUMBER;
+    hash = (53 * hash) + getUsername().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(byte[] data)
+  public static com.example.newsapi.CommentDTO parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       byte[] data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(java.io.InputStream input)
+  public static com.example.newsapi.CommentDTO parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input, extensionRegistry);
   }
-  public static com.example.newsapi.NewsDTO parseDelimitedFrom(java.io.InputStream input)
+  public static com.example.newsapi.CommentDTO parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.NewsDTO parseDelimitedFrom(
+  public static com.example.newsapi.CommentDTO parseDelimitedFrom(
       java.io.InputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       com.google.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3
         .parseWithIOException(PARSER, input);
   }
-  public static com.example.newsapi.NewsDTO parseFrom(
+  public static com.example.newsapi.CommentDTO parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -331,7 +331,7 @@ public  final class NewsDTO extends
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
-  public static Builder newBuilder(com.example.newsapi.NewsDTO prototype) {
+  public static Builder newBuilder(com.example.newsapi.CommentDTO prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() {
@@ -346,25 +346,25 @@ public  final class NewsDTO extends
     return builder;
   }
   /**
-   * Protobuf type {@code NewsDTO}
+   * Protobuf type {@code CommentDTO}
    */
   public static final class Builder extends
       com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-      // @@protoc_insertion_point(builder_implements:NewsDTO)
-      com.example.newsapi.NewsDTOOrBuilder {
+      // @@protoc_insertion_point(builder_implements:CommentDTO)
+      com.example.newsapi.CommentDTOOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.example.newsapi.DTO.internal_static_NewsDTO_descriptor;
+      return com.example.newsapi.DTO.internal_static_CommentDTO_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.example.newsapi.DTO.internal_static_NewsDTO_fieldAccessorTable
+      return com.example.newsapi.DTO.internal_static_CommentDTO_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.example.newsapi.NewsDTO.class, com.example.newsapi.NewsDTO.Builder.class);
+              com.example.newsapi.CommentDTO.class, com.example.newsapi.CommentDTO.Builder.class);
     }
 
-    // Construct using com.example.newsapi.NewsDTO.newBuilder()
+    // Construct using com.example.newsapi.CommentDTO.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -385,33 +385,33 @@ public  final class NewsDTO extends
 
       text_ = "";
 
-      title_ = "";
+      username_ = "";
 
       return this;
     }
 
     public com.google.protobuf.Descriptors.Descriptor
         getDescriptorForType() {
-      return com.example.newsapi.DTO.internal_static_NewsDTO_descriptor;
+      return com.example.newsapi.DTO.internal_static_CommentDTO_descriptor;
     }
 
-    public com.example.newsapi.NewsDTO getDefaultInstanceForType() {
-      return com.example.newsapi.NewsDTO.getDefaultInstance();
+    public com.example.newsapi.CommentDTO getDefaultInstanceForType() {
+      return com.example.newsapi.CommentDTO.getDefaultInstance();
     }
 
-    public com.example.newsapi.NewsDTO build() {
-      com.example.newsapi.NewsDTO result = buildPartial();
+    public com.example.newsapi.CommentDTO build() {
+      com.example.newsapi.CommentDTO result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public com.example.newsapi.NewsDTO buildPartial() {
-      com.example.newsapi.NewsDTO result = new com.example.newsapi.NewsDTO(this);
+    public com.example.newsapi.CommentDTO buildPartial() {
+      com.example.newsapi.CommentDTO result = new com.example.newsapi.CommentDTO(this);
       result.date_ = date_;
       result.text_ = text_;
-      result.title_ = title_;
+      result.username_ = username_;
       onBuilt();
       return result;
     }
@@ -443,16 +443,16 @@ public  final class NewsDTO extends
       return (Builder) super.addRepeatedField(field, value);
     }
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.example.newsapi.NewsDTO) {
-        return mergeFrom((com.example.newsapi.NewsDTO)other);
+      if (other instanceof com.example.newsapi.CommentDTO) {
+        return mergeFrom((com.example.newsapi.CommentDTO)other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.example.newsapi.NewsDTO other) {
-      if (other == com.example.newsapi.NewsDTO.getDefaultInstance()) return this;
+    public Builder mergeFrom(com.example.newsapi.CommentDTO other) {
+      if (other == com.example.newsapi.CommentDTO.getDefaultInstance()) return this;
       if (!other.getDate().isEmpty()) {
         date_ = other.date_;
         onChanged();
@@ -461,8 +461,8 @@ public  final class NewsDTO extends
         text_ = other.text_;
         onChanged();
       }
-      if (!other.getTitle().isEmpty()) {
-        title_ = other.title_;
+      if (!other.getUsername().isEmpty()) {
+        username_ = other.username_;
         onChanged();
       }
       onChanged();
@@ -477,11 +477,11 @@ public  final class NewsDTO extends
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.example.newsapi.NewsDTO parsedMessage = null;
+      com.example.newsapi.CommentDTO parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.example.newsapi.NewsDTO) e.getUnfinishedMessage();
+        parsedMessage = (com.example.newsapi.CommentDTO) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -629,71 +629,71 @@ public  final class NewsDTO extends
       return this;
     }
 
-    private java.lang.Object title_ = "";
+    private java.lang.Object username_ = "";
     /**
-     * <code>optional string title = 3;</code>
+     * <code>optional string username = 3;</code>
      */
-    public java.lang.String getTitle() {
-      java.lang.Object ref = title_;
+    public java.lang.String getUsername() {
+      java.lang.Object ref = username_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs =
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        title_ = s;
+        username_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
       }
     }
     /**
-     * <code>optional string title = 3;</code>
+     * <code>optional string username = 3;</code>
      */
     public com.google.protobuf.ByteString
-        getTitleBytes() {
-      java.lang.Object ref = title_;
+        getUsernameBytes() {
+      java.lang.Object ref = username_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        title_ = b;
+        username_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
     /**
-     * <code>optional string title = 3;</code>
+     * <code>optional string username = 3;</code>
      */
-    public Builder setTitle(
+    public Builder setUsername(
         java.lang.String value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      title_ = value;
+      username_ = value;
       onChanged();
       return this;
     }
     /**
-     * <code>optional string title = 3;</code>
+     * <code>optional string username = 3;</code>
      */
-    public Builder clearTitle() {
+    public Builder clearUsername() {
       
-      title_ = getDefaultInstance().getTitle();
+      username_ = getDefaultInstance().getUsername();
       onChanged();
       return this;
     }
     /**
-     * <code>optional string title = 3;</code>
+     * <code>optional string username = 3;</code>
      */
-    public Builder setTitleBytes(
+    public Builder setUsernameBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
       
-      title_ = value;
+      username_ = value;
       onChanged();
       return this;
     }
@@ -708,39 +708,39 @@ public  final class NewsDTO extends
     }
 
 
-    // @@protoc_insertion_point(builder_scope:NewsDTO)
+    // @@protoc_insertion_point(builder_scope:CommentDTO)
   }
 
-  // @@protoc_insertion_point(class_scope:NewsDTO)
-  private static final com.example.newsapi.NewsDTO DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:CommentDTO)
+  private static final com.example.newsapi.CommentDTO DEFAULT_INSTANCE;
   static {
-    DEFAULT_INSTANCE = new com.example.newsapi.NewsDTO();
+    DEFAULT_INSTANCE = new com.example.newsapi.CommentDTO();
   }
 
-  public static com.example.newsapi.NewsDTO getDefaultInstance() {
+  public static com.example.newsapi.CommentDTO getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<NewsDTO>
-      PARSER = new com.google.protobuf.AbstractParser<NewsDTO>() {
-    public NewsDTO parsePartialFrom(
+  private static final com.google.protobuf.Parser<CommentDTO>
+      PARSER = new com.google.protobuf.AbstractParser<CommentDTO>() {
+    public CommentDTO parsePartialFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-        return new NewsDTO(input, extensionRegistry);
+        return new CommentDTO(input, extensionRegistry);
     }
   };
 
-  public static com.google.protobuf.Parser<NewsDTO> parser() {
+  public static com.google.protobuf.Parser<CommentDTO> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<NewsDTO> getParserForType() {
+  public com.google.protobuf.Parser<CommentDTO> getParserForType() {
     return PARSER;
   }
 
-  public com.example.newsapi.NewsDTO getDefaultInstanceForType() {
+  public com.example.newsapi.CommentDTO getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 

@@ -3,8 +3,8 @@
 
 package com.example.newsapi;
 
-public final class Dtos {
-  private Dtos() {}
+public final class DTO {
+  private DTO() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
@@ -19,6 +19,11 @@ public final class Dtos {
   static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_NewsDTO_fieldAccessorTable;
+  static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_CommentDTO_descriptor;
+  static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_CommentDTO_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -29,8 +34,10 @@ public final class Dtos {
   static {
     java.lang.String[] descriptorData = {
       "\n\ndtos.proto\"4\n\007NewsDTO\022\014\n\004date\030\001 \001(\t\022\014\n" +
-      "\004text\030\002 \001(\t\022\r\n\005title\030\003 \001(\tB\027\n\023com.exampl" +
-      "e.newsapiP\001b\006proto3"
+      "\004text\030\002 \001(\t\022\r\n\005title\030\003 \001(\t\":\n\nCommentDTO" +
+      "\022\014\n\004date\030\001 \001(\t\022\014\n\004text\030\002 \001(\t\022\020\n\010username" +
+      "\030\003 \001(\tB\034\n\023com.example.newsapiB\003DTOP\001b\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -50,6 +57,12 @@ public final class Dtos {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_NewsDTO_descriptor,
         new java.lang.String[] { "Date", "Text", "Title", });
+    internal_static_CommentDTO_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_CommentDTO_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_CommentDTO_descriptor,
+        new java.lang.String[] { "Date", "Text", "Username", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

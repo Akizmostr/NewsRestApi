@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option java_package = "com.example.newsapi";
+option java_outer_classname = "DTO";
 option java_multiple_files = true;
 
 
@@ -10,3 +11,8 @@ message NewsDTO {
   string title = 3;
 }
 
+message CommentDTO {
+  string date = 1;
+  string text = 2;
+  string username = 3;
+}

@@ -22,7 +22,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Class that converts Comment entities to CommentDTO objects with links and vice versa
  */
 @Component
-public class CommentModelAssembler implements RepresentationModelAssembler<Comment, EntityModel<CommentDTO>> {
+public class CommentModelAssembler implements RepresentationModelAssembler<Comment, EntityModel<com.example.newsapi.CommentDTO>> {
     /**
      * Converts single Comment entity to DTO object and adds corresponding links
      *
@@ -31,13 +31,13 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
      * @return Representation of comment
      */
     @Override
-    public EntityModel<CommentDTO> toModel(Comment comment) {
+    public EntityModel<com.example.newsapi.CommentDTO> toModel(Comment comment) {
         //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
-        CommentDTO commentDto = modelMapper.map(comment, CommentDTO.class);
+        com.example.newsapi.CommentDTO commentDto = modelMapper.map(comment, com.example.newsapi.CommentDTO.Builder.class).build();
 
         //Add links
-        EntityModel<CommentDTO> commentModel = EntityModel.of(commentDto);
+        EntityModel<com.example.newsapi.CommentDTO> commentModel = EntityModel.of(commentDto);
         commentModel.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
         commentModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
         commentModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
@@ -52,8 +52,8 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
      * @return CollectionModel of Comment
      */
     @Override
-    public CollectionModel<EntityModel<CommentDTO>> toCollectionModel(Iterable<? extends Comment> entities) {
-        List<EntityModel<CommentDTO>> comments = new ArrayList<>();
+    public CollectionModel<EntityModel<com.example.newsapi.CommentDTO>> toCollectionModel(Iterable<? extends Comment> entities) {
+        List<EntityModel<com.example.newsapi.CommentDTO>> comments = new ArrayList<>();
 
         entities.forEach((comment -> {
             comments.add(toModel(comment)); //converting each entity to dto with links and adding to the list

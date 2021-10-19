@@ -34,7 +34,7 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
     }
 
     @Override
-    @GetMapping("/news")
+    @GetMapping(value = "/news", produces = "application/x-protobuf")
     public PagedModel<EntityModel<com.example.newsapi.NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),

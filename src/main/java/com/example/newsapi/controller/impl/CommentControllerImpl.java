@@ -29,7 +29,7 @@ public class CommentControllerImpl implements com.example.newsapi.controller.Com
 
     @Override
     @GetMapping("/news/{newsId}/comments")
-    public PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(
+    public PagedModel<EntityModel<com.example.newsapi.CommentDTO>> getAllCommentsByNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
                     @Spec(path = "username", params = "username", spec = Like.class)
@@ -41,19 +41,19 @@ public class CommentControllerImpl implements com.example.newsapi.controller.Com
 
     @Override
     @PostMapping("/news/{newsId}/comments")
-    public EntityModel<CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId){
+    public EntityModel<com.example.newsapi.CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId){
         return commentService.createComment(comment, newsId);
     }
 
     @Override
-    @GetMapping("/news/{newsId}/comments/{commentId}")
-    public EntityModel<CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId){
+    @GetMapping(value = "/news/{newsId}/comments/{commentId}")
+    public com.example.newsapi.CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId){
         return commentService.getCommentById(newsId, commentId);
     }
 
     @Override
     @PutMapping("/news/{newsId}/comments/{commentId}")
-    public EntityModel<CommentDTO> updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
+    public EntityModel<com.example.newsapi.CommentDTO> updateComment(@Valid @RequestBody UpdateCommentDTO comment, @PathVariable long newsId, @PathVariable long commentId) {
         return commentService.updateComment(comment, newsId, commentId);
     }
 
