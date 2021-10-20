@@ -18,12 +18,12 @@ import java.util.Arrays;
 @SpringBootApplication
 public class NewsapiApplication {
 
-    /*@Bean
+    @Bean
     ProtobufJsonFormatHttpMessageConverter protobufJsonHttpMessageConverter() {
         JsonFormat.Printer printer = JsonFormat.printer().omittingInsignificantWhitespace();
         JsonFormat.Parser parser = JsonFormat.parser().ignoringUnknownFields();
         return new ProtobufJsonFormatHttpMessageConverter(parser, printer);
-    }*/
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(NewsapiApplication.class, args);

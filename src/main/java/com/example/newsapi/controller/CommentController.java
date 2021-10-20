@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * Rest controller responsible for Comment resource
@@ -55,7 +56,7 @@ public interface CommentController {
      * @return Representation of found comment
      */
     @GetMapping("/news/{newsId}/comments/{commentId}")
-    com.example.newsapi.CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId);
+    List<com.example.newsapi.CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId);
 
     /**
      * Updates comment

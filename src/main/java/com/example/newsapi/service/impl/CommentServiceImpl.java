@@ -1,5 +1,7 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.CommentDTOOrBuilder;
+import com.example.newsapi.controller.impl.CommentControllerImpl;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
@@ -8,6 +10,8 @@ import com.example.newsapi.modelassembler.CommentModelAssembler;
 import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.CommentService;
+import com.google.protobuf.util.JsonFormat;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +20,11 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Service class implementation for Comments
@@ -73,17 +82,31 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public com.example.newsapi.CommentDTO getCommentById(long newsId, long commentId){
+    public List<com.example.newsapi.CommentDTO> getCommentById(long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
-        return commentRepository.findAllByNewsId(newsId).get() //returns all comments of the news
+        Comment comment = commentRepository.findAllByNewsId(newsId).get()
+                .stream()
+                .filter(comment1 -> comment1.getId()==commentId) //filter comments with requested id
+                .findFirst()
+                .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId));
+
+        ModelMapper modelMapper = new ModelMapper();
+        com.example.newsapi.CommentDTO commentDto = modelMapper.map(comment, com.example.newsapi.CommentDTO.Builder.class).build();
+
+        EntityModel<com.example.newsapi.CommentDTO> commentModel = EntityModel.of(commentDto);
+        //commentModel.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
+
+        return List.of(commentDto);
+
+        /*return commentRepository.findAllByNewsId(newsId).get() //returns all comments of the news
                 .stream()
                 .filter(comment -> comment.getId()==commentId) //filter comments with requested id
                 .findFirst()
                 .map(assembler::toModel) //map found entity to dto
                 .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId))
-                .getContent();
+                .getContent();*/
     }
 
     @Override

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
+import java.util.List;
+
 /**
  * Service interface for Comment
  */
@@ -32,7 +34,7 @@ public interface CommentService {
      * @return Representation of found comment
      * @throws ResourceNotFoundException if news or comment was not found
      */
-    com.example.newsapi.CommentDTO getCommentById(long newsId, long commentId);
+    List<com.example.newsapi.CommentDTO> getCommentById(long newsId, long commentId);
 
     /**
      * Saves provided comment in repository

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -47,7 +48,7 @@ public class CommentControllerImpl implements com.example.newsapi.controller.Com
 
     @Override
     @GetMapping(value = "/news/{newsId}/comments/{commentId}")
-    public com.example.newsapi.CommentDTO getCommentById(@PathVariable long newsId, @PathVariable long commentId){
+    public List<com.example.newsapi.CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId){
         return commentService.getCommentById(newsId, commentId);
     }
 
