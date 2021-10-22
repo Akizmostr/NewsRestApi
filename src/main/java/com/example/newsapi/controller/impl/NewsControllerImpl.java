@@ -50,8 +50,6 @@ public class NewsControllerImpl implements com.example.newsapi.controller.NewsCo
         return newsService.createNews(news);
     }
 
-    //!!!!!
-    //Pagination on comments doesn't work
     @Override
     @GetMapping("/news/{id}")
     public EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){

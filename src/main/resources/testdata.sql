@@ -1,9 +1,10 @@
 INSERT INTO news (id, creation_date, title, text) VALUES
 (1, '2021-01-01', 'title1', 'text1'),
-(2, '2021-01-02', 'title2', 'text2'),
+(2, '2021-01-01', 'title2', 'text2'),
 (3, '2021-01-03', 'title3', 'text3'),
 (4, '2021-01-04', 'title4', 'text4'),
-(5, '2021-01-05', 'title5', 'text5');
+(5, '2021-01-05', 'title5', 'text5'),
+(6, '2021-01-05', 'title5', 'text6');
 
 INSERT INTO comments(id, news_id, creation_date, text, username) VALUES
 (1, 1, '2021-01-01', 'comment1', 'user1'),

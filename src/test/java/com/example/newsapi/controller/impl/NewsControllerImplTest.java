@@ -9,10 +9,13 @@ import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
+import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.impl.NewsCommentsServiceImpl;
 import com.example.newsapi.service.impl.NewsServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+import org.hibernate.sql.Update;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,15 +31,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -47,12 +50,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-import static org.hamcrest.Matchers.emptyOrNullString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -69,25 +67,37 @@ class NewsControllerImplTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired
+    NewsRepository newsRepository;
+
     ObjectMapper mapper = new ObjectMapper();
 
-    private
+    //getAllNews START ----------------------------------------------------
 
     @Test
-    void whenGetAllNewsWithoutPaginationParams_thenCorrectResponseAndDefaultPage() throws Exception {
+    void whenGetAllNewsWithoutPage_thenCorrectResponseAndDefaultPage() throws Exception {
+        Page<News> result = newsRepository.findAll((Specification<News>) null, Pageable.unpaged());
+        int totalElements = (int) result.getTotalElements();
+        int numberOfPages = result.getTotalPages();
+
         mockMvc.perform(MockMvcRequestBuilders.get("/news")
                 .accept("application/hal+json"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.news", hasSize(5)))
+                .andExpect(jsonPath("$._embedded.news", hasSize(totalElements)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
-                .andExpect(jsonPath("$.page", notNullValue()))
-                .andExpect(jsonPath("$.page.totalElements", is(5)))
-                .andExpect(jsonPath("$.page.totalPages", is(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)));
     }
 
     @Test
-    void whenGetAllNewsWithPaginationParams_thenCorrectResponseAndPage() throws Exception {
+    void whenGetAllNewsWithPage_thenCorrectResponseAndPage() throws Exception {
+        int size = 2;
+        Page<News> result = newsRepository.findAll((Specification<News>) null, Pageable.ofSize(size));
+        int totalElements = (int) result.getTotalElements();
+        int numberOfPages = result.getTotalPages();
+        int pageNumber = result.getNumber();
+
         mockMvc.perform(MockMvcRequestBuilders.get("/news")
                 .accept("application/hal+json")
                 .param("page", "0")
@@ -96,38 +106,136 @@ class NewsControllerImplTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.news", hasSize(2)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
-                .andExpect(jsonPath("$.page", notNullValue()))
-                .andExpect(jsonPath("$.page.size", is(2)))
-                .andExpect(jsonPath("$.page.totalElements", is(5)))
-                .andExpect(jsonPath("$.page.totalPages", is(3)))
-                .andExpect(jsonPath("$.page.number", is(0)));
+                .andExpect(jsonPath("$.page.size", is(size)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
+                .andExpect(jsonPath("$.page.number", is(pageNumber)));
     }
 
     @Test
-    void getNewsById() throws Exception {
+    void whenSearchAllNewsByDateAndNewsFound_thenReturnCorrectNews() throws Exception {
+        String date = "2021-01-01";
+        Specification<News> spec = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("date"), LocalDate.parse(date));
+        Page<News> result = newsRepository.findAll(spec, Pageable.unpaged());
+        int totalElements = (int) result.getTotalElements();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("date", date))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.news", hasSize(totalElements)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
+                .andExpect(jsonPath("$._embedded.news[*].date", everyItem(is(date))));
+    }
+
+    @Test
+    void whenSearchAllNewsByDateAndNewsNotFound_thenReturnEmptyPage() throws Exception {
+        String date = "1000-01-01";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("date", date))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.page.totalElements", is(0)));
+    }
+
+    @Test
+    void whenSearchAllNewsByTitleAndNewsFound_thenReturnCorrectNews() throws Exception {
+        String title = "title5";
+        Specification<News> spec = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("title"), title);
+        Page<News> result = newsRepository.findAll(spec, Pageable.unpaged());
+        int totalElements = (int) result.getTotalElements();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("title", title))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.news", hasSize(totalElements)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
+                .andExpect(jsonPath("$._embedded.news[*].title", everyItem(is(title))));
+    }
+
+    @Test
+    void whenSearchAllNewsByTitleAndNewsNotFound_thenReturnEmptyPage() throws Exception {
+        String title = "not existing title";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("title", title))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded").doesNotHaveJsonPath())
+                .andExpect(jsonPath("$.page.totalElements", is(0)));
+    }
+
+    //getAllNews END ----------------------------------------------------
+
+    //getNewsById START -------------------------------------------------
+
+    @Test
+    void whenGetNewsByIdAndNewsFound_thenCorrectNews() throws Exception {
+        long id = 1;
+        News news = newsRepository.findById(id).get();
+        int commentsSize = news.getComments().size();
+        String date = news.getDate().toString();
+        String text = news.getText();
+        String title = news.getTitle();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}", id)
                 .accept("application/hal+json"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.comments", hasSize(3)))
-                .andExpect(jsonPath("$.date", is("2021-01-01")))
-                .andExpect(jsonPath("$.text", is("text1")))
-                .andExpect(jsonPath("$.title", is("title1")));
-
+                .andExpect(jsonPath("$.comments", hasSize(commentsSize)))
+                .andExpect(jsonPath("$.date", is(date)))
+                .andExpect(jsonPath("$.text", is(text)))
+                .andExpect(jsonPath("$.title", is(title)));
     }
+
+    @Test
+    void whenGetNewsByIdAndNewsNotFound_thenNotFoundResponse() throws Exception {
+        long id = 9999;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}", id)
+                .accept("application/json"))
+                .andExpect(notFound(id));
+    }
+
+    //getNewsById START -------------------------------------------------
+
+    //updateNews START --------------------------------------------------
+
+    @Test
+    void whenUpdateNewsAndNewsNotFound_thenNotFoundResponse() throws Exception {
+        UpdateNewsDTO news = new UpdateNewsDTO("new text", "new title");
+        long id = 9999;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/news/{id}", id)
+                .accept("application/json")
+                .contentType("application/json")
+                .content(mapper.writeValueAsString(news)))
+                .andExpect(notFound(id));
+    }
+
+    @Test
+    void whenUpdateNewsAndAllFieldsAreNotProvided_thenErrorResponse() throws Exception {
+        long id = 1;
+        UpdateNewsDTO news = new UpdateNewsDTO(null, null);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/news/{id}", id)
+                .accept("application/json")
+                .contentType("application/json")
+                .content(mapper.writeValueAsString(news)))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect();
+    }
+
+    //getNewsById END -------------------------------------------------
 
    /*
-    @Test
-    void whenGetNewsByIdAndNewsNotFound_thenReturnNotFoundStatus() throws Exception {
-        doThrow(new ResourceNotFoundException("Not found News with id 1")).when(newsCommentsService).getNewsCommentsById(1, Pageable.unpaged());
-        mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andDo(print())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
-
-    }
 
     @Test
     void createNews() throws Exception {
@@ -183,4 +291,12 @@ class NewsControllerImplTest {
             .andDo(print())
             .andExpect(status().isNoContent());
     }*/
+
+    private static ResultMatcher notFound(long id){
+        return ResultMatcher.matchAll(
+                status().isNotFound(),
+                jsonPath("$.statusCode", is(404)),
+                jsonPath("$.message", is("Not found News with id " + id))
+        );
+    }
 }
