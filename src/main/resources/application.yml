@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: "test"
+    active: "dev"
 
 logging:
   level:
@@ -9,6 +9,30 @@ logging:
     org.hibernate: ERROR
   file:
     name: mylog.log
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:newsapi
+    username: root
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+  sql:
+    init:
+      data-locations: classpath*:devdata.sql
+      mode: always
+
 
 ---
 spring:
@@ -23,11 +47,15 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   h2:
     console:
       path: /h2-console
       enabled: true
+  sql:
+    init:
+      data-locations: classpath*:testdata.sql
+      mode: always
 
 ---
 spring:

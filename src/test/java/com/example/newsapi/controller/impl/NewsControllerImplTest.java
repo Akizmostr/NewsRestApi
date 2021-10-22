@@ -1,6 +1,6 @@
-/*
 package com.example.newsapi.controller.impl;
 
+import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
@@ -23,7 +23,10 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +34,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -42,8 +47,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 
+import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -52,81 +60,64 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(NewsControllerImpl.class)
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = NewsapiApplication.class)
+@ExtendWith(SpringExtension.class)
+@AutoConfigureTestDatabase
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class NewsControllerImplTest {
-    @InjectMocks
-    NewsControllerImpl newsController;
-
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
-    ObjectMapper mapper;
+    ObjectMapper mapper = new ObjectMapper();
 
-    @MockBean
-    NewsServiceImpl newsService;
+    private
 
-    @MockBean
-    NewsCommentsServiceImpl newsCommentsService;
-
-    NewsDTO newsDto1;
-    NewsDTO newsDto2;
-    List<NewsDTO> newsDto;
-    NewsCommentsDTO newsCommentsDto1;
-
-    */
-/*@BeforeAll
-    static void init(){
-        mockMvc = MockMvcBuilders.standaloneSetup(new NewsControllerImpl(newsCommentsService, newsService)).build();
-    }*//*
-
-
-    @BeforeEach
-    void setup (){
-
-        newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
-        newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
-        newsDto = List.of(newsDto1, newsDto2);
-
-        CommentDTO commentDto1 = new CommentDTO(1, LocalDate.parse("2021-09-09"),"test text 1", "user 1");
-        CommentDTO commentDto2 = new CommentDTO(2, LocalDate.parse("2021-09-09"),"test text 2", "user 2");
-
-        Page<CommentDTO> commentsDtoPage = new PageImpl<>(List.of(commentDto1, commentDto2));
-        newsCommentsDto1 = new NewsCommentsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", commentsDtoPage);
-
+    @Test
+    void whenGetAllNewsWithoutPaginationParams_thenCorrectResponseAndDefaultPage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.news", hasSize(5)))
+                .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
+                .andExpect(jsonPath("$.page", notNullValue()))
+                .andExpect(jsonPath("$.page.totalElements", is(5)))
+                .andExpect(jsonPath("$.page.totalPages", is(1)));
     }
 
     @Test
-    void getAllNews() throws Exception {
-        PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(2, 1, 2);
-        PagedModel<NewsDTO> newsDtoPagedModel = PagedModel.of(newsDto, pageMetadata);
-        when(newsService.getAllNews(any(Specification.class), any(Pageable.class))).thenReturn(newsDtoPagedModel);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/news"))
-        .andDo(print())
-        .andExpect(status().isOk())
-        //.andExpect(model().size(2));
-        .andExpect(jsonPath("$..news", hasSize(2)));
+    void whenGetAllNewsWithPaginationParams_thenCorrectResponseAndPage() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("page", "0")
+                .param("size", "2"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.news", hasSize(2)))
+                .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
+                .andExpect(jsonPath("$.page", notNullValue()))
+                .andExpect(jsonPath("$.page.size", is(2)))
+                .andExpect(jsonPath("$.page.totalElements", is(5)))
+                .andExpect(jsonPath("$.page.totalPages", is(3)))
+                .andExpect(jsonPath("$.page.number", is(0)));
     }
 
     @Test
     void getNewsById() throws Exception {
-        when(newsCommentsService.getNewsCommentsById(anyLong(), any(Pageable.class))).thenReturn(newsCommentsDto1);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/news/1")
-                .accept(MediaType.APPLICATION_JSON))
+                .accept("application/hal+json"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.comments.content", hasSize(2)))
-                .andExpect(jsonPath("$.date", is(newsCommentsDto1.getDate().toString())))
-                .andExpect(jsonPath("$.text", is(newsCommentsDto1.getText())))
-                .andExpect(jsonPath("$.title", is(newsCommentsDto1.getTitle())));
+                .andExpect(jsonPath("$.comments", hasSize(3)))
+                .andExpect(jsonPath("$.date", is("2021-01-01")))
+                .andExpect(jsonPath("$.text", is("text1")))
+                .andExpect(jsonPath("$.title", is("title1")));
 
     }
 
-    //doesn't work
-    //better to use integration tests?
-
+   /*
     @Test
     void whenGetNewsByIdAndNewsNotFound_thenReturnNotFoundStatus() throws Exception {
         doThrow(new ResourceNotFoundException("Not found News with id 1")).when(newsCommentsService).getNewsCommentsById(1, Pageable.unpaged());
@@ -191,5 +182,5 @@ class NewsControllerImplTest {
             .accept(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isNoContent());
-    }
-}*/
+    }*/
+}
