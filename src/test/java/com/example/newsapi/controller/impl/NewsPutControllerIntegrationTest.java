@@ -62,7 +62,7 @@ public class NewsPutControllerIntegrationTest {
     }
 
     @Test
-    void whenUpdateNewsAndAllFieldsAreEmpty_thenErrorResponse() throws Exception {
+    void whenUpdateNewsAndAllFieldsAreEmptyStrings_thenErrorResponse() throws Exception {
         long id = 1;
         UpdateNewsDTO news = new UpdateNewsDTO("", "");
 
@@ -131,10 +131,7 @@ public class NewsPutControllerIntegrationTest {
         UpdateNewsDTO requestedNews = new UpdateNewsDTO("new text", "new title");
 
         News news = newsRepository.findById(id).get();
-        mockMvc.perform(put("/news/{id}", id)
-                .accept("application/json")
-                .contentType("application/json")
-                .content(mapper.writeValueAsString(requestedNews)))
+        mockMvc.perform(putJson("/news/{id}", requestedNews, id))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text", is(requestedNews.getText())))
@@ -142,11 +139,11 @@ public class NewsPutControllerIntegrationTest {
                 .andExpect(jsonPath("$.date", is(news.getDate().toString())));
     }
 
-    public static MockHttpServletRequestBuilder putJson(String url, Object body, Object... uriVars) throws JsonProcessingException {
+    private static MockHttpServletRequestBuilder putJson(String url, Object body, Object... uriVars) throws JsonProcessingException {
         String json = new ObjectMapper().writeValueAsString(body);
         return put(url, uriVars)
                 .contentType("application/json")
-                .accept("application/json")
+                .accept("application/hal+json")
                 .content(json);
     }
 }
