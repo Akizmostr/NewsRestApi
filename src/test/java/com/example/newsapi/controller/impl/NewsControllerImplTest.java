@@ -1,62 +1,34 @@
 package com.example.newsapi.controller.impl;
 
 import com.example.newsapi.NewsapiApplication;
-import com.example.newsapi.controller.NewsController;
-import com.example.newsapi.dto.CommentDTO;
-import com.example.newsapi.dto.NewsCommentsDTO;
-import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
-import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
-import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.repository.NewsRepository;
-import com.example.newsapi.service.impl.NewsCommentsServiceImpl;
-import com.example.newsapi.service.impl.NewsServiceImpl;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.newsapi.testutils.TestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
-import org.hibernate.sql.Update;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.WebDataBinder;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.List;
 
-
+import static com.example.newsapi.testutils.TestUtils.newsNotFound;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = NewsapiApplication.class)
 @ExtendWith(SpringExtension.class)
@@ -177,6 +149,7 @@ class NewsControllerImplTest {
     //getNewsById START -------------------------------------------------
 
     @Test
+    @Transactional
     void whenGetNewsByIdAndNewsFound_thenCorrectNews() throws Exception {
         long id = 1;
         News news = newsRepository.findById(id).get();
@@ -201,36 +174,8 @@ class NewsControllerImplTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}", id)
                 .accept("application/json"))
-                .andExpect(notFound(id));
-    }
-
-    //getNewsById START -------------------------------------------------
-
-    //updateNews START --------------------------------------------------
-
-    @Test
-    void whenUpdateNewsAndNewsNotFound_thenNotFoundResponse() throws Exception {
-        UpdateNewsDTO news = new UpdateNewsDTO("new text", "new title");
-        long id = 9999;
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/news/{id}", id)
-                .accept("application/json")
-                .contentType("application/json")
-                .content(mapper.writeValueAsString(news)))
-                .andExpect(notFound(id));
-    }
-
-    @Test
-    void whenUpdateNewsAndAllFieldsAreNotProvided_thenErrorResponse() throws Exception {
-        long id = 1;
-        UpdateNewsDTO news = new UpdateNewsDTO(null, null);
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/news/{id}", id)
-                .accept("application/json")
-                .contentType("application/json")
-                .content(mapper.writeValueAsString(news)))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect();
+                .andDo(print())
+                .andExpect(newsNotFound(id));
     }
 
     //getNewsById END -------------------------------------------------
@@ -292,11 +237,4 @@ class NewsControllerImplTest {
             .andExpect(status().isNoContent());
     }*/
 
-    private static ResultMatcher notFound(long id){
-        return ResultMatcher.matchAll(
-                status().isNotFound(),
-                jsonPath("$.statusCode", is(404)),
-                jsonPath("$.message", is("Not found News with id " + id))
-        );
-    }
 }

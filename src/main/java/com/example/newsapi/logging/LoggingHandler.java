@@ -3,7 +3,6 @@ package com.example.newsapi.logging;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.commons.io.IOUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -42,8 +41,6 @@ public class LoggingHandler {
         String requestURL = request.getRequestURL().toString();
         String methodType = request.getMethod();
 
-        String requestBody = null;
-
         //get arguments
         String arguments = null;
         try {
@@ -58,7 +55,6 @@ public class LoggingHandler {
         log.info ("--- request information start --------");
         log.info("requestURL : {}", requestURL);
         log.info("Method type: {}", methodType);
-        log.info("Request body: {}", requestBody);
         log.info("Controller : {}", joinPoint.getTarget().getClass());
         log.info("Controller method :  {}", joinPoint.getSignature().getName());
         log.info("Arguments: {}", arguments);
@@ -107,18 +103,5 @@ public class LoggingHandler {
         String methodName = joinPoint.getSignature().getName();
         log.error("An exception has been thrown in {}.{}()", className, methodName);
         log.error("Message : {}", ex.getMessage());
-    }
-
-    private static String extractRequestBody(HttpServletRequest request) {
-        if ("POST".equalsIgnoreCase(request.getMethod()) || "PUT".equalsIgnoreCase(request.getMethod())) {
-            Scanner s = null;
-            try {
-                s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return s.hasNext() ? s.next() : "";
-        }
-        return null;
     }
 }

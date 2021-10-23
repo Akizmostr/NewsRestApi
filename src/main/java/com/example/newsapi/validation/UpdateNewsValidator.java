@@ -25,8 +25,8 @@ public class UpdateNewsValidator implements Validator {
             errors.reject("1", "At least one field is required");
 
         if(newTitle != null)
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "2", "Title could not be empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "title", "2", "The title is required");
         if(newText != null)
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "text", "3", "Text could not be empty");
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "text", "3", "The text is required");
     }
 }
