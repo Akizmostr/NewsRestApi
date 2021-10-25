@@ -1,11 +1,9 @@
-package com.example.newsapi.controller.impl;
+package com.example.newsapi.controller.impl.newscontroller;
 
 import com.example.newsapi.NewsapiApplication;
-import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.repository.NewsRepository;
-import com.example.newsapi.testutils.TestUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,17 +13,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 import static com.example.newsapi.testutils.TestUtils.newsNotFound;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,14 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class NewsControllerImplTest {
+class NewsControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     NewsRepository newsRepository;
-
-    ObjectMapper mapper = new ObjectMapper();
 
     //getAllNews START ----------------------------------------------------
 
@@ -180,61 +181,31 @@ class NewsControllerImplTest {
 
     //getNewsById END -------------------------------------------------
 
-   /*
+    //deleteNews START -------------------------------------------------
 
     @Test
-    void createNews() throws Exception {
-        NewsDTO requestedNewsDto = new NewsDTO(3, LocalDate.parse("2021-09-09"), "test text 3", "test title 3");
-        when(newsService.createNews(any(NewsDTO.class))).thenReturn(requestedNewsDto);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/news")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(requestedNewsDto));
-
-        mockMvc.perform(mockRequest)
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.text", is(requestedNewsDto.getText())))
-                .andExpect(jsonPath("$.title", is(requestedNewsDto.getTitle())))
-                .andExpect(jsonPath("$.date", is(requestedNewsDto.getDate().toString())));
-    }
-
-
-    @Test
-    void updateNews() throws Exception {
-        UpdateNewsDTO requestedNewsDto = new UpdateNewsDTO("new text", "new title");
-        NewsDTO updatedNewsDto = new NewsDTO(1, LocalDate.parse("2021-09-09"), "new text", "new title");
-
-        when(newsService.updateNews(any(UpdateNewsDTO.class), anyLong())).thenReturn(updatedNewsDto);
-
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.put("/news/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(requestedNewsDto));
-
-        mockMvc.perform(mockRequest)
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.text", is(requestedNewsDto.getText())))
-                .andExpect(jsonPath("$.title", is(requestedNewsDto.getTitle())))
-                .andExpect(jsonPath("$.date", is(updatedNewsDto.getDate().toString())));
-
-        //how to check helper method invocation?
-        //verify(newsController, times(1)).initBinder(any(WebDataBinder.class));
-    }
-
-
-    @Test
-    void deleteNews() throws Exception {
-        doNothing().when(newsService).deleteNewsById(newsDto1.getId());
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void whenDeleteNewsAndNewsFound_thenCorrectResponseAndNewsDoesNotExist() throws Exception {
 
         mockMvc.perform(delete("/news/1")
-            .accept(MediaType.APPLICATION_JSON))
+            .accept("application/json"))
             .andDo(print())
             .andExpect(status().isNoContent());
-    }*/
 
+        Assertions.assertFalse(newsRepository.existsById(1L));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void whenDeleteNewsAndNewsNotFound_thenNotFoundResponse() throws Exception {
+        long id = 999;
+
+        mockMvc.perform(delete("/news/{id}", id)
+                .accept("application/json"))
+                .andDo(print())
+                .andExpect(newsNotFound(id));
+
+    }
+
+    //deleteNews END -------------------------------------------------
 }

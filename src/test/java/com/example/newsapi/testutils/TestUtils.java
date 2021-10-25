@@ -1,9 +1,15 @@
 package com.example.newsapi.testutils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,10 +49,47 @@ public class TestUtils {
         );
     }
 
+    public static ResultMatcher invalidUsernameMessage(){
+        return ResultMatcher.matchAll(
+                jsonPath("$.message", containsString("The username is required"))
+        );
+    }
+
     public static ResultMatcher invalidTextAndTitleMessage(){
         return ResultMatcher.matchAll(
-                jsonPath("$.message", containsString("The text is required")),
-                jsonPath("$.message", containsString("The title is required"))
+                invalidTextMessage(),
+                invalidTitleMessage()
         );
+    }
+
+    public static ResultMatcher invalidTextAndUsernameMessage(){
+        return ResultMatcher.matchAll(
+                invalidTextMessage(),
+                invalidUsernameMessage()
+        );
+    }
+
+    public static MockHttpServletRequestBuilder putJson(String url, Object body, Object... uriVars) throws JsonProcessingException {
+        ObjectMapper mapper = createObjectMapper();
+        String json = mapper.writeValueAsString(body);
+        return put(url, uriVars)
+                .contentType("application/json")
+                .accept("application/hal+json")
+                .content(json);
+    }
+
+    public static MockHttpServletRequestBuilder postJson(String url, Object body) throws JsonProcessingException {
+        ObjectMapper mapper = createObjectMapper();
+        String json = mapper.writeValueAsString(body);
+        return post(url)
+                .contentType("application/json")
+                .accept("application/hal+json")
+                .content(json);
+    }
+
+    private static ObjectMapper createObjectMapper(){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.newsapi.controller.impl;
+package com.example.newsapi.controller.impl.newscontroller;
 
 import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.dto.UpdateNewsDTO;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NewsPutControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
@@ -139,11 +141,5 @@ public class NewsPutControllerIntegrationTest {
                 .andExpect(jsonPath("$.date", is(news.getDate().toString())));
     }
 
-    private static MockHttpServletRequestBuilder putJson(String url, Object body, Object... uriVars) throws JsonProcessingException {
-        String json = new ObjectMapper().writeValueAsString(body);
-        return put(url, uriVars)
-                .contentType("application/json")
-                .accept("application/hal+json")
-                .content(json);
-    }
+
 }

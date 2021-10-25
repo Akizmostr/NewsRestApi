@@ -39,7 +39,7 @@ class UpdateNewsValidatorTest {
 
         assertTrue(errors.hasFieldErrors("title"));
         assertEquals(errors.getFieldError("title").getCode(), "2");
-        assertEquals(errors.getFieldError("title").getDefaultMessage(), "Title could not be empty");
+        assertEquals(errors.getFieldError("title").getDefaultMessage(), "The title is required");
 
         assertFalse(errors.hasGlobalErrors());
         assertFalse(errors.hasFieldErrors("text"));
@@ -55,7 +55,7 @@ class UpdateNewsValidatorTest {
 
         assertTrue(errors.hasFieldErrors("text"));
         assertEquals(errors.getFieldError("text").getCode(), "3");
-        assertEquals(errors.getFieldError("text").getDefaultMessage(), "Text could not be empty");
+        assertEquals(errors.getFieldError("text").getDefaultMessage(), "The text is required");
 
         assertFalse(errors.hasGlobalErrors());
         assertFalse(errors.hasFieldErrors("title"));
@@ -71,11 +71,11 @@ class UpdateNewsValidatorTest {
 
         assertTrue(errors.hasFieldErrors("title"));
         assertEquals(errors.getFieldError("title").getCode(), "2");
-        assertEquals(errors.getFieldError("title").getDefaultMessage(), "Title could not be empty");
+        assertEquals(errors.getFieldError("title").getDefaultMessage(), "The title is required");
 
         assertTrue(errors.hasFieldErrors("text"));
         assertEquals(errors.getFieldError("text").getCode(), "3");
-        assertEquals(errors.getFieldError("text").getDefaultMessage(), "Text could not be empty");
+        assertEquals(errors.getFieldError("text").getDefaultMessage(), "The text is required");
 
         assertFalse(errors.hasGlobalErrors());
     }
