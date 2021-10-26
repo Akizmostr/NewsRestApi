@@ -1,9 +1,7 @@
 package com.example.newsapi.dto;
 
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 
 import javax.validation.constraints.NotBlank;
@@ -12,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateCommentDTO {
 
     @NotBlank(message = "The text is required")

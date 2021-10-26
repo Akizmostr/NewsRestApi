@@ -34,12 +34,12 @@ public class NewsController {
     }
 
     /**
-         * Searches for all news based on the provided specification
-         *
-         * @param spec Specification which contains criteria for search
-         * @param pageable Pageable object with pagination information
-         * @return PagedModel of NewsDTO
-         */
+     * Searches for all news based on the provided specification
+     *
+     * @param spec     Specification which contains criteria for search
+     * @param pageable Pageable object with pagination information
+     * @return PagedModel of NewsDTO
+     */
     @GetMapping("/news")
     public PagedModel<EntityModel<NewsDTO>> getAllNews(
             @And({
@@ -51,23 +51,23 @@ public class NewsController {
     }
 
     /**
-         * Saves provided news
-         *
-         * @param news NewsDTO object which contains properties to save
-         * @return Representation of currently saved news
-         */
+     * Saves provided news
+     *
+     * @param news NewsDTO object which contains properties to save
+     * @return Representation of currently saved news
+     */
     @PostMapping("/news")
     public EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news){
         return newsService.createNews(news);
     }
 
     /**
-         * Provides information about specific news and all corresponding comments
-         *
-         * @param id id property of news to find
-         * @param pageable Pageable object with pagination information
-         * @return
-         */
+     * Provides information about specific news and all corresponding comments
+     *
+     * @param id       id property of news to find
+     * @param pageable Pageable object with pagination information
+     * @return Representation of found News
+     */
     @GetMapping("/news/{id}")
     public EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
         //Using NewsCommentsDTO and corresponding service to return view of the news and comments
@@ -87,10 +87,10 @@ public class NewsController {
     }
 
     /**
-         * Deletes news
-         *
-         * @param id id property of news to delete
-         */
+     * Deletes news
+     *
+     * @param id id property of news to delete
+     */
     @DeleteMapping("/news/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteNews(@PathVariable long id){

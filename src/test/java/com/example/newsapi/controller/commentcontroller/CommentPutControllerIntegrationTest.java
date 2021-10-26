@@ -1,8 +1,11 @@
-package com.example.newsapi.controller.newscontroller;
+package com.example.newsapi.controller.commentcontroller;
+
 
 import com.example.newsapi.NewsapiApplication;
+import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,43 +36,49 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class NewsPutControllerIntegrationTest {
+public class CommentPutControllerIntegrationTest {
     @Autowired
     MockMvc mockMvc;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     @Autowired
     NewsRepository newsRepository;
 
     @Test
-    void whenUpdateNewsAndNewsNotFound_thenNotFoundResponse() throws Exception {
-        UpdateNewsDTO news = new UpdateNewsDTO("new text", "new title");
-        long id = 9999;
+    void whenUpdateCommentAndCommentNotFound_thenNotFoundResponse() throws Exception {
+        long newsId = 1;
+        long commentId = 9999;
+        UpdateCommentDTO comment = new UpdateCommentDTO("new text");
 
-        mockMvc.perform(putJson("/news/{id}", news, id))
+        mockMvc.perform(putJson("/news/{newsId}/comments/{commentId}", comment, newsId, commentId))
                 .andDo(print())
-                .andExpect(newsNotFound(id));
+                .andExpect(commentNotFound(commentId));
     }
 
     @Test
-    void whenUpdateNewsAndAllFieldsAreNotProvided_thenErrorResponse() throws Exception {
-        long id = 1;
-        UpdateNewsDTO news = new UpdateNewsDTO(null, null);
+    void whenUpdateCommentAndTextIsNotProvided_thenErrorResponse() throws Exception {
+        long newsId = 1;
+        long commentId = 1;
+        UpdateCommentDTO comment = new UpdateCommentDTO(null);
 
-        mockMvc.perform(putJson("/news/{id}", news, id))
+        mockMvc.perform(putJson("/news/{newsId}/comments/{commentId}", comment, newsId, commentId))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(jsonPath("$.message", containsString("At least one field is required")));
+                .andExpect(invalidTextMessage());
     }
 
     @Test
-    void whenUpdateNewsAndAllFieldsAreEmptyStrings_thenErrorResponse() throws Exception {
-        long id = 1;
-        UpdateNewsDTO news = new UpdateNewsDTO("", "");
+    void whenUpdateCommentAndTextIsEmptyString_thenErrorResponse() throws Exception {
+        long newsId = 1;
+        long commentId = 1;
+        UpdateCommentDTO comment = new UpdateCommentDTO("");
 
-        mockMvc.perform(putJson("/news/{id}", news, id))
+        mockMvc.perform(putJson("/news/{newsId}/comments/{commentId}", comment, newsId, commentId))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(invalidTextAndTitleMessage());
+                .andExpect(invalidTextMessage());
     }
 
     @Test
@@ -141,3 +150,4 @@ public class NewsPutControllerIntegrationTest {
 
 
 }
+
