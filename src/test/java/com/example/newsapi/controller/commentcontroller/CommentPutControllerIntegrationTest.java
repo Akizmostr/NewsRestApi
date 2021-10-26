@@ -4,6 +4,7 @@ package com.example.newsapi.controller.commentcontroller;
 import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
+import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
@@ -82,72 +83,20 @@ public class CommentPutControllerIntegrationTest {
     }
 
     @Test
-    void whenUpdateNewsAndTitleIsEmpty_thenErrorResponse() throws Exception {
-        long id = 1;
-        UpdateNewsDTO news = new UpdateNewsDTO("new text", "");
+    void whenUpdateCommentAndValidTextIsProvided_thenTextIsChanged() throws Exception {
+        long newsId = 1;
+        long commentId = 1;
+        UpdateCommentDTO requestedComment = new UpdateCommentDTO("new text");
 
-        mockMvc.perform(putJson("/news/{id}", news, id))
-                .andDo(print())
-                .andExpect(invalidEntityStatus())
-                .andExpect(invalidTitleMessage());
-    }
+        Comment comment = commentRepository.findById(commentId).get();
 
-
-
-    @Test
-    void whenUpdateNewsAndTextIsEmpty_thenErrorResponse() throws Exception {
-        long id = 1;
-        UpdateNewsDTO news = new UpdateNewsDTO("", "new title");
-
-        mockMvc.perform(putJson("/news/{id}", news, id))
-                .andDo(print())
-                .andExpect(invalidEntityStatus())
-                .andExpect(invalidTextMessage());
-    }
-
-    @Test
-    void whenUpdateNewsAndValidTitleIsProvided_thenTitleIsChanged() throws Exception {
-        long id = 1;
-        UpdateNewsDTO requestedNews = new UpdateNewsDTO(null, "new title");
-
-        News news = newsRepository.findById(id).get();
-
-        mockMvc.perform(putJson("/news/{id}", requestedNews, id))
+        mockMvc.perform(putJson("/news/{newsId}/comments/{commentId}", requestedComment, newsId, commentId))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text", is(news.getText())))
-                .andExpect(jsonPath("$.title", is(requestedNews.getTitle())))
-                .andExpect(jsonPath("$.date", is(news.getDate().toString())));
+                .andExpect(jsonPath("$.text", is(requestedComment.getText())))
+                .andExpect(jsonPath("$.username", is(comment.getUsername())))
+                .andExpect(jsonPath("$.date", is(comment.getDate().toString())));
     }
-
-    @Test
-    void whenUpdateNewsAndValidTextIsProvided_thenTextIsChanged() throws Exception {
-        long id = 1;
-        UpdateNewsDTO requestedNews = new UpdateNewsDTO("new text", null);
-
-        News news = newsRepository.findById(id).get();
-        mockMvc.perform(putJson("/news/{id}", requestedNews, id))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text", is(requestedNews.getText())))
-                .andExpect(jsonPath("$.title", is(news.getTitle())))
-                .andExpect(jsonPath("$.date", is(news.getDate().toString())));
-    }
-
-    @Test
-    void whenUpdateNewsAndValidTextAndTitleAreProvided_thenTextAndTitleAreChanged() throws Exception {
-        long id = 1;
-        UpdateNewsDTO requestedNews = new UpdateNewsDTO("new text", "new title");
-
-        News news = newsRepository.findById(id).get();
-        mockMvc.perform(putJson("/news/{id}", requestedNews, id))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.text", is(requestedNews.getText())))
-                .andExpect(jsonPath("$.title", is(requestedNews.getTitle())))
-                .andExpect(jsonPath("$.date", is(news.getDate().toString())));
-    }
-
 
 }
 
