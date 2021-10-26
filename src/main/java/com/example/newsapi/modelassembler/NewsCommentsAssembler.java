@@ -1,26 +1,19 @@
 package com.example.newsapi.modelassembler;
 
-import com.example.newsapi.controller.impl.CommentControllerImpl;
-import com.example.newsapi.controller.impl.NewsControllerImpl;
+import com.example.newsapi.controller.CommentController;
+import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -50,9 +43,9 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
 
         //add links
         EntityModel<NewsCommentsDTO> newsCommentsModel = EntityModel.of(newsCommentsDto);
-        newsCommentsModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel());
-        newsCommentsModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, entity.getId(), Pageable.unpaged())).withRel("comments"));
-        newsCommentsModel.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null, Pageable.unpaged())).withRel("news"));
+        newsCommentsModel.add(linkTo(methodOn(NewsController.class).getNewsById(entity.getId(), Pageable.unpaged())).withSelfRel());
+        newsCommentsModel.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, entity.getId(), Pageable.unpaged())).withRel("comments"));
+        newsCommentsModel.add(linkTo(methodOn(NewsController.class).getAllNews(null, Pageable.unpaged())).withRel("news"));
 
         return newsCommentsModel;
     }

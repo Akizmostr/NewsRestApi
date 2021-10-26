@@ -1,4 +1,4 @@
-package com.example.newsapi.controller.impl.newscontroller;
+package com.example.newsapi.controller.newscontroller;
 
 import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.entity.News;

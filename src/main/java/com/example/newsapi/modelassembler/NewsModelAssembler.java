@@ -1,14 +1,13 @@
 package com.example.newsapi.modelassembler;
 
-import com.example.newsapi.controller.impl.CommentControllerImpl;
-import com.example.newsapi.controller.impl.NewsControllerImpl;
+import com.example.newsapi.controller.CommentController;
+import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -37,9 +36,9 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
 
         //Add links
         EntityModel<NewsDTO> newsModel = EntityModel.of(newsDto);
-        newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
-        newsModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
-        newsModel.add(linkTo(methodOn(NewsControllerImpl.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
+        newsModel.add(linkTo(methodOn(NewsController.class).getNewsById(news.getId(),Pageable.unpaged())).withSelfRel());
+        newsModel.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, news.getId(), Pageable.unpaged())).withRel("comments"));
+        newsModel.add(linkTo(methodOn(NewsController.class).getAllNews(null,Pageable.unpaged())).withRel("news"));
         return newsModel;
     }
 

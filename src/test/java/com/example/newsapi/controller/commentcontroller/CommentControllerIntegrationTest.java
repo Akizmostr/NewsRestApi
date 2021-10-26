@@ -1,4 +1,4 @@
-package com.example.newsapi.controller.impl.commentcontroller;
+package com.example.newsapi.controller.commentcontroller;
 
 import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.entity.Comment;

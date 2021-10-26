@@ -1,19 +1,13 @@
 package com.example.newsapi.modelassembler;
 
-import com.example.newsapi.controller.impl.CommentControllerImpl;
-import com.example.newsapi.controller.impl.NewsControllerImpl;
-import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 
 import java.time.LocalDate;
@@ -22,9 +16,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @ExtendWith(MockitoExtension.class)
 class NewsCommentsAssemblerTest {

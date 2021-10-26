@@ -1,9 +1,8 @@
 package com.example.newsapi.modelassembler;
 
-import com.example.newsapi.controller.impl.CommentControllerImpl;
-import com.example.newsapi.controller.impl.NewsControllerImpl;
+import com.example.newsapi.controller.CommentController;
+import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
-import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +37,9 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
 
         //Add links
         EntityModel<CommentDTO> commentModel = EntityModel.of(commentDto);
-        commentModel.add(linkTo(methodOn(CommentControllerImpl.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
-        commentModel.add(linkTo(methodOn(NewsControllerImpl.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
-        commentModel.add(linkTo(methodOn(CommentControllerImpl.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
+        commentModel.add(linkTo(methodOn(CommentController.class).getCommentById(comment.getNews().getId(), comment.getId())).withSelfRel());
+        commentModel.add(linkTo(methodOn(NewsController.class).getNewsById(comment.getNews().getId(), Pageable.unpaged())).withRel("news"));
+        commentModel.add(linkTo(methodOn(CommentController.class).getAllCommentsByNews(null, comment.getNews().getId(), Pageable.unpaged())).withRel("comments"));
 
         return commentModel;
     }
