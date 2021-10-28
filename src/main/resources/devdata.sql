@@ -23,3 +23,8 @@ INSERT INTO comments(id, creation_date, text, username, news_id) VALUES
 (7, '2021-09-18', 'future is here :)', 'ltech22', 3),
 (8, '2021-09-24', 'шутник', 'kolyain1995', 12);
 
+INSERT INTO role(id, name) VALUES
+(1, 'admin'),
+(2, 'journalist'),
+(3, 'subscriber');
+

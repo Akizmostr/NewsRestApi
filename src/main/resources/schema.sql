@@ -15,3 +15,25 @@ CREATE TABLE IF NOT EXISTS comments
     news_id       INT,
     FOREIGN KEY (news_id) REFERENCES news (id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS user
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username  VARCHAR(100),
+    password VARCHAR(1000)
+);
+
+CREATE TABLE IF NOT EXISTS role
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name  VARCHAR(100)
+);
+
+CREATE TABLE IF NOT EXISTS user_role
+(
+    user_id INT,
+    role_id INT,
+    PRIMARY KEY(user_id, role_id),
+    FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY(role_id) REFERENCES  user(id) ON DELETE CASCADE
+);
