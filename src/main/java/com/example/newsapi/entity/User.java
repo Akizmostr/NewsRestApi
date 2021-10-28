@@ -1,10 +1,12 @@
 package com.example.newsapi.entity;
 
+import lombok.Data;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Set;
 
+@Data
 @Entity
 @Table(name = "user")
 public class User {
