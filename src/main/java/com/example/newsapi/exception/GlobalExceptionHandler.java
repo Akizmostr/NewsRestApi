@@ -34,4 +34,10 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(","));
         return new ErrorInfo(HttpStatus.UNPROCESSABLE_ENTITY.value(), LocalDateTime.now(), message, req.getRequestURL().toString());
     }
+
+    @ExceptionHandler(value = UserAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorInfo userAlreadyExists(HttpServletRequest req, Exception ex){
+        return new ErrorInfo(HttpStatus.CONFLICT.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
+    }
 }

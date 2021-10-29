@@ -3,6 +3,7 @@ package com.example.newsapi.service.impl;
 import com.example.newsapi.dto.UserDTO;
 import com.example.newsapi.entity.Role;
 import com.example.newsapi.entity.User;
+import com.example.newsapi.exception.UserAlreadyExistsException;
 import com.example.newsapi.modelassembler.UserMapper;
 import com.example.newsapi.repository.UserRepository;
 import com.example.newsapi.service.RoleService;
@@ -12,10 +13,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private RoleService roleService;
@@ -31,7 +34,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User save(UserDTO requestedUser) {
+    public UserDTO save(UserDTO requestedUser) {
+        String username = requestedUser.getUsername();
+        if(userRepository.existsByUsername(username))
+            throw new UserAlreadyExistsException("User with username: " + username + " already exists");
         User user = UserMapper.toEntity(requestedUser);
 
         user.setPassword(bcryptEncoder.encode(requestedUser.getPassword()));
@@ -42,13 +48,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setRoles(roleSet);
 
-        return userRepository.save(user);
+        return UserMapper.toModel(userRepository.save(user));
     }
 
     @Override
-    public User findUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found"));
+    public UserDTO findUser(String username) {
+        return UserMapper.toModel(
+                userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found"))
+        );
     }
 
     @Override
