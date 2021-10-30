@@ -10,6 +10,11 @@ logging:
   file:
     name: mylog.log
 
+jwt:
+  secret: H8kOZuauGN
+  token:
+    validity: 259200 #3 days in seconds
+
 ---
 spring:
   config:

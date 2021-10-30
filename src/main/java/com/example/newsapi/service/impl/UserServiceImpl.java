@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private BCryptPasswordEncoder bcryptEncoder;
 
-    public UserServiceImpl(RoleService roleServiceж, UserRepository userRepository, BCryptPasswordEncoder bcryptEncoder) {
-        this.roleService = roleServiceж;
+    public UserServiceImpl(RoleService roleService, UserRepository userRepository, BCryptPasswordEncoder bcryptEncoder) {
+        this.roleService = roleService;
         this.userRepository = userRepository;
         this.bcryptEncoder = bcryptEncoder;
     }
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setPassword(bcryptEncoder.encode(requestedUser.getPassword()));
 
-        Role role = roleService.findByName("subscriber");
+        Role role = roleService.findByName("SUBSCRIBER");
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(role);
 
@@ -63,13 +63,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), getAuthority(user));
+        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), getAuthorities(user));
     }
 
-    private Set<SimpleGrantedAuthority> getAuthority(User user) {
+    private Set<SimpleGrantedAuthority> getAuthorities(User user) {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         user.getRoles().forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
         return authorities;
     }

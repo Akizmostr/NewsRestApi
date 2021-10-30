@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class LoggingHandler {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    @Pointcut("within(com.example.newsapi.controller.impl.*)")
+    @Pointcut("within(com.example.newsapi.controller.*)")
     public void controller() {}
 
     @Pointcut("within(com.example.newsapi.service.impl.*)")
