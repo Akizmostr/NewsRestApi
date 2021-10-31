@@ -6,8 +6,8 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserDTO {
-    @NotBlank
+    @NotBlank(message = "The username is required")
     private String username;
-    @NotBlank
+    @NotBlank(message = "The password is required")
     private String password;
 }

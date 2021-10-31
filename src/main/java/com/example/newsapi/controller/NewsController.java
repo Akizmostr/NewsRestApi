@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -69,6 +70,7 @@ public class NewsController {
      * @return Representation of found News
      */
     @GetMapping("/news/{id}")
+    //@PreAuthorize("hasRole('SUBSCRIBER')")
     public EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
         //Using NewsCommentsDTO and corresponding service to return view of the news and comments
         return newsCommentsService.getNewsCommentsById(id, pageable);
