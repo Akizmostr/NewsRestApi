@@ -8,7 +8,6 @@ import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.CommentModelAssembler;
 import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
-import com.sun.xml.bind.v2.TODO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -97,7 +96,7 @@ class CommentServiceImplTest {
     void whenFindCommentByIdAndNewsNotFound_thenNewsNotFoundException(){
         when(newsRepository.existsById(anyLong())).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentById(1, 1));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentByNews(1, 1));
 
     }
 
@@ -106,7 +105,7 @@ class CommentServiceImplTest {
         when(newsRepository.existsById(anyLong())).thenReturn(true);
         when(commentRepository.findAllByNewsId(anyLong())).thenReturn(Optional.of(Collections.emptyList()));
 
-        assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentById(1, 1));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.getCommentByNews(1, 1));
 
     }
 

@@ -14,7 +14,7 @@ INSERT INTO news (id, creation_date, title, text) VALUES
 (13, '2021-08-15', 'В МЧС за сутки поступило 5 сообщений о потерявшихся в лесу', 'Работниками МЧС обнаружены 2 человека. Не найдены 5 человек в Столинском районе Брестской области, поиски которых продолжаются.');
 
 INSERT INTO comments(id, creation_date, text, username, news_id) VALUES
-(1, '2021-09-22', 'stay safe', 'jon21', 1),
+(1, '2021-09-22', 'stay safe', 'user1', 1),
 (2, '2021-09-22', 'agree', 'lolsvc', 1),
 (3, '2021-09-23', 'poor children', 'molj', 1),
 (4, '2023-04-19', 'who watches it in 2023?', 'guyfromfuture', 1),

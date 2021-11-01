@@ -1,5 +1,6 @@
 package com.example.newsapi.config.security;
 
+import com.example.newsapi.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,12 +12,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity( prePostEnabled = true )
+
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     JwtTokenFilter jwtTokenFilter;
@@ -28,17 +32,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests()
-                .antMatchers("/users/**").permitAll()
-                //.antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers("/news/").hasAnyRole("ADMIN", "JOURNALIST", "SUBSCRIBER")
-                //.antMatchers(HttpMethod.POST, "/news").hasAnyRole("ADMIN", "JOURNALIST")
-                //.antMatchers(HttpMethod.PUT, "/news/*").hasAnyRole("ADMIN", "JOURNALIST")
-                //.antMatchers(HttpMethod.DELETE, "/news/*").hasAnyRole("ADMIN", "JOURNALIST")
-                //.antMatchers(HttpMethod.POST, "/news/*/comments").hasAnyRole("ADMIN", "JOURNALIST", "SUBSCRIBER")
-                //.antMatchers(HttpMethod.PUT, "/news/*/comments/*").hasAnyRole("ADMIN", "JOURNALIST", "SUBSCRIBER")
-                //.antMatchers(HttpMethod.DELETE, "/news/*/comments/*").hasAnyRole("ADMIN", "JOURNALIST", "SUBSCRIBER")
-                .antMatchers("/h2-console/**").permitAll();
-                //.anyRequest().authenticated();
+                .mvcMatchers("/users/**").permitAll()
+                .mvcMatchers(HttpMethod.GET).permitAll()
+                .mvcMatchers(HttpMethod.POST, "/news").hasAnyAuthority("ADMIN", "JOURNALIST")
+                .mvcMatchers(HttpMethod.PUT, "/news/*").hasAnyAuthority("ADMIN", "JOURNALIST")
+                .mvcMatchers(HttpMethod.DELETE, "/news/*").hasAnyAuthority("ADMIN", "JOURNALIST")
+                .mvcMatchers(HttpMethod.POST, "/news/*/comments").hasAnyAuthority("ADMIN", "SUBSCRIBER")
+                .mvcMatchers(HttpMethod.PUT, "/news/*/comments/{commentId}").access("hasAuthority('ADMIN') or @userSecurity.commentBelongsToUser(authentication, #commentId)")
+                .mvcMatchers(HttpMethod.DELETE, "/news/*/comments/{commentId}").access("hasAuthority('ADMIN') or @userSecurity.commentBelongsToUser(authentication, #commentId)")
+                .mvcMatchers("/h2-console/**").permitAll();
 
         http.headers().frameOptions().disable();
 
@@ -60,4 +62,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults(""); // Remove the ROLE_ prefix
     }
+
 }

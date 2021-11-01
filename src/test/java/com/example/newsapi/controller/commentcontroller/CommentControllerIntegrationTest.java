@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = NewsapiApplication.class)
 @ExtendWith(SpringExtension.class)
 @AutoConfigureTestDatabase
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false) //addFilters = false disables authentication
 @ActiveProfiles("test")
 class CommentControllerIntegrationTest {
     @Autowired

@@ -67,7 +67,7 @@ public class CommentController {
      */
     @GetMapping("/news/{newsId}/comments/{commentId}")
     public EntityModel<CommentDTO> getCommentById(@PathVariable long newsId, @PathVariable long commentId) {
-        return commentService.getCommentById(newsId, commentId);
+        return commentService.getCommentByNews(newsId, commentId);
     }
 
     /**

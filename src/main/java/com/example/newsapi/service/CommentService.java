@@ -19,7 +19,7 @@ public interface CommentService {
      * @param spec Specification which contains criteria for search
      * @param newsId id property of the news
      * @param pageable Pageable object with pagination information
-     * @return PagedModel of CommentDTO
+     * @return {@link PagedModel} of {@link CommentDTO}
      * @throws ResourceNotFoundException if news was not found
      */
     PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(Specification<Comment> spec, long newsId, Pageable pageable);
@@ -32,7 +32,15 @@ public interface CommentService {
      * @return Representation of found comment
      * @throws ResourceNotFoundException if news or comment was not found
      */
-    EntityModel<CommentDTO> getCommentById(long newsId, long commentId);
+    EntityModel<CommentDTO> getCommentByNews(long newsId, long commentId);
+
+    /**
+     * Finds comment by its id
+     *
+     * @param commentId
+     * @return {@link CommentDTO}
+     */
+    EntityModel<CommentDTO> getCommentById(long commentId);
 
     /**
      * Saves provided comment in repository

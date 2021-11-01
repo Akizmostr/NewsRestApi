@@ -70,7 +70,6 @@ public class NewsController {
      * @return Representation of found News
      */
     @GetMapping("/news/{id}")
-    //@PreAuthorize("hasRole('SUBSCRIBER')")
     public EntityModel<NewsCommentsDTO> getNewsById(@PathVariable(name = "id") long id, Pageable pageable){
         //Using NewsCommentsDTO and corresponding service to return view of the news and comments
         return newsCommentsService.getNewsCommentsById(id, pageable);

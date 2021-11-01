@@ -73,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public EntityModel<CommentDTO> getCommentById(long newsId, long commentId){
+    public EntityModel<CommentDTO> getCommentByNews(long newsId, long commentId){
         if(!newsRepository.existsById(newsId))
             throw new ResourceNotFoundException("Not found News with id " + newsId);
 
@@ -83,6 +83,14 @@ public class CommentServiceImpl implements CommentService {
                 .findFirst()
                 .map(assembler::toModel) //map found entity to dto
                 .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId));
+    }
+
+    @Override
+    public EntityModel<CommentDTO> getCommentById(long commentId) {
+        return assembler.toModel(
+                commentRepository.findById(commentId)
+                        .orElseThrow(()->new ResourceNotFoundException("Not found Comment with id " + commentId))
+        );
     }
 
     @Override
