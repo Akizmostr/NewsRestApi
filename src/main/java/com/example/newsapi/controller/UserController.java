@@ -30,29 +30,26 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody @Valid UserDTO request){
-        try {
-            Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+    public ResponseEntity<AuthResponse>  login(@RequestBody @Valid UserDTO request){
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-            //User user = (User) authentication.getPrincipal();
-            //User user = userService.findUser(request.getUsername());
-            String token = jwtTokenUtil.generateToken(authentication);
+        //User user = (User) authentication.getPrincipal();
+        //User user = userService.findUser(request.getUsername());
+        String token = jwtTokenUtil.generateToken(authentication);
 
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .body(new AuthResponse(token));
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .body(new AuthResponse(token));
     }
 
     @PostMapping("/users/register")
-    public UserDTO saveUser(@Valid @RequestBody UserDTO user){
-        return userService.save(user);
+    public ResponseEntity<String> saveUser(@Valid @RequestBody UserDTO user){
+        userService.save(user);
+        return new ResponseEntity<>("User was successfully registered", HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
+    @PostMapping("/users/{id}")
     public ResponseEntity<String> addRoles(@Valid @RequestBody AddUserRolesDTO roles,@PathVariable(name = "id") long id){
         return ResponseEntity.ok().body(userService.addRoles(roles, id));
     }

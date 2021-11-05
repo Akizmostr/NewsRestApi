@@ -2,6 +2,8 @@ package com.example.newsapi.exception;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,5 +41,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorInfo userAlreadyExists(HttpServletRequest req, Exception ex){
         return new ErrorInfo(HttpStatus.CONFLICT.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
+    }
+
+    @ExceptionHandler(value = BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorInfo badCredentials(HttpServletRequest req, Exception ex){
+        return new ErrorInfo(HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
     }
 }

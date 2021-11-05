@@ -4,7 +4,6 @@ import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.UserDTO;
 
 public interface UserService {
-    UserDTO save(UserDTO user);
-    UserDTO findUser(String username);
+    void save(UserDTO user);
     String addRoles(AddUserRolesDTO newRoles,long id);
 }

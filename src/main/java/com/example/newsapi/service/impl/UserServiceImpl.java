@@ -1,5 +1,6 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.config.security.RoleConstants;
 import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.UserDTO;
 import com.example.newsapi.entity.Role;
@@ -37,7 +38,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDTO save(UserDTO requestedUser) {
+    public void save(UserDTO requestedUser) {
         String username = requestedUser.getUsername();
         if(userRepository.existsByUsername(username))
             throw new UserAlreadyExistsException("User with username: " + username + " already exists");
@@ -45,21 +46,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         user.setPassword(bcryptEncoder.encode(requestedUser.getPassword()));
 
-        Role role = roleService.findByName("SUBSCRIBER");
+        Role role = roleService.findByName(RoleConstants.SUBSCRIBER);
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(role);
 
         user.setRoles(roleSet);
 
-        return UserMapper.toModel(userRepository.save(user));
-    }
-
-    @Override
-    public UserDTO findUser(String username) {
-        return UserMapper.toModel(
-                userRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User with username: " + username + " not found"))
-        );
+        userRepository.save(user);
     }
 
     @Override

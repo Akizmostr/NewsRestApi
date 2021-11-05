@@ -25,8 +25,15 @@ public class UserSecurity {
             if (commentService.getCommentById(commentId).getContent().getUsername().equals(username))
                 return true;
         }catch (ResourceNotFoundException ex){
-            HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-            response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+            /*HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+            response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());*/
+
+            /*
+            BAD?
+            GlobalExceptionHandler works only through controllers
+            we return true, user gets access but then ResourceNotFoundException is thrown again
+            and then  GlobalExceptionHandler handles it
+            */
             return true;
         }
         return false;
