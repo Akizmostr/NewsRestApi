@@ -1,8 +1,10 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.UserDTO;
 import com.example.newsapi.entity.Role;
 import com.example.newsapi.entity.User;
+import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.exception.UserAlreadyExistsException;
 import com.example.newsapi.modelassembler.UserMapper;
 import com.example.newsapi.repository.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
@@ -64,6 +67,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
         return new org.springframework.security.core.userdetails.User(username, user.getPassword(), getAuthorities(user));
+    }
+
+    @Override
+    public String addRoles(AddUserRolesDTO newRoles, long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found"));
+
+        Set<String> stringRolesSet = new HashSet<>();
+        user.getRoles().forEach(role -> stringRolesSet.add(role.getName()));
+
+        Set<String> newStringRolesSet = new HashSet<>(newRoles.getRoles());
+        newStringRolesSet = newStringRolesSet.stream().map(String::toUpperCase).collect(Collectors.toSet());
+
+        Set<Role> roles = new HashSet<>(user.getRoles());
+
+        for (String role : newStringRolesSet){
+            if (!stringRolesSet.contains(role)){
+                roles.add(roleService.findByName(role));
+            }
+        }
+        user.setRoles(roles);
+
+        return userRepository.save(user).getRoles().toString();
     }
 
     private Set<SimpleGrantedAuthority> getAuthorities(User user) {

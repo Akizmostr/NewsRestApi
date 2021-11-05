@@ -2,8 +2,8 @@ package com.example.newsapi.controller;
 
 import com.example.newsapi.config.security.TokenProvider;
 import com.example.newsapi.dto.AuthResponse;
+import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.UserDTO;
-import com.example.newsapi.entity.User;
 import com.example.newsapi.service.UserService;
 import com.example.newsapi.service.impl.UserServiceImpl;
 import org.springframework.http.HttpHeaders;
@@ -13,9 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -52,5 +50,10 @@ public class UserController {
     @PostMapping("/users/register")
     public UserDTO saveUser(@Valid @RequestBody UserDTO user){
         return userService.save(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<String> addRoles(@Valid @RequestBody AddUserRolesDTO roles,@PathVariable(name = "id") long id){
+        return ResponseEntity.ok().body(userService.addRoles(roles, id));
     }
 }
