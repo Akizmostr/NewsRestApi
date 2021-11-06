@@ -37,6 +37,21 @@ public class TestUtils {
         );
     }
 
+    public static ResultMatcher conflictStatus(){
+        return ResultMatcher.matchAll(
+                status().isConflict(),
+                jsonPath("$.statusCode", is(409))
+        );
+    }
+
+    public static ResultMatcher badCredentials(){
+        return ResultMatcher.matchAll(
+                status().isUnauthorized(),
+                jsonPath("$.statusCode", is(401)),
+                jsonPath("$.message", is("Bad credentials"))
+        );
+    }
+
     public static ResultMatcher invalidTextMessage(){
         return ResultMatcher.matchAll(
                 jsonPath("$.message", containsString("The text is required"))
@@ -52,6 +67,12 @@ public class TestUtils {
     public static ResultMatcher invalidUsernameMessage(){
         return ResultMatcher.matchAll(
                 jsonPath("$.message", containsString("The username is required"))
+        );
+    }
+
+    public static ResultMatcher invalidPasswordMessage(){
+        return ResultMatcher.matchAll(
+                jsonPath("$.message", containsString("The password is required"))
         );
     }
 

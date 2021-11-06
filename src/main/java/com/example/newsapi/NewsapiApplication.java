@@ -2,6 +2,7 @@ package com.example.newsapi;
 
 import com.example.newsapi.entity.News;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
+import com.example.newsapi.modelassembler.UserMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +19,11 @@ public class NewsapiApplication {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public UserMapper userMapper() {
+        return new UserMapper();
     }
 
     @Bean

@@ -23,3 +23,15 @@ INSERT INTO comments(id, news_id, creation_date, text, username) VALUES
 (14, 5, '2021-01-06', 'comment14', 'user2'),
 (15, 5, '2021-01-07', 'comment15', 'user3');
 
+INSERT INTO role(id, name) VALUES
+(1, 'ADMIN'),
+(2, 'JOURNALIST'),
+(3, 'SUBSCRIBER');
+
+INSERT INTO user(id, username, password) VALUES
+(1, 'admin', '$2a$12$R2Yk6AGg9guPRvlRUi/MsOBwwY1no7ikjW/oO/tUiTBj8QCIr.w.a'), -- password = password
+(2, 'user1', '$2a$12$NDetGlcMW.s9NatomPv/Se/tVdvXI5Mu/oFSB6ckeS08647xYofNO'); -- password = password
+
+INSERT INTO user_role(user_id, role_id) VALUES
+(1, 1),
+(2, 3);

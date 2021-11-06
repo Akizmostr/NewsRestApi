@@ -1,8 +1,10 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.UserDTO;
 import com.example.newsapi.entity.Role;
 import com.example.newsapi.entity.User;
+import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.UserMapper;
 import com.example.newsapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +41,9 @@ class UserServiceImplTest {
     @Mock
     RoleServiceImpl roleService;
 
+    @Mock
+    UserMapper userMapper;
+
     User user1;
     Role subscriberRole;
     Role journalistRole;
@@ -53,13 +58,12 @@ class UserServiceImplTest {
     }
 
     @Test
-    void whenSaveUserAndUserFound_thenSaveUser() {
+    void whenSaveUserAndUserFound_thenUserWithEncodedPasswordAndDefaultRoleIsSaved() {
         UserDTO requestedUserDto = new UserDTO("username", "password");
         User user = new User(1, "username", "password", null);
-        //User user = new User(1, "username", "password", new HashSet<>(Arrays.asList(subscriberRole)));
 
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
-        //when(UserMapper.toEntity(any(UserDTO.class))).thenReturn(user);
+        when(userMapper.toEntity(any(UserDTO.class))).thenReturn(user);
         when(roleService.findByName(anyString())).thenReturn(subscriberRole);
         when(bcryptEncoder.encode(anyString())).thenReturn("encoded password");
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -97,6 +101,30 @@ class UserServiceImplTest {
     }
 
     @Test
-    void addRoles() {
+    void whenAddRolesAndUserFound_thenOnlyNewRolesAreAdded() {
+        AddUserRolesDTO additionalRolesDto = new AddUserRolesDTO(List.of("JOURNALIST", "ADMIN"));
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
+        when(roleService.findByName(journalistRole.getName())).thenReturn(journalistRole);
+        when(roleService.findByName(adminRole.getName())).thenReturn(adminRole);
+        when(userRepository.save(any(User.class))).thenReturn(user1);
+
+        String result = userService.addRoles(additionalRolesDto, 1);
+
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(roleService, times(2)).findByName(anyString());
+        assertEquals(3, user1.getRoles().size());
+        assertTrue(user1.getRoles().contains(subscriberRole));
+        assertTrue(user1.getRoles().contains(journalistRole));
+        assertTrue(user1.getRoles().contains(adminRole));
+        assertTrue(result.contains(subscriberRole.getName()));
+        assertTrue(result.contains(journalistRole.getName()));
+        assertTrue(result.contains(adminRole.getName()));
+    }
+
+    @Test
+    void whenAddRolesAndUserNotFound_thenNotFoundException(){
+        AddUserRolesDTO additionalRolesDto = new AddUserRolesDTO(List.of("JOURNALIST", "ADMIN"));
+        assertThrows(ResourceNotFoundException.class, () -> userService.addRoles(additionalRolesDto, 1));
     }
 }

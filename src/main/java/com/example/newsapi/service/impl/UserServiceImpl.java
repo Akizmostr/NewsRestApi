@@ -31,10 +31,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private BCryptPasswordEncoder bcryptEncoder;
 
-    public UserServiceImpl(RoleService roleService, UserRepository userRepository, BCryptPasswordEncoder bcryptEncoder) {
+    private UserMapper userMapper;
+
+    public UserServiceImpl(RoleService roleService, UserRepository userRepository, BCryptPasswordEncoder bcryptEncoder, UserMapper userMapper) {
         this.roleService = roleService;
         this.userRepository = userRepository;
         this.bcryptEncoder = bcryptEncoder;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String username = requestedUser.getUsername();
         if(userRepository.existsByUsername(username))
             throw new UserAlreadyExistsException("User with username: " + username + " already exists");
-        User user = UserMapper.toEntity(requestedUser);
+        User user = userMapper.toEntity(requestedUser);
 
         user.setPassword(bcryptEncoder.encode(requestedUser.getPassword()));
 
