@@ -15,6 +15,11 @@ jwt:
   token:
     validity: 259200 #3 days in seconds
 
+springdoc:
+  model-converters:
+    pageable-converter:
+      enabled: true
+
 ---
 spring:
   config:

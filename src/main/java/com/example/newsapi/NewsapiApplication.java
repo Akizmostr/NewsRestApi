@@ -3,6 +3,8 @@ package com.example.newsapi;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.modelassembler.UserMapper;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,4 +40,10 @@ public class NewsapiApplication {
         SpringApplication.run(NewsapiApplication.class, args);
     }
 
+    @Bean
+    public OpenAPI customOpenApi() {
+        return new OpenAPI().info(new Info().title("Application API")
+                .version("0.0.1")
+                .description("Rest api for news management system"));
+    }
 }
