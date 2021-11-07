@@ -1,6 +1,7 @@
 package com.example.newsapi.controller.usercontroller;
 
 import com.example.newsapi.NewsapiApplication;
+import com.example.newsapi.dto.AddUserRolesDTO;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.dto.UserDTO;
 import com.example.newsapi.repository.NewsRepository;
@@ -17,6 +18,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import static com.example.newsapi.testutils.TestUtils.badCredentials;
 import static com.example.newsapi.testutils.TestUtils.conflictStatus;
@@ -125,4 +128,48 @@ class UserControllerIntegrationTest {
                 .andExpect(conflictStatus())
                 .andExpect(jsonPath("$.message", is("User with username: user1 already exists")));
     }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void whenAddValidRolesAndUserFound_thenReturnCorrectNewRoles() throws Exception{
+        AddUserRolesDTO addedRoles = new AddUserRolesDTO(List.of("admin", "journalist"));
+
+        mockMvc.perform(postJson("/users/2", addedRoles))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect((content().string("[Role{name='SUBSCRIBER'}, Role{name='ADMIN'}, Role{name='JOURNALIST'}]")));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    void whenAddValidRolesAndUserNotFound_thenNotFoundResponse() throws Exception{
+        AddUserRolesDTO addedRoles = new AddUserRolesDTO(List.of("admin", "journalist"));
+
+        mockMvc.perform(postJson("/users/999", addedRoles))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("User with id: 999 not found")));
+    }
+
+    @Test
+    void whenAddInvalidRoles_thenErrorResponse() throws Exception{
+        AddUserRolesDTO addedRoles = new AddUserRolesDTO(List.of("invalid role"));
+
+        mockMvc.perform(postJson("/users/2", addedRoles))
+                .andDo(print())
+                .andExpect(invalidEntityStatus())
+                .andExpect(jsonPath("$.message", is("Invalid role")));
+    }
+
+    @Test
+    void whenAddEmptyRolesList_thenErrorResponse() throws Exception{
+        AddUserRolesDTO addedRoles = new AddUserRolesDTO(Collections.emptyList());
+
+        mockMvc.perform(postJson("/users/2", addedRoles))
+                .andDo(print())
+                .andExpect(invalidEntityStatus())
+                .andExpect(jsonPath("$.message", is("Must not be empty")));
+    }
+
+    
 }

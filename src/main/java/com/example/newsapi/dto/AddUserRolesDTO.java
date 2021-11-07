@@ -3,6 +3,7 @@ package com.example.newsapi.dto;
 import com.example.newsapi.config.security.RoleConstants;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.List;
@@ -17,6 +18,6 @@ import static com.example.newsapi.config.security.RoleConstants.*;
 @NoArgsConstructor
 public class AddUserRolesDTO {
 
-    @NotNull(message = "Must not be null")
-    List<@Pattern(regexp = "admin|subscriber|journalist", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Some roles don't exist") String> roles;
+    @NotEmpty(message = "Must not be empty")
+    List<@Pattern(regexp = "admin|subscriber|journalist", flags = Pattern.Flag.CASE_INSENSITIVE, message = "Invalid role") String> roles;
 }
