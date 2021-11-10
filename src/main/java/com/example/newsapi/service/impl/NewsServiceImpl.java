@@ -1,12 +1,15 @@
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.entity.User;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.NewsService;
+import com.example.newsapi.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,10 +43,13 @@ public class NewsServiceImpl implements NewsService {
      */
     private PagedResourcesAssembler<News> pagedAssembler;
 
-    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler, PagedResourcesAssembler<News> pagedAssembler) {
+    private UserService userService;
+
+    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler, PagedResourcesAssembler<News> pagedAssembler, UserServiceImpl userService) {
         this.newsRepository = newsRepository;
         this.assembler = assembler;
         this.pagedAssembler = pagedAssembler;
+        this.userService = userService;
     }
 
     @Override
@@ -52,9 +60,13 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public EntityModel<NewsDTO> createNews(NewsDTO news){
+    public EntityModel<NewsDTO> createNews(PostNewsDTO newsDTO){
+        News news = assembler.toEntity(newsDTO);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userService.getUserByUsername(userDetails.getUsername());
+        news.setUser(user);
         return assembler.toModel(
-                newsRepository.save(assembler.toEntity(news))
+                newsRepository.save(news)
         );
     }
 

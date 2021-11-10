@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS news
     title         VARCHAR(150),
     text          VARCHAR(20000),
     user_id       INT,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE NO ACTION
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS comments

@@ -3,8 +3,10 @@ package com.example.newsapi.modelassembler;
 import com.example.newsapi.controller.CommentController;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -32,6 +34,8 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
     public EntityModel<NewsDTO> toModel(News news) {
         //Convert entity to DTO
         ModelMapper modelMapper = new ModelMapper();
+        TypeMap<News, NewsDTO> propertyMapper = modelMapper.createTypeMap(News.class, NewsDTO.class);
+        propertyMapper.addMapping(src -> src.getUser().getUsername(), NewsDTO::setUsername);
         NewsDTO newsDto = modelMapper.map(news, NewsDTO.class);
 
         //Add links
@@ -58,6 +62,20 @@ public class NewsModelAssembler implements RepresentationModelAssembler<News, En
         });
 
         return CollectionModel.of(news);
+    }
+
+    /**
+     * Converts PostNewsDTO object to News entity
+     *
+     * @param newsDto newsDTO object to convert
+     * @return News entity
+     */
+    public News toEntity(PostNewsDTO newsDto){
+        //convert dto to entity
+        ModelMapper modelMapper = new ModelMapper();
+        News news = modelMapper.map(newsDto, News.class);
+
+        return news;
     }
 
     /**

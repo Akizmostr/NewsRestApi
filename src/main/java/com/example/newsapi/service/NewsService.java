@@ -1,6 +1,7 @@
 package com.example.newsapi.service;
 
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.exception.ResourceNotFoundException;
@@ -28,7 +29,7 @@ public interface NewsService {
      * @param news NewsDTO object which contains properties to save
      * @return Representation of currently saved news
      */
-    EntityModel<NewsDTO> createNews(NewsDTO news);
+    EntityModel<NewsDTO> createNews(PostNewsDTO news);
 
     /**
      * Finds news by id

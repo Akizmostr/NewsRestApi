@@ -2,6 +2,7 @@ package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.NewsCommentsDTO;
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.service.NewsCommentsService;
@@ -58,7 +59,7 @@ public class NewsController {
      * @return Representation of currently saved news
      */
     @PostMapping("/news")
-    public EntityModel<NewsDTO> createNews(@Valid @RequestBody NewsDTO news){
+    public EntityModel<NewsDTO> createNews(@Valid @RequestBody PostNewsDTO news){
         return newsService.createNews(news);
     }
 

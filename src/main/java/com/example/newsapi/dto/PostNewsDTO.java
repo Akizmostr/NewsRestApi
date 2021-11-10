@@ -1,10 +1,7 @@
 package com.example.newsapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
@@ -14,14 +11,17 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Relation(collectionRelation = "news")
 @EqualsAndHashCode
-public class NewsDTO {
+public class PostNewsDTO {
+    @JsonIgnore
+    private long id;
+
     private LocalDate date = LocalDate.now();
 
+    @NotBlank(message = "The text is required")
     private String text;
 
+    @NotBlank(message = "The title is required")
     private String title;
-
-    private String username;
 }
+
