@@ -1,6 +1,7 @@
 package com.example.newsapi.controller;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.PostCommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.service.CommentService;
@@ -14,6 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -54,7 +57,8 @@ public class CommentController {
      * @return Representation of currently saved comment
      */
     @PostMapping("/news/{newsId}/comments")
-    public EntityModel<CommentDTO> createComment(@Valid @RequestBody CommentDTO comment, @PathVariable long newsId) {
+    public EntityModel<CommentDTO> createComment(@Valid @RequestBody PostCommentDTO comment, @PathVariable long newsId, @AuthenticationPrincipal User user) {
+        comment.setUsername(user.getUsername());
         return commentService.createComment(comment, newsId);
     }
 

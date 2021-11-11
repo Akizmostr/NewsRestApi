@@ -3,6 +3,7 @@ package com.example.newsapi.modelassembler;
 import com.example.newsapi.controller.CommentController;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.PostCommentDTO;
 import com.example.newsapi.entity.Comment;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
@@ -68,6 +69,14 @@ public class CommentModelAssembler implements RepresentationModelAssembler<Comme
      * @return Comment entity
      */
     public Comment toEntity(CommentDTO commentDto){
+        //convert dto to entity
+        ModelMapper modelMapper = new ModelMapper();
+        Comment comment = modelMapper.map(commentDto, Comment.class);
+
+        return comment;
+    }
+
+    public Comment toEntity(PostCommentDTO commentDto){
         //convert dto to entity
         ModelMapper modelMapper = new ModelMapper();
         Comment comment = modelMapper.map(commentDto, Comment.class);

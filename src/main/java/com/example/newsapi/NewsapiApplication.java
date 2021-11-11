@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.web.PagedResourcesAssembler;
 
+import java.time.Clock;
 import java.util.Locale;
 
 @SpringBootApplication
@@ -36,8 +37,9 @@ public class NewsapiApplication {
         return messageSource;
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(NewsapiApplication.class, args);
+    @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
     }
 
     @Bean
@@ -46,4 +48,10 @@ public class NewsapiApplication {
                 .version("0.0.1")
                 .description("Rest api for news management system"));
     }
+
+    public static void main(String[] args) {
+        SpringApplication.run(NewsapiApplication.class, args);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.newsapi.service;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.PostCommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.exception.ResourceNotFoundException;
@@ -50,7 +51,7 @@ public interface CommentService {
      * @return Representation of currently saved comment
      * @throws ResourceNotFoundException if news was not found
      */
-    EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId);
+    EntityModel<CommentDTO> createComment(PostCommentDTO commentDto, long newsId);
 
     /**
      * Updates comment

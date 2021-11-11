@@ -17,11 +17,12 @@ import java.time.LocalDate;
 @Relation(collectionRelation = "news")
 @EqualsAndHashCode
 public class NewsDTO {
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     private String text;
 
     private String title;
 
+    @JsonProperty("author")
     private String username;
 }

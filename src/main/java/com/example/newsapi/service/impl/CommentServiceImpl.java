@@ -1,6 +1,7 @@
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.PostCommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.exception.ResourceNotFoundException;
@@ -94,7 +95,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public EntityModel<CommentDTO> createComment(CommentDTO commentDto, long newsId){
+    public EntityModel<CommentDTO> createComment(PostCommentDTO commentDto, long newsId){
         return assembler.toModel(
                 newsRepository.findById(newsId).map(news -> {
                     Comment comment = assembler.toEntity(commentDto); //create Comment object from dto

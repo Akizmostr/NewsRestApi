@@ -17,9 +17,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.time.Clock;
+import java.time.LocalDate;
 
 /**
  * Service implementation class for News
@@ -45,11 +46,14 @@ public class NewsServiceImpl implements NewsService {
 
     private UserService userService;
 
-    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler, PagedResourcesAssembler<News> pagedAssembler, UserServiceImpl userService) {
+    private Clock clock;
+
+    public NewsServiceImpl(NewsRepository newsRepository, NewsModelAssembler assembler, PagedResourcesAssembler<News> pagedAssembler, UserServiceImpl userService, Clock clock) {
         this.newsRepository = newsRepository;
         this.assembler = assembler;
         this.pagedAssembler = pagedAssembler;
         this.userService = userService;
+        this.clock = clock;
     }
 
     @Override
@@ -62,9 +66,9 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public EntityModel<NewsDTO> createNews(PostNewsDTO newsDTO){
         News news = assembler.toEntity(newsDTO);
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userService.getUserByUsername(userDetails.getUsername());
+        User user = userService.getUserByUsername(newsDTO.getUsername());
         news.setUser(user);
+        news.setDate(LocalDate.now(clock));
         return assembler.toModel(
                 newsRepository.save(news)
         );

@@ -20,6 +20,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
@@ -59,7 +62,8 @@ public class NewsController {
      * @return Representation of currently saved news
      */
     @PostMapping("/news")
-    public EntityModel<NewsDTO> createNews(@Valid @RequestBody PostNewsDTO news){
+    public EntityModel<NewsDTO> createNews(@Valid @RequestBody PostNewsDTO news, @AuthenticationPrincipal User user){
+        news.setUsername(user.getUsername());
         return newsService.createNews(news);
     }
 

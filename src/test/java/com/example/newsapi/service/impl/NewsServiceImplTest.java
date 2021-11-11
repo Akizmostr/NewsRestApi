@@ -1,11 +1,17 @@
 package com.example.newsapi.service.impl;
 
+import com.example.newsapi.config.security.RoleConstants;
 import com.example.newsapi.dto.NewsDTO;
+import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.entity.Role;
+import com.example.newsapi.entity.User;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
+import com.example.newsapi.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,11 +24,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -40,6 +47,30 @@ class NewsServiceImplTest {
 
     @Mock
     PagedResourcesAssembler<News> pagedAssembler;
+
+    @Mock
+    private UserServiceImpl userService;
+
+    @Mock
+    private Clock clock;
+
+    //field that will contain the fixed clock
+    private Clock fixedClock;
+
+    Role subscriberRole;
+    Role journalistRole;
+    Role adminRole;
+    User user1;
+    LocalDate date = LocalDate.of(2021, 9, 9);
+
+    @BeforeEach
+    void setup(){
+        subscriberRole = new Role(1, "SUBSCRIBER");
+        journalistRole = new Role(2, "JOURNALIST");
+        adminRole = new Role(3, "ADMIN");
+        Set<Role> roles1 = new HashSet<>(Collections.singleton(journalistRole));
+        user1 = new User(1, "username", "password", roles1, null);
+    }
 
     @Test
     void whenFindNewsNotFound_thenNotFoundException() {
@@ -60,38 +91,31 @@ class NewsServiceImplTest {
 
     @Test
     void whenCreateValidNews_thenSuccess(){
-        News news = new News();
-        news.setDate(LocalDate.parse("2021-09-09"));
-        news.setId(1);
-        news.setText("test text");
-        news.setTitle("test title");
-        news.setComments(null);
+        News news = new News(1, LocalDate.parse("2021-09-09"), "test text", "test title", null, null);
+        PostNewsDTO postNewsDto = new PostNewsDTO("test text", "test title", "username");
+        NewsDTO newsDto = new NewsDTO(LocalDate.parse("2021-09-09"), "test text", "test title", "username");
 
-        NewsDTO newsDto = new NewsDTO();
-        newsDto.setDate(LocalDate.parse("2021-09-09"));
-        newsDto.setId(1);
-        newsDto.setText("test text");
-        newsDto.setTitle("test title");
-
+        when(assembler.toEntity(any(PostNewsDTO.class))).thenReturn(news);
+        when(userService.getUserByUsername(anyString())).thenReturn(user1);
         when(newsRepository.save(any(News.class))).thenReturn(news);
-        when(assembler.toEntity(any(NewsDTO.class))).thenReturn(news);
         when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(newsDto));
 
-        NewsDTO savedNewsDto = newsService.createNews(newsDto).getContent();
+        NewsDTO savedNewsDto = newsService.createNews(postNewsDto).getContent();
 
         assertNotNull(savedNewsDto);
         assertEquals(savedNewsDto, newsDto);
+        assertEquals(user1, news.getUser());
 
         verify(newsRepository, times(1)).save(any(News.class));
     }
 
     @Test
     void whenGetAllNews_thenSuccess(){
-        News news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        News news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null);
+        News news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null, user1);
+        News news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null, user1);
 
-        NewsDTO newsDto1 = new NewsDTO(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
-        NewsDTO newsDto2 = new NewsDTO(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2");
+        NewsDTO newsDto1 = new NewsDTO(LocalDate.parse("2021-09-09"), "test text 1", "test title 1", user1.getUsername());
+        NewsDTO newsDto2 = new NewsDTO(LocalDate.parse("2021-09-09"), "test text 2", "test title 2", user1.getUsername());
 
         List<News> news = new ArrayList();
         news.add(news1);
@@ -126,18 +150,18 @@ class NewsServiceImplTest {
 
     @Test
     void whenGetNewsById_thenSuccess(){
-        long id = 1;
-        News news = new News(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        NewsDTO newsDto = new NewsDTO(id, LocalDate.parse("2021-09-09"), "test text 1", "test title 1");
+        News news = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null, user1);
+        NewsDTO newsDto = new NewsDTO(LocalDate.parse("2021-09-09"), "test text 1", "test title 1", user1.getUsername());
 
-        when(newsRepository.findById(id)).thenReturn(Optional.of(news));
+        when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news));
         when(assembler.toModel(any(News.class))).thenReturn(EntityModel.of(newsDto));
 
-        NewsDTO result = newsService.getNewsById(id).getContent();
+        NewsDTO result = newsService.getNewsById(1).getContent();
 
         assertNotNull(result);
-        assertEquals(id, result.getId());
-        assertEquals(newsDto, result);
+
+        verify(newsRepository, times(1)).findById(anyLong());
+
     }
 
     @Test
@@ -158,9 +182,9 @@ class NewsServiceImplTest {
         requestedNewsDto.setTitle("new title");
         long id = 1;
 
-        News newsToUpdate = new News(id, null, "text", "title", null);
+        News newsToUpdate = new News(id, null, "text", "title", null, user1);
 
-        NewsDTO updatedNewsDto = new NewsDTO(id, null, "text", "new title");
+        NewsDTO updatedNewsDto = new NewsDTO(null, "text", "new title", "username");
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
         when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
@@ -183,9 +207,9 @@ class NewsServiceImplTest {
         requestedNewsDto.setTitle(null);
         long id = 1;
 
-        News newsToUpdate = new News(id, null, "text", "title", null);
+        News newsToUpdate = new News(id, null, "text", "title", null, user1);
 
-        NewsDTO updatedNewsDto = new NewsDTO(id, null, "new text", "title");
+        NewsDTO updatedNewsDto = new NewsDTO(null, "new text", "title", user1.getUsername());
 
         when(newsRepository.findById(id)).thenReturn(Optional.of(newsToUpdate));
         when(newsRepository.save(any(News.class))).thenReturn(newsToUpdate);
