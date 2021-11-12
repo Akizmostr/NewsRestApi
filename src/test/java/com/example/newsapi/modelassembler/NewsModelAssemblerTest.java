@@ -1,5 +1,7 @@
 package com.example.newsapi.modelassembler;
 
+import com.example.newsapi.config.security.RoleConstants;
+import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.dto.PostNewsDTO;
 import com.example.newsapi.entity.News;
@@ -29,7 +31,7 @@ class NewsModelAssemblerTest {
 
     @BeforeEach
     void setup(){
-        Role subscriberRole = new Role(1, "SUBSCRIBER");
+        Role subscriberRole = new Role(1, RoleConstants.SUBSCRIBER);
         Set<Role> roles1 = new HashSet<>(Collections.singleton(subscriberRole));
         user1 = new User(1, "username", "password", roles1, null);
     }
@@ -42,10 +44,9 @@ class NewsModelAssemblerTest {
 
         assertNotNull(result);
         assertNotNull(result.getContent());
-        assertModelAndEntity(news, result);
+        assertModelAndEntity(news, result.getContent());
+        assertModelLinks(result);
     }
-
-
 
     @Test
     void toEntity() {
@@ -55,10 +56,10 @@ class NewsModelAssemblerTest {
         News result = assembler.toEntity(newsDto);
 
         assertNotNull(result);
-        assertEquals(newsDto.getDate(), result.getDate());
-        assertEquals(newsDto.getText(), result.getText());
-        assertEquals(newsDto.getTitle(), result.getTitle());
-
+        assertNull(result.getUser());
+        assertEquals(result.getDate(), newsDto.getDate());
+        assertEquals(result.getText(), newsDto.getText());
+        assertEquals(result.getTitle(), newsDto.getTitle());
     }
 
     @Test
@@ -77,17 +78,20 @@ class NewsModelAssemblerTest {
 
         assertNotNull(result);
         assertNotNull(models);
-        assertModelAndEntity(news1, newsDto1);
-        assertModelAndEntity(news2, newsDto2);
+        assertModelAndEntity(news1, newsDto1.getContent());
+        assertModelAndEntity(news2, newsDto2.getContent());
+        assertModelLinks(newsDto1);
+        assertModelLinks(newsDto2);
     }
 
-    void assertModelAndEntity(News entity, EntityModel<NewsDTO> model){
-        NewsDTO news = model.getContent();
-        assertEquals(entity.getDate(), news.getDate());
-        assertEquals(entity.getText(), news.getText());
-        assertEquals(entity.getTitle(), news.getTitle());
-        assertEquals(entity.getUser().getUsername(), news.getUsername());
+    void assertModelAndEntity(News entity, NewsDTO model){
+        assertEquals(entity.getDate(), model.getDate());
+        assertEquals(entity.getText(), model.getText());
+        assertEquals(entity.getTitle(), model.getTitle());
+        assertEquals(entity.getUser().getUsername(), model.getUsername());
+    }
 
+    void assertModelLinks(EntityModel<NewsDTO> model){
         assertTrue(model.hasLink("self"));
         assertTrue(model.hasLink("news"));
         assertTrue(model.hasLink("comments"));
