@@ -1,10 +1,12 @@
-/*
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.CommentDTO;
+import com.example.newsapi.dto.PostCommentDTO;
 import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
+import com.example.newsapi.entity.Role;
+import com.example.newsapi.entity.User;
 import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.CommentModelAssembler;
 import com.example.newsapi.repository.CommentRepository;
@@ -24,10 +26,10 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,6 +51,12 @@ class CommentServiceImplTest {
     @Mock
     PagedResourcesAssembler<Comment> pagedAssembler;
 
+    @Mock
+    Clock clock;
+
+    User user1;
+    LocalDate date = LocalDate.of(2021, 9, 9);
+    Clock fixedClock;
     News news1;
     News news2;
     Comment comment1;
@@ -65,14 +73,17 @@ class CommentServiceImplTest {
     void setup(){
         MockitoAnnotations.openMocks(this);
 
-        news1 = new News(1, LocalDate.parse("2021-09-09"), "test text 1", "test title 1", null);
-        news2 = new News(2, LocalDate.parse("2021-09-09"), "test text 2", "test title 2", null);
+        Set<Role> roles1 = new HashSet<>(Collections.singleton(new Role(1, "JOURNALIST")));
+        user1 = new User(1, "user1", "password", roles1, null);
 
-        comment1 = new Comment(1, LocalDate.parse("2021-09-09"),"text 1", "user 1", news1);
-        comment2 = new Comment(2, LocalDate.parse("2021-09-09"),"text 2", "user 2", news1);
+        news1 = new News(1, date, "test text 1", "test title 1", null, user1);
+        news2 = new News(2, date, "test text 2", "test title 2", null, user1);
 
-        commentDto1 = new CommentDTO(1, LocalDate.parse("2021-09-09"),"text 1", "user 1");
-        commentDto2 = new CommentDTO(2, LocalDate.parse("2021-09-09"),"text 2", "user 2");
+        comment1 = new Comment(1, date,"text 1", "user 1", news1);
+        comment2 = new Comment(2, date,"text 2", "user 2", news1);
+
+        commentDto1 = new CommentDTO(date,"text 1", "user 1");
+        commentDto2 = new CommentDTO(date,"text 2", "user 2");
 
         comments = List.of(comment1, comment2);
         commentsDto = List.of(commentDto1, commentDto2);
@@ -85,10 +96,10 @@ class CommentServiceImplTest {
         news1.setComments(comments);
 
         commentsPage = new PageImpl<>(comments);
-
         PagedModel.PageMetadata pageMetadata = new PagedModel.PageMetadata(2, 0, 2);
-
         commentsDtoPagedModel = PagedModel.of(commentsModel, pageMetadata);
+
+        fixedClock = Clock.fixed(date.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
     }
 
     //getCommentById
@@ -114,24 +125,28 @@ class CommentServiceImplTest {
 
     @Test
     void whenCreateCommentAndNewsNotFound_thenNewsNotFoundException(){
-        assertThrows(ResourceNotFoundException.class, () -> commentService.createComment(any(CommentDTO.class), 1));
+        assertThrows(ResourceNotFoundException.class, () -> commentService.createComment(any(PostCommentDTO.class), 1));
     }
 
     @Test
     void createComment() {
-        CommentDTO requestedCommentDto = new CommentDTO(3, LocalDate.parse("2021-09-09"),"text 3", "user 3");
-        Comment comment = new Comment(3, LocalDate.parse("2021-09-09"),"text 3", "user 3", null);
+        PostCommentDTO requestedCommentDto = new PostCommentDTO("text 3", "user 1");
+        Comment comment = new Comment(3, date,"text 3", "user 1", null);
+        CommentDTO commentDto = new CommentDTO(date, "text 3", "user 1");
 
+        when(clock.instant()).thenReturn(fixedClock.instant());
+        when(clock.getZone()).thenReturn(fixedClock.getZone());
         when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news2));
         when(assembler.toEntity(requestedCommentDto)).thenReturn(comment);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        when(assembler.toModel(any(Comment.class))).thenReturn(EntityModel.of(requestedCommentDto));
+        when(assembler.toModel(any(Comment.class))).thenReturn(EntityModel.of(commentDto));
 
         CommentDTO result = commentService.createComment(requestedCommentDto, 2).getContent();
 
         assertNotNull(result);
-        assertNotNull(comment.getNews());
         assertEquals(news2, comment.getNews());
+        assertEquals(result.getDate(), date);
+
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
@@ -158,7 +173,7 @@ class CommentServiceImplTest {
         UpdateCommentDTO requestedCommentDto = new UpdateCommentDTO();
         requestedCommentDto.setText("new text");
 
-        CommentDTO updatedCommentDto = new CommentDTO(commentId, LocalDate.parse("2021-09-09"),"new text", "user 1");
+        CommentDTO updatedCommentDto = new CommentDTO(date,"new text", "user 1");
 
         when(newsRepository.existsById(anyLong())).thenReturn(true);
         when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment1));
@@ -250,4 +265,3 @@ class CommentServiceImplTest {
 
 }
 
-*/

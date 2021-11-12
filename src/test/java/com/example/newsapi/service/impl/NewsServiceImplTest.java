@@ -11,6 +11,7 @@ import com.example.newsapi.exception.ResourceNotFoundException;
 import com.example.newsapi.modelassembler.NewsModelAssembler;
 import com.example.newsapi.repository.NewsRepository;
 import com.example.newsapi.service.UserService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +57,7 @@ class NewsServiceImplTest {
     private Clock clock;
 
     //field that will contain the fixed clock
-    private Clock fixedClock;
+    Clock fixedClock;
 
     Role subscriberRole;
     Role journalistRole;
@@ -70,6 +72,7 @@ class NewsServiceImplTest {
         adminRole = new Role(3, "ADMIN");
         Set<Role> roles1 = new HashSet<>(Collections.singleton(journalistRole));
         user1 = new User(1, "username", "password", roles1, null);
+        fixedClock = Clock.fixed(date.atStartOfDay(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
     }
 
     @Test
@@ -95,6 +98,8 @@ class NewsServiceImplTest {
         PostNewsDTO postNewsDto = new PostNewsDTO("test text", "test title", "username");
         NewsDTO newsDto = new NewsDTO(LocalDate.parse("2021-09-09"), "test text", "test title", "username");
 
+        when(clock.instant()).thenReturn(fixedClock.instant());
+        when(clock.getZone()).thenReturn(fixedClock.getZone());
         when(assembler.toEntity(any(PostNewsDTO.class))).thenReturn(news);
         when(userService.getUserByUsername(anyString())).thenReturn(user1);
         when(newsRepository.save(any(News.class))).thenReturn(news);

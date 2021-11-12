@@ -1,4 +1,3 @@
-/*
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.CommentDTO;
@@ -58,16 +57,16 @@ class NewsCommentsServiceImplTest {
 
     @Test
     void getNewsCommentsById() {
-        News news = new News(1, LocalDate.parse("2021-09-09"), "news text 1", "news title 1", null);
+        News news = new News(1, LocalDate.parse("2021-09-09"), "news text 1", "news title 1", null, null);
         Comment comment = new Comment(1, LocalDate.parse("2021-09-09"),"comment text 1", "user 1", news);
 
         news.setComments(List.of(comment));
 
-        CommentDTO commentDto = new CommentDTO(1, LocalDate.parse("2021-09-09"),"text 1", "user 1");
+        CommentDTO commentDto = new CommentDTO(LocalDate.parse("2021-09-09"),"text 1", "user 1");
 
         List<CommentDTO> commentsDto = List.of(commentDto);
 
-        NewsCommentsDTO newsCommentsDto = new NewsCommentsDTO(1, LocalDate.parse("2021-09-09"), "news text 1", "news title 1", null);
+        NewsCommentsDTO newsCommentsDto = new NewsCommentsDTO( LocalDate.parse("2021-09-09"), "news text 1", "news title 1", "user1", null);
         newsCommentsDto.setComments(commentsDto);
 
         when(newsRepository.findById(anyLong())).thenReturn(Optional.of(news));
@@ -79,4 +78,3 @@ class NewsCommentsServiceImplTest {
         assertEquals(1, result.getComments().size());
     }
 }
-*/

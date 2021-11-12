@@ -1,10 +1,27 @@
-INSERT INTO news (id, creation_date, title, text) VALUES
-(1, '2021-01-01', 'title1', 'text1'),
-(2, '2021-01-01', 'title2', 'text2'),
-(3, '2021-01-03', 'title3', 'text3'),
-(4, '2021-01-04', 'title4', 'text4'),
-(5, '2021-01-05', 'title5', 'text5'),
-(6, '2021-01-05', 'title5', 'text6');
+INSERT INTO role(id, name) VALUES
+(1, 'ADMIN'),
+(2, 'JOURNALIST'),
+(3, 'SUBSCRIBER');
+
+INSERT INTO user(id, username, password) VALUES
+(1, 'admin', '$2a$12$R2Yk6AGg9guPRvlRUi/MsOBwwY1no7ikjW/oO/tUiTBj8QCIr.w.a'),
+(2, 'user1', '$2a$12$NDetGlcMW.s9NatomPv/Se/tVdvXI5Mu/oFSB6ckeS08647xYofNO'),
+(3, 'journalist1', '$2a$12$NDetGlcMW.s9NatomPv/Se/tVdvXI5Mu/oFSB6ckeS08647xYofNO'),
+(4, 'journalist2', '$2a$12$NDetGlcMW.s9NatomPv/Se/tVdvXI5Mu/oFSB6ckeS08647xYofNO');
+
+INSERT INTO user_role(user_id, role_id) VALUES
+(1, 1),
+(2, 3),
+(3, 2),
+(4, 2);
+
+INSERT INTO news (id, user_id, creation_date, title, text) VALUES
+(1, 3, '2021-01-01', 'title1', 'text1'),
+(2, 3, '2021-01-01', 'title2', 'text2'),
+(3, 3, '2021-01-03', 'title3', 'text3'),
+(4, 3, '2021-01-04', 'title4', 'text4'),
+(5, 3, '2021-01-05', 'title5', 'text5'),
+(6, 3, '2021-01-05', 'title5', 'text6');
 
 INSERT INTO comments(id, news_id, creation_date, text, username) VALUES
 (1, 1, '2021-01-01', 'comment1', 'user1'),
@@ -23,15 +40,3 @@ INSERT INTO comments(id, news_id, creation_date, text, username) VALUES
 (14, 5, '2021-01-06', 'comment14', 'user2'),
 (15, 5, '2021-01-07', 'comment15', 'user3');
 
-INSERT INTO role(id, name) VALUES
-(1, 'ADMIN'),
-(2, 'JOURNALIST'),
-(3, 'SUBSCRIBER');
-
-INSERT INTO user(id, username, password) VALUES
-(1, 'admin', '$2a$12$R2Yk6AGg9guPRvlRUi/MsOBwwY1no7ikjW/oO/tUiTBj8QCIr.w.a'), -- password = password
-(2, 'user1', '$2a$12$NDetGlcMW.s9NatomPv/Se/tVdvXI5Mu/oFSB6ckeS08647xYofNO'); -- password = password
-
-INSERT INTO user_role(user_id, role_id) VALUES
-(1, 1),
-(2, 3);

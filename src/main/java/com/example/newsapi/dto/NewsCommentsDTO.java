@@ -1,6 +1,7 @@
 package com.example.newsapi.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.RepresentationModel;
@@ -17,15 +18,15 @@ import java.util.List;
 @NoArgsConstructor
 @Relation(collectionRelation = "news with comments")
 public class NewsCommentsDTO {
-    @JsonIgnore
-    private long id;
 
-    private LocalDate date = LocalDate.now();
-    @NotBlank(message = "The text is required")
+    private LocalDate date;
+
     private String text;
 
-    @NotBlank(message = "The title is required")
     private String title;
+
+    @JsonProperty("author")
+    private String username;
 
     private List<CommentDTO> comments;
 }

@@ -18,6 +18,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDate;
+
 /**
  * Service class implementation for Comments
  */
@@ -39,13 +42,16 @@ public class CommentServiceImpl implements CommentService {
      */
     private PagedResourcesAssembler<Comment> pagedAssembler;
 
+    private Clock clock;
+
     private static final Logger log = LoggerFactory.getLogger(NewsServiceImpl.class);
 
-    public CommentServiceImpl(CommentRepository commentRepository, NewsRepository newsRepository, CommentModelAssembler assembler, PagedResourcesAssembler<Comment> pagedAssembler) {
+    public CommentServiceImpl(CommentRepository commentRepository, NewsRepository newsRepository, CommentModelAssembler assembler, PagedResourcesAssembler<Comment> pagedAssembler, Clock clock) {
         this.commentRepository = commentRepository;
         this.newsRepository = newsRepository;
         this.assembler = assembler;
         this.pagedAssembler = pagedAssembler;
+        this.clock = clock;
     }
 
     @Override
@@ -100,6 +106,7 @@ public class CommentServiceImpl implements CommentService {
                 newsRepository.findById(newsId).map(news -> {
                     Comment comment = assembler.toEntity(commentDto); //create Comment object from dto
                     comment.setNews(news); //connect new Comment entity with found news
+                    comment.setDate(LocalDate.now(clock));
                     return commentRepository.save(comment); //save constructed Comment entity
                 }).orElseThrow(()->new ResourceNotFoundException("Not found News with id " + newsId))
         );

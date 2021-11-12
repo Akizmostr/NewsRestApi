@@ -1,4 +1,3 @@
-/*
 package com.example.newsapi.service.impl;
 
 import com.example.newsapi.dto.AddUserRolesDTO;
@@ -19,10 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.*;
@@ -55,13 +51,14 @@ class UserServiceImplTest {
         subscriberRole = new Role(1, "SUBSCRIBER");
         journalistRole = new Role(2, "JOURNALIST");
         adminRole = new Role(3, "ADMIN");
-        user1 = new User(1, "user1", "encoded password", new HashSet<>(Arrays.asList(subscriberRole)));
+        Set<Role> roles1 = new HashSet<>(Collections.singleton(subscriberRole));
+        user1 = new User(1, "user1", "encoded password", roles1, null);
     }
 
     @Test
     void whenSaveUserAndUserFound_thenUserWithEncodedPasswordAndDefaultRoleIsSaved() {
         UserDTO requestedUserDto = new UserDTO("username", "password");
-        User user = new User(1, "username", "password", null);
+        User user = new User(1, "username", "password", null, null);
 
         when(userRepository.existsByUsername(anyString())).thenReturn(false);
         when(userMapper.toEntity(any(UserDTO.class))).thenReturn(user);
@@ -128,4 +125,4 @@ class UserServiceImplTest {
         AddUserRolesDTO additionalRolesDto = new AddUserRolesDTO(List.of("JOURNALIST", "ADMIN"));
         assertThrows(ResourceNotFoundException.class, () -> userService.addRoles(additionalRolesDto, 1));
     }
-}*/
+}

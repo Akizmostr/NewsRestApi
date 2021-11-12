@@ -1,4 +1,3 @@
-/*
 package com.example.newsapi.validation;
 
 import com.example.newsapi.dto.UpdateNewsDTO;
@@ -81,4 +80,3 @@ class UpdateNewsValidatorTest {
         assertFalse(errors.hasGlobalErrors());
     }
 }
-*/

@@ -16,10 +16,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Relation(collectionRelation = "comments")
 public class CommentDTO {
-    @JsonIgnore
-    private long id;
 
-    private LocalDate date = LocalDate.now();
+    private LocalDate date;
 
     @NotBlank(message = "The text is required")
     private String text;

@@ -4,9 +4,11 @@ import com.example.newsapi.controller.CommentController;
 import com.example.newsapi.controller.NewsController;
 import com.example.newsapi.dto.CommentDTO;
 import com.example.newsapi.dto.NewsCommentsDTO;
+import com.example.newsapi.dto.NewsDTO;
 import com.example.newsapi.entity.Comment;
 import com.example.newsapi.entity.News;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -33,6 +35,8 @@ public class NewsCommentsAssembler implements RepresentationModelAssembler<News,
     @Override
     public EntityModel<NewsCommentsDTO> toModel(News entity) {
         ModelMapper modelMapper = new ModelMapper();
+        TypeMap<News, NewsCommentsDTO> propertyMapper = modelMapper.createTypeMap(News.class, NewsCommentsDTO.class);
+        propertyMapper.addMapping(src -> src.getUser().getUsername(), NewsCommentsDTO::setUsername);
         NewsCommentsDTO newsCommentsDto = modelMapper.map(entity, NewsCommentsDTO.class);
 
         List<Comment> comments = entity.getComments();
