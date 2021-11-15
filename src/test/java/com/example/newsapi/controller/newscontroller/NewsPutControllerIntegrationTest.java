@@ -83,8 +83,6 @@ public class NewsPutControllerIntegrationTest {
                 .andExpect(invalidTitleMessage());
     }
 
-
-
     @Test
     void whenUpdateNewsAndTextIsEmpty_thenErrorResponse() throws Exception {
         long id = 1;
