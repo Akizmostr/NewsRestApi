@@ -1,0 +1,17 @@
+
+== Endpoints
+=== Comment
+==== Get comment by ID
+====== HTTP Request
+include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/http-request.adoc[]
+====== HTTP Response
+====== Success HTTP responses
+include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/http-response.adoc[]
+
+////
+====== Response fields
+include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/response-fields.adoc[]
+////
+
+====== HATEOAS links
+include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/links.adoc[]

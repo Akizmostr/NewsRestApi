@@ -10,11 +10,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -32,15 +34,19 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = NewsapiApplication.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc(addFilters = false) //addFilters = false disables authentication
+@AutoConfigureRestDocs(outputDir = "build/generated-snippets")
 @ActiveProfiles("test")
 class CommentControllerIntegrationTest {
     @Autowired
@@ -69,7 +75,13 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$._embedded.comments", hasSize(totalElements)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
-                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)));
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
+                .andDo(document("{class-name}/{method-name}",
+                        links(
+                            linkWithRel("self").ignored(),
+                            linkWithRel("comments").description("Link to the list of news' comments"),
+                            linkWithRel("news").description("Link to all the news"))
+                ));
     }
 
     @Test
@@ -182,7 +194,8 @@ class CommentControllerIntegrationTest {
                 .andDo(print())
                 .andExpect(jsonPath("$.date", is(date)))
                 .andExpect(jsonPath("$.text", is(text)))
-                .andExpect(jsonPath("$.username", is(username)));
+                .andExpect(jsonPath("$.username", is(username)))
+                .andDo(document("{class-name}/{method-name}"));
     }
 
     @Test

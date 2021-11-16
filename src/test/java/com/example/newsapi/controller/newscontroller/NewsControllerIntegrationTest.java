@@ -4,22 +4,29 @@ import com.example.newsapi.NewsapiApplication;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.repository.NewsRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -30,15 +37,19 @@ import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = NewsapiApplication.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc(addFilters = false) //addFilters = false disables authentication
+@AutoConfigureRestDocs(outputDir = "build/generated-snippets")
 @ActiveProfiles("test")
 class NewsControllerIntegrationTest {
     @Autowired
@@ -62,7 +73,8 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$._embedded.news", hasSize(totalElements)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
-                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)));
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
+                .andDo(document("{class-name}/{method-name}"));
     }
 
     @Test
@@ -168,7 +180,11 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$.comments", hasSize(commentsSize)))
                 .andExpect(jsonPath("$.date", is(date)))
                 .andExpect(jsonPath("$.text", is(text)))
-                .andExpect(jsonPath("$.title", is(title)));
+                .andExpect(jsonPath("$.title", is(title)))
+                .andDo(document("{class-name}/{method-name}", links(
+                        linkWithRel("self").ignored(),
+                        linkWithRel("comments").description("Link to the list of news' comments"),
+                        linkWithRel("news").description("Link to all the news"))));
     }
 
     @Test
