@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,9 +35,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -76,11 +78,8 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
                 .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andDo(document("{class-name}/{method-name}",
-                        links(
-                            linkWithRel("self").ignored(),
-                            linkWithRel("comments").description("Link to the list of news' comments"),
-                            linkWithRel("news").description("Link to all the news"))
+                .andDo(document("{class-name}/{method-name}"
+
                 ));
     }
 
@@ -104,7 +103,8 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.size", is(size)))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
                 .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andExpect(jsonPath("$.page.number", is(pageNumber)));
+                .andExpect(jsonPath("$.page.number", is(pageNumber)))
+                .andDo(document("{class-name}/{method-name}"));
     }
 
     @Test
@@ -188,14 +188,24 @@ class CommentControllerIntegrationTest {
         String text = comment.getText();
         String username = comment.getUsername();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/news/{newsId}/comments/{commentId}", newsId, commentId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/news/{newsId}/comments/{commentId}", newsId, commentId)
                 .accept("application/hal+json"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.date", is(date)))
                 .andExpect(jsonPath("$.text", is(text)))
                 .andExpect(jsonPath("$.username", is(username)))
-                .andDo(document("{class-name}/{method-name}"));
+                .andDo(document("{class-name}/{method-name}",
+                        links(halLinks(),
+                                linkWithRel("self").ignored(),
+                                linkWithRel("news").description("Link to the corresponding news"),
+                                linkWithRel("comments").description("Link to all comments of the news")),
+                        pathParameters(
+                                parameterWithName("newsId").description("The id of the news"),
+                                parameterWithName("commentId").description("The id of the comment")
+                        )
+
+                ));
     }
 
     @Test
@@ -206,7 +216,8 @@ class CommentControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/news/{newsId}/comments/{commentId}", newsId, commentId)
                 .accept("application/json"))
                 .andDo(print())
-                .andExpect(commentNotFound(commentId));
+                .andExpect(commentNotFound(commentId))
+                .andDo(document("{class-name}/{method-name}"));
     }
 
     @Test
@@ -237,7 +248,6 @@ class CommentControllerIntegrationTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void whenDeleteCommentAndCommentNotFound_thenCommentNotFoundResponse() throws Exception {
         long newsId = 1;
         long commentId = 999;
@@ -249,7 +259,6 @@ class CommentControllerIntegrationTest {
     }
 
     @Test
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void whenDeleteCommentAndNewsNotFound_thenNewsNotFoundResponse() throws Exception {
         long newsId = 999;
         long commentId = 1;

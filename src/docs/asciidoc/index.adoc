@@ -1,7 +1,14 @@
 
-== Endpoints
+== Resources
 === Comment
-==== Get comment by ID
+
+Comment resource is used to describe comment information (including its author) posted under specific news
+
+==== The comment object
+
+
+
+==== Get comment
 ====== HTTP Request
 include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/http-request.adoc[]
 ====== HTTP Response
