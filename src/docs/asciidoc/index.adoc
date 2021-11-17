@@ -1,24 +1,50 @@
+= News Api Docs
 
+:source-highlighter: highlightjs
+
+include::security.adoc[]
+
+[[resources]]
 == Resources
+
+[[resources-comment]]
 === Comment
 
-Comment resource is used to describe comment information (including its author) posted under specific news
+Comment resource is used to describe comment information (including its author) posted under specific news.
+The API allows you to create, delete, and update your comments. You can retreive individual comment
+as well as the list of all comments related with the news.
 
+****
+Endpoints +
+[horizontal]
+GET::  /news/{newsId}/comments +
+POST:: /news/{newsId}/comments +
+GET::  /news/{newsId}/comments/{commentId}
+PUT::  /news/{newsId}/comments/{commentId}
+DELETE::  /news/{newsId}/comments/{commentId}
+
+****
+
+[[resources-comment-object]]
 ==== The comment object
 
-
+Attributes
+include::{snippets}/comment-controller-integration-test/get-comment-success/response-fields.adoc[]
+Example:
+include::{snippets}/comment-controller-integration-test/get-comment-success/response-body.adoc[]
 
 ==== Get comment
-====== HTTP Request
-include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/http-request.adoc[]
-====== HTTP Response
-====== Success HTTP responses
-include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/http-response.adoc[]
 
-////
-====== Response fields
-include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/response-fields.adoc[]
-////
+Retrieves a comment identified by the given id
 
-====== HATEOAS links
-include::{snippets}/comment-controller-integration-test/when-get-comment-by-id-and-comment-found_then-correct-comment/links.adoc[]
+===== HTTP Request Example
+include::{snippets}/comment-controller-integration-test/get-comment-success/http-request.adoc[]
+
+===== HTTP Response Example
+include::{snippets}/comment-controller-integration-test/get-comment-success/http-response.adoc[]
+
+[[resources-comment-links]]
+==== Comment links
+include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
+
+include::create-comment.adoc[]

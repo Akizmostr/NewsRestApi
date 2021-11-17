@@ -6,8 +6,10 @@ import com.example.newsapi.repository.CommentRepository;
 import com.example.newsapi.repository.NewsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.restdocs.ManualRestDocumentation;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.annotation.DirtiesContext;
@@ -23,6 +26,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
@@ -37,6 +42,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -60,7 +73,10 @@ class CommentControllerIntegrationTest {
     @Autowired
     CommentRepository commentRepository;
 
+
     //getAllComments START ----------------------------------------------------
+
+
 
     @Test
     void whenGetAllCommentsWithoutPage_thenCorrectResponseAndDefaultPage() throws Exception {
@@ -77,10 +93,7 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$._embedded.comments", hasSize(totalElements)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
-                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andDo(document("{class-name}/{method-name}"
-
-                ));
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)));
     }
 
     @Test
@@ -103,8 +116,7 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.size", is(size)))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
                 .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andExpect(jsonPath("$.page.number", is(pageNumber)))
-                .andDo(document("{class-name}/{method-name}"));
+                .andExpect(jsonPath("$.page.number", is(pageNumber)));
     }
 
     @Test
@@ -195,14 +207,20 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.date", is(date)))
                 .andExpect(jsonPath("$.text", is(text)))
                 .andExpect(jsonPath("$.username", is(username)))
-                .andDo(document("{class-name}/{method-name}",
+                .andDo(document("{class-name}/get-comment-success",
                         links(halLinks(),
-                                linkWithRel("self").ignored(),
-                                linkWithRel("news").description("Link to the corresponding news"),
-                                linkWithRel("comments").description("Link to all comments of the news")),
+                                linkWithRel("self").description("This comment"),
+                                linkWithRel("news").description("News related to this comment"),
+                                linkWithRel("comments").description("All comments of the related news")),
                         pathParameters(
                                 parameterWithName("newsId").description("The id of the news"),
                                 parameterWithName("commentId").description("The id of the comment")
+                        ),
+                        responseFields(
+                                fieldWithPath("date").description("Date the comment was posted"),
+                                fieldWithPath("text").description("The text of the comment"),
+                                fieldWithPath("username").description("The comment's author"),
+                                subsectionWithPath("_links").description("<<resources-comment-links, Links>> to other resources")
                         )
 
                 ));
@@ -217,7 +235,10 @@ class CommentControllerIntegrationTest {
                 .accept("application/json"))
                 .andDo(print())
                 .andExpect(commentNotFound(commentId))
-                .andDo(document("{class-name}/{method-name}"));
+                .andDo(document("{class-name}/get-comment-not-found",
+                        preprocessRequest(removeHeaders("Foo")),
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
@@ -238,11 +259,20 @@ class CommentControllerIntegrationTest {
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void whenDeleteCommentAndCommentFound_thenCorrectResponseAndCommentDoesNotExist() throws Exception {
+        long newsId = 1;
+        long commentId = 1;
 
-        mockMvc.perform(delete("/news/1/comments/1")
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/news/{newsId}/comments/{commentId}", newsId, commentId)
                 .accept("application/json"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent())
+                .andDo(document("{class-name}/delete-comment-success",
+                        pathParameters(
+                                parameterWithName("newsId").description("The id of the news"),
+                                parameterWithName("commentId").description("The id of the comment")
+                        )
+
+                ));
 
         Assertions.assertFalse(commentRepository.existsById(1L));
     }

@@ -58,7 +58,7 @@ public class NewsPutControllerIntegrationTest {
         mockMvc.perform(putJson("/news/{id}", news, id))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(jsonPath("$.message", containsString("At least one field is required")));
+                .andExpect(jsonPath("$.error", containsString("At least one field is required")));
     }
 
     @Test

@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class ErrorInfo {
-    private int statusCode;
     private LocalDateTime timestamp;
-    private String message;
-    private String url;
+    private int status;
+    private String error;
+    private String path;
 }

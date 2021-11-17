@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorInfo resourceNotFound(HttpServletRequest req, ResourceNotFoundException ex) {
-        return new ErrorInfo(HttpStatus.NOT_FOUND.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
+        return new ErrorInfo(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), req.getRequestURI().toString());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
@@ -34,18 +34,18 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(","));
-        return new ErrorInfo(HttpStatus.UNPROCESSABLE_ENTITY.value(), LocalDateTime.now(), message, req.getRequestURL().toString());
+        return new ErrorInfo(LocalDateTime.now(), HttpStatus.UNPROCESSABLE_ENTITY.value(), message, req.getRequestURI().toString());
     }
 
     @ExceptionHandler(value = UserAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorInfo userAlreadyExists(HttpServletRequest req, Exception ex){
-        return new ErrorInfo(HttpStatus.CONFLICT.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
+        return new ErrorInfo(LocalDateTime.now(), HttpStatus.CONFLICT.value(), ex.getMessage(), req.getRequestURI().toString());
     }
 
     @ExceptionHandler(value = BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorInfo badCredentials(HttpServletRequest req, Exception ex){
-        return new ErrorInfo(HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now(), ex.getMessage(), req.getRequestURL().toString());
+        return new ErrorInfo(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.value(), ex.getMessage(), req.getRequestURI().toString());
     }
 }

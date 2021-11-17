@@ -18,7 +18,15 @@ public class UserSecurity {
     NewsService newsService;
 
     public boolean commentBelongsToUser(Authentication authentication, long commentId) throws IOException {
-        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        org.springframework.security.core.userdetails.User user;
+        //VERY BAD
+        //principal is string when user is not authenticated
+        try {
+            user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        }catch (ClassCastException ex){
+            ex.printStackTrace();
+            return false;
+        }
         String username = user.getUsername();
 
         try {
@@ -40,7 +48,15 @@ public class UserSecurity {
     }
 
     public boolean newsBelongsToUser(Authentication authentication, long newsId) throws IOException{
-        org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        org.springframework.security.core.userdetails.User user;
+        //VERY BAD
+        //principal is string when user is not authenticated
+        try {
+            user = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        }catch (ClassCastException ex){
+            ex.printStackTrace();
+            return false;
+        }
         String username = user.getUsername();
 
         try {

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
@@ -28,22 +29,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                .mvcMatchers("/users/login").permitAll()
-                .mvcMatchers("/users/register").permitAll()
-                .mvcMatchers(HttpMethod.PUT, "users/**").hasAnyAuthority(ADMIN)
-                .mvcMatchers(HttpMethod.GET).permitAll()
-                .mvcMatchers(HttpMethod.POST, "/news").hasAnyAuthority(ADMIN, JOURNALIST)
-                .mvcMatchers(HttpMethod.PUT, "/news/{newsId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.newsBelongsToUser(authentication, #newsId)")
-                .mvcMatchers(HttpMethod.DELETE, "/news/{newsId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.newsBelongsToUser(authentication, #newsId)")
-                .mvcMatchers(HttpMethod.POST, "/news/*/comments").hasAnyAuthority(ADMIN, JOURNALIST, SUBSCRIBER)
-                .mvcMatchers(HttpMethod.PUT, "/news/*/comments/{commentId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.commentBelongsToUser(authentication, #commentId)")
-                .mvcMatchers(HttpMethod.DELETE, "/news/*/comments/{commentId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.commentBelongsToUser(authentication, #commentId)")
-                .mvcMatchers("/h2-console/**").permitAll();
+                .and()
+                    .authorizeRequests()
+                    .mvcMatchers(HttpMethod.PUT, "users/**").hasAnyAuthority(ADMIN)
+                    .mvcMatchers(HttpMethod.POST, "/news").hasAnyAuthority(ADMIN, JOURNALIST)
+                    .mvcMatchers(HttpMethod.PUT, "/news/{newsId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.newsBelongsToUser(authentication, #newsId)")
+                    .mvcMatchers(HttpMethod.DELETE, "/news/{newsId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.newsBelongsToUser(authentication, #newsId)")
+                    .mvcMatchers(HttpMethod.POST, "/news/*/comments").hasAnyAuthority(ADMIN, JOURNALIST, SUBSCRIBER)
+                    .mvcMatchers(HttpMethod.PUT, "/news/*/comments/{commentId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.commentBelongsToUser(authentication, #commentId)")
+                    .mvcMatchers(HttpMethod.DELETE, "/news/*/comments/{commentId}").access("hasAuthority(@roleConstants.ADMIN) or @userSecurity.commentBelongsToUser(authentication, #commentId)")
+                    .mvcMatchers("/h2-console/**").permitAll()
+                .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         http.headers().frameOptions().disable();
 
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers(HttpMethod.GET)
+                .antMatchers("/users/login")
+                .antMatchers("/users/register");
     }
 
     @Bean

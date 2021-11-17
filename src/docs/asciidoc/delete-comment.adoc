@@ -1,0 +1,4 @@
+==== Delete comment
+Delete specific comment of the news by id. Only the author of the comment and admin
+can delete comments (see <<security, Security>>). After successful deletion No Content (404) status code
+is returned

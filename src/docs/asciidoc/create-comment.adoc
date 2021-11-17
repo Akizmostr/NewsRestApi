@@ -1,0 +1,14 @@
+==== Create comment
+Post a new comment under specific news. Only authenticated users can post comments.
+For more details see <<security, Security>>. After success newly created
+<<resources-comment-object, Comment object>> is returned.
+The author of the comment is automatically assigned based on the logged-in user.
+
+===== HTTP Headers
+include::{snippets}/comment-post-controller-integration-test/create-comment-success/request-headers.adoc[]
+===== Request Fields
+include::{snippets}/comment-post-controller-integration-test/create-comment-success/request-fields.adoc[]
+===== HTTP Request Example
+include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-response.adoc[]

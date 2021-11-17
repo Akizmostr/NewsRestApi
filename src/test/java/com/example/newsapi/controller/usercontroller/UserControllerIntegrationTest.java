@@ -126,7 +126,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(postJson("/users/register", user))
                 .andDo(print())
                 .andExpect(conflictStatus())
-                .andExpect(jsonPath("$.message", is("User with username: user1 already exists")));
+                .andExpect(jsonPath("$.error", is("User with username: user1 already exists")));
     }
 
     @Test
@@ -148,7 +148,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(postJson("/users/999", addedRoles))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is("User with id: 999 not found")));
+                .andExpect(jsonPath("$.error", is("User with id: 999 not found")));
     }
 
     @Test
@@ -158,7 +158,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(postJson("/users/2", addedRoles))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(jsonPath("$.message", is("Invalid role")));
+                .andExpect(jsonPath("$.error", is("Invalid role")));
     }
 
     @Test
@@ -168,7 +168,7 @@ class UserControllerIntegrationTest {
         mockMvc.perform(postJson("/users/2", addedRoles))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(jsonPath("$.message", is("Must not be empty")));
+                .andExpect(jsonPath("$.error", is("Must not be empty")));
     }
 
     
