@@ -4,6 +4,8 @@
 
 include::security.adoc[]
 
+include::paging-sorting.adoc[]
+
 [[resources]]
 == Resources
 
@@ -17,11 +19,11 @@ as well as the list of all comments related with the news.
 ****
 Endpoints +
 [horizontal]
-GET::  /news/{newsId}/comments +
-POST:: /news/{newsId}/comments +
-GET::  /news/{newsId}/comments/{commentId}
-PUT::  /news/{newsId}/comments/{commentId}
-DELETE::  /news/{newsId}/comments/{commentId}
+<<list-comments,GET>>::         /news/{newsId}/comments
+<<create-comment,POST>>::       /news/{newsId}/comments
+<<get-comment,GET>>::           /news/{newsId}/comments/{commentId}
+<<update-comment,PUT>>::        /news/{newsId}/comments/{commentId}
+<<delete-comment, DELETE>>::    /news/{newsId}/comments/{commentId}
 
 ****
 
@@ -37,22 +39,8 @@ include::{snippets}/comment-controller-integration-test/get-comment-success/resp
 ==== Comment links
 include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
 
-
-==== Get comment
-
-Retrieve a comment under the specific news by id
-
-===== Path parameters
-
-include::{snippets}/comment-controller-integration-test/get-comment-success/path-parameters.adoc[]
-
-===== HTTP Request Example
-include::{snippets}/comment-controller-integration-test/get-comment-success/http-request.adoc[]
-
-===== HTTP Response Example
-include::{snippets}/comment-controller-integration-test/get-comment-success/http-response.adoc[]
-
-
+include::list-comments.adoc[]
+include::get-comment.adoc[]
 include::create-comment.adoc[]
-include::delete-comment.adoc[]
 include::update-comment.adoc[]
+include::delete-comment.adoc[]

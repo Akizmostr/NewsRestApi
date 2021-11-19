@@ -1,3 +1,4 @@
+[[delete-comment]]
 ==== Delete comment
 Delete a comment under the specific news by id. Only the author of the comment and admin
 can delete comments (see <<security, Security>>). Returns No Content (204) after successful
@@ -9,5 +10,8 @@ include::{snippets}/comment-controller-integration-test/delete-comment-success/r
 include::{snippets}/comment-controller-integration-test/delete-comment-success/path-parameters.adoc[]
 ===== HTTP Request Example
 include::{snippets}/comment-controller-integration-test/delete-comment-success/http-request.adoc[]
+===== Returns
+If successful, returns No Content(204) status code
+
 ===== HTTP Response Example
 include::{snippets}/comment-controller-integration-test/delete-comment-success/http-response.adoc[]

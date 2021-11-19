@@ -1,0 +1,33 @@
+[[list-comments]]
+==== List comments
+Returns a list of the comments under specific news.
+The comments are returned sorted by creation date, with
+the most recent comments appearing first.
+
+===== Path parameters
+include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/path-parameters.adoc[]
+===== Query parameters
+This endpoint supports pagination, sorting and search.
+For information about pagination and sorting refer
+to corresponding <<pagination-sorting, section>>.
+
+[caption=]
+.Search parameters
+include::{snippets}/comment-controller-integration-test/search-comment-by-date-username/request-parameters.adoc[]
+
+===== Returns
+Returns an object which exposes:
+
+* list of found comments according
+to provided search, paging and sorting parameters
+* pagination information
+* available pagination links.
+
+===== HTTP Request Example
+include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/http-request.adoc[]
+
+===== HTTP Response Example
+include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/http-response.adoc[]
+
+===== Response fields
+include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/response-fields.adoc[]

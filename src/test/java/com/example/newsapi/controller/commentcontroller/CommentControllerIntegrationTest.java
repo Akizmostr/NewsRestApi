@@ -52,8 +52,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.re
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -78,8 +77,6 @@ class CommentControllerIntegrationTest {
 
     //getAllComments START ----------------------------------------------------
 
-
-
     @Test
     void whenGetAllCommentsWithoutPage_thenCorrectResponseAndDefaultPage() throws Exception {
         long id = 1;
@@ -99,15 +96,15 @@ class CommentControllerIntegrationTest {
     }
 
     @Test
-    void whenGetAllNewsWithPage_thenCorrectResponseAndPage() throws Exception {
-        long id = 1;
+    void whenGetAllCommentsWithPage_thenCorrectResponseAndPage() throws Exception {
+        long newsId = 1;
         int size = 2;
-        Page<Comment> result = commentRepository.findAllByNewsId(id, Pageable.ofSize(size));
+        Page<Comment> result = commentRepository.findAllByNewsId(newsId, Pageable.ofSize(size));
         int totalElements = (int) result.getTotalElements();
         int numberOfPages = result.getTotalPages();
         int pageNumber = result.getNumber();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}/comments", id)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/news/{newsId}/comments", newsId)
                 .accept("application/hal+json")
                 .param("page", "0")
                 .param("size", "2"))
@@ -118,7 +115,29 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.size", is(size)))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
                 .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andExpect(jsonPath("$.page.number", is(pageNumber)));
+                .andExpect(jsonPath("$.page.number", is(pageNumber)))
+                .andDo(document("{class-name}/get-all-comments-with-page-success",
+                        pathParameters(
+                                parameterWithName("newsId").description("The id of the news")
+                        ),
+                        responseFields(
+                                subsectionWithPath("_embedded.comments")
+                                        .description("An array of <<resources-comment-object, Comment objects>> without links"),
+                                subsectionWithPath("_links")
+                                        .description("Links to other pages, if available. See <<pagination-sorting, Pagination>>"),
+                                subsectionWithPath("page")
+                                        .description("Page information. See <<pagination-sorting, Pagination>>")
+                        ),
+                        responseFields(
+                                subsectionWithPath("_embedded")
+                                        .description("The field which contains main content, usually an array"),
+                                subsectionWithPath("_links")
+                                        .description("Available links to other pages. See <<pagination-sorting, Pagination>>"),
+                                subsectionWithPath("page")
+                                        .description("Page information. See <<pagination-sorting, Pagination>>")
+                        )
+
+                ));
     }
 
     @Test
@@ -185,6 +204,23 @@ class CommentControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.totalElements", is(0)));
     }
 
+    @Test
+    void documentCommentSearchByDateAndUsername() throws Exception {
+        long newsId = 1;
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/news/{newsId}/comments", newsId)
+                .accept("application/hal+json")
+                .param("date", "2021-01-01")
+                .param("username", "user1"))
+                .andDo(print())
+                .andDo(document("{class-name}/search-comment-by-date-username",
+                    requestParameters(
+                            parameterWithName("date").description("The date when the comment was originally posted"),
+                            parameterWithName("username").description("The name of the user who posted the comment")
+                    )
+                ));
+    }
+
     //getAllComments END ----------------------------------------------------
 
     //getCommentById START --------------------------------------------------
@@ -219,9 +255,9 @@ class CommentControllerIntegrationTest {
                                 parameterWithName("commentId").description("The id of the comment")
                         ),
                         responseFields(
-                                fieldWithPath("date").description("Date the comment was posted"),
+                                fieldWithPath("date").description("The date when the comment was originally posted"),
                                 fieldWithPath("text").description("The text of the comment"),
-                                fieldWithPath("username").description("The comment's author"),
+                                fieldWithPath("username").description("The name of the user who posted the comment"),
                                 subsectionWithPath("_links").description("<<resources-comment-links, Links>> to other resources")
                         )
 

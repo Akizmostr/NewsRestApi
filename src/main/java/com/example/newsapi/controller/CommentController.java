@@ -10,8 +10,12 @@ import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -42,11 +47,19 @@ public class CommentController {
     public PagedModel<EntityModel<CommentDTO>> getAllCommentsByNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
-                    @Spec(path = "username", params = "username", spec = Like.class)
+                    @Spec(path = "username", params = "username", spec = Equal.class)
             }) Specification<Comment> spec,
             @PathVariable long newsId,
-            Pageable pageable) {
-        return commentService.getAllCommentsByNews(spec, newsId, pageable);
+            @PageableDefault(sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
+        Sort newSort = Sort.by(pageable.getSort()
+                .get()
+                .filter(news -> news.getProperty().equals("date"))
+                .collect(Collectors.toList()));
+
+        PageRequest newPage = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
+
+
+        return commentService.getAllCommentsByNews(spec, newsId, newPage);
     }
 
     /**

@@ -1,7 +1,10 @@
+[[update-comment]]
 ==== Update comment
 Partially update comment by providing new text.
 Returns updated <<resources-comment-object, Comment object>>
 after successful update.
+
+
 ===== HTTP Headers
 include::{snippets}/comment-put-controller-integration-test/create-comment-success/request-headers.adoc[]
 ===== Path parameters
@@ -10,5 +13,8 @@ include::{snippets}/comment-put-controller-integration-test/create-comment-succe
 include::{snippets}/comment-put-controller-integration-test/create-comment-success/request-fields.adoc[]
 ===== HTTP Request Example
 include::{snippets}/comment-put-controller-integration-test/create-comment-success/http-request.adoc[]
+===== Returns
+Returns updated <<resources-comment-object, Comment object>>
+
 ===== HTTP Response Example
 include::{snippets}/comment-put-controller-integration-test/create-comment-success/http-response.adoc[]

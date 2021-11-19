@@ -1,7 +1,7 @@
+[[create-comment]]
 ==== Create comment
-Post a new comment under specific news. After success newly created
-<<resources-comment-object, Comment object>> is returned.
-The author of the comment is automatically assigned based on the logged-in user.
+Post a new comment under specific news. The author is
+assigned according to the logged-in user.
 
 ===== HTTP Headers
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/request-headers.adoc[]
@@ -9,7 +9,12 @@ include::{snippets}/comment-post-controller-integration-test/create-comment-succ
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/path-parameters.adoc[]
 ===== Request Fields
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/request-fields.adoc[]
+===== Returns
+Returns newly created
+<<resources-comment-object, Comment object>>.
+
 ===== HTTP Request Example
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-request.adoc[]
 ===== HTTP Response Example
+If successful,
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-response.adoc[]

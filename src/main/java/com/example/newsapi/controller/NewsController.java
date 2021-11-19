@@ -13,9 +13,13 @@ import com.example.newsapi.validation.UpdateNewsValidator;
 import net.kaczmarzyk.spring.data.jpa.domain.Equal;
 import net.kaczmarzyk.spring.data.jpa.domain.Like;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.And;
+import net.kaczmarzyk.spring.data.jpa.web.annotation.Join;
 import net.kaczmarzyk.spring.data.jpa.web.annotation.Spec;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 public class NewsController {
@@ -49,10 +54,19 @@ public class NewsController {
     public PagedModel<EntityModel<NewsDTO>> getAllNews(
             @And({
                     @Spec(path = "date", params = "date", spec = Equal.class),
-                    @Spec(path = "title", params = "title", spec = Like.class)
+                    @Spec(path = "title", params = "title", spec = Like.class),
+                    @Spec(path = "user.username", params = "author", spec = Equal.class)
             }) Specification<News> spec,
-            Pageable pageable) {
-        return newsService.getAllNews(spec, pageable);
+            @PageableDefault(sort = "date", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Sort newSort = Sort.by(pageable.getSort()
+                .get()
+                .filter(news -> news.getProperty().equals("date"))
+                .collect(Collectors.toList()));
+
+        PageRequest newPage = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), newSort);
+
+        return newsService.getAllNews(spec, newPage);
     }
 
     /**

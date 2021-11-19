@@ -10,7 +10,7 @@ asciidoctor {
     sourceDir 'src/docs/asciidoc'
     attributes = [
       'snippets'    : file("build/generated-snippets"),
-      /*'source-highlighter': 'highlightjs',*/
+      'source-highlighter': 'highlightjs',
       'toc'         : 'left',
       'toclevels'   : 3
     ]

@@ -1,0 +1,17 @@
+[[get-comment]]
+==== Get comment
+
+Retrieve a comment under the specific news by id
+
+===== Path parameters
+
+include::{snippets}/comment-controller-integration-test/get-comment-success/path-parameters.adoc[]
+
+===== HTTP Request Example
+include::{snippets}/comment-controller-integration-test/get-comment-success/http-request.adoc[]
+===== Returns
+Returns <<resources-comment-object, Comment object>>
+if valid identifier of the news and comment was provided
+
+===== HTTP Response Example
+include::{snippets}/comment-controller-integration-test/get-comment-success/http-response.adoc[]
