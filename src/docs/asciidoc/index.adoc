@@ -33,9 +33,18 @@ include::{snippets}/comment-controller-integration-test/get-comment-success/resp
 Example:
 include::{snippets}/comment-controller-integration-test/get-comment-success/response-body.adoc[]
 
+[[resources-comment-links]]
+==== Comment links
+include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
+
+
 ==== Get comment
 
-Retrieves a comment identified by the given id
+Retrieve a comment under the specific news by id
+
+===== Path parameters
+
+include::{snippets}/comment-controller-integration-test/get-comment-success/path-parameters.adoc[]
 
 ===== HTTP Request Example
 include::{snippets}/comment-controller-integration-test/get-comment-success/http-request.adoc[]
@@ -43,8 +52,7 @@ include::{snippets}/comment-controller-integration-test/get-comment-success/http
 ===== HTTP Response Example
 include::{snippets}/comment-controller-integration-test/get-comment-success/http-response.adoc[]
 
-[[resources-comment-links]]
-==== Comment links
-include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
 
 include::create-comment.adoc[]
+include::delete-comment.adoc[]
+include::update-comment.adoc[]

@@ -6,6 +6,7 @@ plugins {
 }
 
 asciidoctor {
+    baseDir 'src/docs/asciidoc'
     sourceDir 'src/docs/asciidoc'
     attributes = [
       'snippets'    : file("build/generated-snippets"),

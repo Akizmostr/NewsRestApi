@@ -45,6 +45,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.attributes;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,6 +112,7 @@ public class CommentPostControllerIntegrationTest {
                                 parameterWithName("newsId").description("The id of the news")
                         ),
                         requestFields(
+                                attributes(key("title").value("Fields for comment creation")),
                                 fieldWithPath("text").description("The text of the comment")
                                         .attributes(key("constraints").value(commentConstraints.descriptionsForProperty("text")))
                         )

@@ -40,6 +40,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -263,10 +265,13 @@ class CommentControllerIntegrationTest {
         long commentId = 1;
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/news/{newsId}/comments/{commentId}", newsId, commentId)
-                .accept("application/json"))
+                .header("Authorization", "Bearer <token>"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andDo(document("{class-name}/delete-comment-success",
+                        requestHeaders(
+                                headerWithName("Authorization").description("Bearer token (see <<security, Security>>)")
+                        ),
                         pathParameters(
                                 parameterWithName("newsId").description("The id of the news"),
                                 parameterWithName("commentId").description("The id of the comment")

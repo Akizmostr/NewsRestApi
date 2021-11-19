@@ -1,4 +1,13 @@
 ==== Delete comment
-Delete specific comment of the news by id. Only the author of the comment and admin
-can delete comments (see <<security, Security>>). After successful deletion No Content (404) status code
-is returned
+Delete a comment under the specific news by id. Only the author of the comment and admin
+can delete comments (see <<security, Security>>). Returns No Content (204) after successful
+deletion
+
+===== HTTP Headers
+include::{snippets}/comment-controller-integration-test/delete-comment-success/request-headers.adoc[]
+===== Path parameters
+include::{snippets}/comment-controller-integration-test/delete-comment-success/path-parameters.adoc[]
+===== HTTP Request Example
+include::{snippets}/comment-controller-integration-test/delete-comment-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/comment-controller-integration-test/delete-comment-success/http-response.adoc[]
