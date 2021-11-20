@@ -73,8 +73,7 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$._embedded.news", hasSize(totalElements)))
                 .andExpect(jsonPath("$._links.self.href", not(emptyOrNullString())))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
-                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andDo(document("{class-name}/{method-name}"));
+                .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)));
     }
 
     @Test

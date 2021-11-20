@@ -44,3 +44,33 @@ include::get-comment.adoc[]
 include::create-comment.adoc[]
 include::update-comment.adoc[]
 include::delete-comment.adoc[]
+
+[[resources-news]]
+=== News
+News resource describes information about news articles.
+The API allows you to create, update, delete news, list all news
+and get specific news with all its comments.
+
+****
+Endpoints +
+[horizontal]
+<<list-news,GET>>::             /news
+<<create-news,POST>>::          /news
+<<get-news,GET>>::              /news/{newsId}
+<<update-news,PUT>>::           /news/{newsId}
+<<delete-news, DELETE>>::       /news/{newsId}
+
+****
+
+[[resources-news-object]]
+==== The news object
+Various endpoints return 2 different types of news object.
+The first one contains information about news only.
+The second one also contains the list of all its comments.
+
+[[news-without-comments]]
+===== News object without comments
+
+
+[[news-with-comments]]
+=====
