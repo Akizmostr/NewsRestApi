@@ -1,0 +1,16 @@
+[[add-roles-user]]
+==== Add roles to user
+Adds new roles to the existing ones to the user.
+Only admin has access to this endpoint (see <<security, Security>>).
+
+===== Request Fields
+include::{snippets}/user-controller-integration-test/add-roles-success/request-fields.adoc[]
+
+===== Returns
+If successful, returns string with new roles of the user.
+
+===== HTTP Request Example
+Consider that user with id 2 has only subscriber role.
+include::{snippets}/user-controller-integration-test/add-roles-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/user-controller-integration-test/add-roles-success/http-response.adoc[]

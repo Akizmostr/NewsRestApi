@@ -1,0 +1,45 @@
+[[list-news]]
+==== List news
+Returns a list of all the news.
+The news are returned sorted by creation date, with
+the most recent news appearing first.
+
+===== Query parameters
+This endpoint supports pagination, sorting and search.
+For information about pagination and sorting refer
+to corresponding <<pagination-sorting, section>>.
+
+[caption=]
+.Search parameters
+include::{snippets}/news-controller-integration-test/search-news-by-date-title-author/request-parameters.adoc[]
+
+NOTE: When you have title parameter in a query, you will get
+all the news which have your provided string in any position of the title.
+Consider the following example: +
+GET /news?title=country +
+This query can return you news with following titles: +
+"XX countryXX" +
+"XXcountryXX" +
+"XX countryside." +
+and so on.
+
+===== Returns
+Returns an object which exposes:
+
+* list of found news according
+to provided search, paging and sorting parameters
+* pagination information
+* available pagination links.
+
+===== HTTP Request Example
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/http-request.adoc[]
+
+===== HTTP Response Example
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/http-response.adoc[]
+
+NOTE: If there are no news, or they were not found,
+the returned object doesn't contain _embedded attribute.
+Please see <<pagination-sorting, Pagination and Sorting>> section for more information.
+
+===== Response fields
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-fields.adoc[]

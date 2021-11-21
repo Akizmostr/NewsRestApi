@@ -1,0 +1,18 @@
+[[login-user]]
+==== Login user
+Returns access token (see <<security, Security>>).
+
+===== Request Fields
+include::{snippets}/user-controller-integration-test/register-user-success/request-fields.adoc[]
+
+===== Returns
+If successful, returns access token. This token is also added in response header.
+If user doesn't exist or password is wrong, returns
+<<errors, error>> with Bad Credentials(401) status code.
+
+===== HTTP Request Example
+include::{snippets}/user-controller-integration-test/login-user-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/user-controller-integration-test/login-user-success/http-response.adoc[]
+===== Response Headers
+include::{snippets}/user-controller-integration-test/login-user-success/response-headers.adoc[]

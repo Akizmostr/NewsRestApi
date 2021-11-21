@@ -1,0 +1,16 @@
+[[get-news]]
+==== Get news
+Retrieve specific news by its id.
+
+===== Path parameters
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/path-parameters.adoc[]
+
+===== HTTP Request Example
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/http-request.adoc[]
+
+===== Returns
+Returns <<news-with-comments, news object with comments>>
+if valid identifier of the news and comment was provided.
+
+===== HTTP Response Example
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/http-response.adoc[]

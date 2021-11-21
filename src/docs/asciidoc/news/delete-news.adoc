@@ -1,0 +1,16 @@
+[[delete-news]]
+==== Delete news
+Delete specific news by its id. Only the author of the news and admin
+can delete news (see <<security, Security>>).
+
+===== HTTP Headers
+include::{snippets}/news-post-controller-integration-test/create-news-success/request-headers.adoc[]
+===== Path parameters
+include::{snippets}/news-put-controller-integration-test/update-news-success/path-parameters.adoc[]
+===== HTTP Request Example
+include::{snippets}/news-controller-integration-test/delete-news-success/http-request.adoc[]
+===== Returns
+If successful, returns No Content(204) status code
+
+===== HTTP Response Example
+include::{snippets}/news-controller-integration-test/delete-news-success/http-response.adoc[]

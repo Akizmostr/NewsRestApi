@@ -1,9 +1,8 @@
 [[update-comment]]
 ==== Update comment
 Partially update comment by providing new text.
-Returns updated <<resources-comment-object, Comment object>>
-after successful update.
-
+Only the author of the comment and admin
+can delete comments (see <<security, Security>>).
 
 ===== HTTP Headers
 include::{snippets}/comment-put-controller-integration-test/create-comment-success/request-headers.adoc[]

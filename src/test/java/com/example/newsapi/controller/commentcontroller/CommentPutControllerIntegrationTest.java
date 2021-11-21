@@ -120,7 +120,7 @@ public class CommentPutControllerIntegrationTest {
                                 parameterWithName("commentId").description("The id of the comment")
                         ),
                         requestFields(
-                                fieldWithPath("text").description("The text of the comment")
+                                fieldWithPath("text").description("New text of the comment")
                                         .attributes(key("constraints").value(commentConstraints.descriptionsForProperty("text")))
                         )
                 ));

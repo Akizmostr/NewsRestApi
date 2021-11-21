@@ -16,5 +16,4 @@ Returns newly created
 ===== HTTP Request Example
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-request.adoc[]
 ===== HTTP Response Example
-If successful,
 include::{snippets}/comment-post-controller-integration-test/create-comment-success/http-response.adoc[]

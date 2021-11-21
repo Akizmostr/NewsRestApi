@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,9 +38,20 @@ import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -95,7 +107,26 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.size", is(size)))
                 .andExpect(jsonPath("$.page.totalElements", is(totalElements)))
                 .andExpect(jsonPath("$.page.totalPages", is(numberOfPages)))
-                .andExpect(jsonPath("$.page.number", is(pageNumber)));
+                .andExpect(jsonPath("$.page.number", is(pageNumber)))
+                .andDo(document("{class-name}/get-all-news-with-page-success",
+                        responseBody(beneathPath("_embedded.news")),
+                        responseFields(
+                                beneathPath("_embedded.news"),
+                                fieldWithPath("date").description("The date when the news was originally published"),
+                                fieldWithPath("text").description("The text of the news"),
+                                fieldWithPath("title").description("The title of the news"),
+                                fieldWithPath("author").description("The username of the author"),
+                                subsectionWithPath("_links").description("<<resources-news-links, Links>> to other endpoints")
+                        ),
+                        responseFields(
+                                subsectionWithPath("_embedded.news")
+                                        .description("An array of simple <<news-without-comments, news objects>>"),
+                                subsectionWithPath("_links")
+                                        .description("Available links to other pages. See <<pagination-sorting, Pagination>>"),
+                                subsectionWithPath("page")
+                                        .description("Page information. See <<pagination-sorting, Pagination>>")
+                        )
+                ));
     }
 
     @Test
@@ -158,6 +189,28 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.totalElements", is(0)));
     }
 
+    @Test
+    void documentNewsSearchParameters() throws Exception {
+        String title = "title5";
+        Specification<News> spec = (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("title"), title);
+        Page<News> result = newsRepository.findAll(spec, Pageable.unpaged());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/news")
+                .accept("application/hal+json")
+                .param("title", title)
+                .param("date", "2021-01-05")
+                .param("author", "journalist1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("{class-name}/search-news-by-date-title-author",
+                        requestParameters(
+                                parameterWithName("date").description("The date when the comment was originally posted"),
+                                parameterWithName("title").description("The title of the news"),
+                                parameterWithName("author").description("The name of the user who posted the news")
+                        )
+                ));
+    }
+
     //getAllNews END ----------------------------------------------------
 
     //getNewsById START -------------------------------------------------
@@ -165,14 +218,14 @@ class NewsControllerIntegrationTest {
     @Test
     @Transactional
     void whenGetNewsByIdAndNewsFound_thenCorrectNews() throws Exception {
-        long id = 1;
-        News news = newsRepository.findById(id).get();
+        long newsId = 1;
+        News news = newsRepository.findById(newsId).get();
         int commentsSize = news.getComments().size();
         String date = news.getDate().toString();
         String text = news.getText();
         String title = news.getTitle();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}", id)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/news/{newsId}", newsId)
                 .accept("application/hal+json"))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -180,10 +233,24 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$.date", is(date)))
                 .andExpect(jsonPath("$.text", is(text)))
                 .andExpect(jsonPath("$.title", is(title)))
-                .andDo(document("{class-name}/{method-name}", links(
-                        linkWithRel("self").ignored(),
-                        linkWithRel("comments").description("Link to the list of news' comments"),
-                        linkWithRel("news").description("Link to all the news"))));
+                .andDo(document("{class-name}/get-news-by-id-success",
+                        links(
+                                linkWithRel("self").description("This news"),
+                                linkWithRel("comments").description("All comments related with this piece of news"),
+                                linkWithRel("news").description("List of all news")
+                        ),
+                        pathParameters(
+                                parameterWithName("newsId").description("The id of the news")
+                        ),
+                        responseFields(
+                                fieldWithPath("date").description("The date when the news was originally published"),
+                                fieldWithPath("text").description("The text of the news"),
+                                fieldWithPath("title").description("The title of the news"),
+                                fieldWithPath("author").description("The username of the author"),
+                                subsectionWithPath("comments").description("An array of <<resources-comment-object, comment object>> without links"),
+                                subsectionWithPath("_links").description("<<resources-news-links, Links>> to other endpoints")
+                        )
+                ));
     }
 
     @Test
@@ -205,9 +272,11 @@ class NewsControllerIntegrationTest {
     void whenDeleteNewsAndNewsFound_thenCorrectResponseAndNewsDoesNotExist() throws Exception {
 
         mockMvc.perform(delete("/news/1")
-            .accept("application/json"))
-            .andDo(print())
-            .andExpect(status().isNoContent());
+                .header("Authorization", "Bearer <token>"))
+                .andDo(print())
+                .andExpect(status().isNoContent())
+                .andDo(document("{class-name}/delete-news-success"));
+
 
         Assertions.assertFalse(newsRepository.existsById(1L));
     }

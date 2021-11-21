@@ -1,0 +1,16 @@
+[[create-news]]
+==== Create news
+Post news. The author is assigned
+according to the logged-in user.
+
+===== HTTP Headers
+include::{snippets}/news-post-controller-integration-test/create-news-success/request-headers.adoc[]
+===== Request Fields
+include::{snippets}/news-post-controller-integration-test/create-news-success/request-fields.adoc[]
+===== Returns
+Returns newly created <<news-without-comments, simple news object>>.
+
+===== HTTP Request Example
+include::{snippets}/news-post-controller-integration-test/create-news-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/news-post-controller-integration-test/create-news-success/http-response.adoc[]

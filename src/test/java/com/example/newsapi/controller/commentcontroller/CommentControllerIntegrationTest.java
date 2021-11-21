@@ -50,6 +50,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.removeHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.subsectionWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -129,8 +130,8 @@ class CommentControllerIntegrationTest {
                                         .description("Page information. See <<pagination-sorting, Pagination>>")
                         ),
                         responseFields(
-                                subsectionWithPath("_embedded")
-                                        .description("The field which contains main content, usually an array"),
+                                subsectionWithPath("_embedded.comments")
+                                        .description("An array of <<resources-comment-object, comment objects>>"),
                                 subsectionWithPath("_links")
                                         .description("Available links to other pages. See <<pagination-sorting, Pagination>>"),
                                 subsectionWithPath("page")
@@ -169,7 +170,11 @@ class CommentControllerIntegrationTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded").doesNotHaveJsonPath())
-                .andExpect(jsonPath("$.page.totalElements", is(0)));
+                .andExpect(jsonPath("$.page.totalElements", is(0)))
+                .andDo(document("{class-name}/search-comment-by-date-not-found",
+                       responseBody()
+                ));
+
     }
 
     @Test
@@ -249,7 +254,7 @@ class CommentControllerIntegrationTest {
                         links(halLinks(),
                                 linkWithRel("self").description("This comment"),
                                 linkWithRel("news").description("News related to this comment"),
-                                linkWithRel("comments").description("All comments of the related news")),
+                                linkWithRel("comments").description("All comments of the related piece of news")),
                         pathParameters(
                                 parameterWithName("newsId").description("The id of the news"),
                                 parameterWithName("commentId").description("The id of the comment")
@@ -258,7 +263,7 @@ class CommentControllerIntegrationTest {
                                 fieldWithPath("date").description("The date when the comment was originally posted"),
                                 fieldWithPath("text").description("The text of the comment"),
                                 fieldWithPath("username").description("The name of the user who posted the comment"),
-                                subsectionWithPath("_links").description("<<resources-comment-links, Links>> to other resources")
+                                subsectionWithPath("_links").description("<<resources-comment-links, Links>> to other endpoints")
                         )
 
                 ));

@@ -4,6 +4,8 @@
 
 include::security.adoc[]
 
+include::errors.adoc[]
+
 include::paging-sorting.adoc[]
 
 [[resources]]
@@ -39,11 +41,11 @@ include::{snippets}/comment-controller-integration-test/get-comment-success/resp
 ==== Comment links
 include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
 
-include::list-comments.adoc[]
-include::get-comment.adoc[]
-include::create-comment.adoc[]
-include::update-comment.adoc[]
-include::delete-comment.adoc[]
+include::{docdir}/comment/list-comments.adoc[]
+include::{docdir}/comment/get-comment.adoc[]
+include::{docdir}/comment/create-comment.adoc[]
+include::{docdir}/comment/update-comment.adoc[]
+include::{docdir}/comment/delete-comment.adoc[]
 
 [[resources-news]]
 === News
@@ -69,8 +71,44 @@ The first one contains information about news only.
 The second one also contains the list of all its comments.
 
 [[news-without-comments]]
-===== News object without comments
-
+===== Simple news object without comments
+Attributes
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-fields-beneath-_embedded.news.adoc[]
+Example
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-body-beneath-_embedded.news.adoc[]
 
 [[news-with-comments]]
-=====
+===== News object with comments
+
+Attributes
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/response-fields.adoc[]
+Example
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/response-body.adoc[]
+
+[[resources-news-links]]
+==== News links
+include::{snippets}/news-controller-integration-test/get-news-by-id-success/links.adoc[]
+
+include::{docdir}/news/list-news.adoc[]
+include::{docdir}/news/create-news.adoc[]
+include::{docdir}/news/get-news.adoc[]
+include::{docdir}/news/update-news.adoc[]
+include::{docdir}/news/delete-news.adoc[]
+
+[[users-api]]
+== Users API
+The Users API allows you to register and login users as well
+as allows admin to add roles to existing users.
+
+****
+Endpoints +
+[horizontal]
+<<register-user,POST>>::    /users/register
+<<login-user,POST>>::       /users/login
+<<add-roles-user,POST>>::    /users/{userId}/addRoles
+
+****
+
+include::{docdir}/users/register-user.adoc[]
+include::{docdir}/users/login-user.adoc[]
+include::{docdir}/users/add-roles-user.adoc[]

@@ -1,0 +1,23 @@
+[[update-news]]
+==== Update news
+Partially update news by providing new text or title.
+Only the author of the news and admin
+can delete news (see <<security, Security>>).
+
+===== HTTP Headers
+include::{snippets}/news-post-controller-integration-test/create-news-success/request-headers.adoc[]
+===== Path parameters
+include::{snippets}/news-put-controller-integration-test/update-news-success/path-parameters.adoc[]
+===== Request Fields
+include::{snippets}/news-put-controller-integration-test/update-news-success/request-fields.adoc[]
+
+IMPORTANT: Although all request fields are marked as optional,
+you must provide at least one field to successfully update news.
+
+===== HTTP Request Example
+include::{snippets}/news-put-controller-integration-test/update-news-success/http-request.adoc[]
+===== Returns
+Returns updated <<news-without-comments, simple news object>>
+
+===== HTTP Response Example
+include::{snippets}/news-put-controller-integration-test/update-news-success/http-response.adoc[]

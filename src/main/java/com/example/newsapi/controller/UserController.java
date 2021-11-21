@@ -47,7 +47,7 @@ public class UserController {
         return new ResponseEntity<>("User was successfully registered", HttpStatus.OK);
     }
 
-    @PostMapping("/users/{id}")
+    @PostMapping("/users/{id}/addRoles")
     public ResponseEntity<String> addRoles(@Valid @RequestBody AddUserRolesDTO roles,@PathVariable(name = "id") long id){
         return ResponseEntity.ok().body(userService.addRoles(roles, id));
     }

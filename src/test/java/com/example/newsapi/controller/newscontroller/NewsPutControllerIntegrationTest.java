@@ -1,6 +1,7 @@
 package com.example.newsapi.controller.newscontroller;
 
 import com.example.newsapi.NewsapiApplication;
+import com.example.newsapi.dto.UpdateCommentDTO;
 import com.example.newsapi.dto.UpdateNewsDTO;
 import com.example.newsapi.entity.News;
 import com.example.newsapi.repository.NewsRepository;
@@ -10,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -22,15 +26,26 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.example.newsapi.testutils.TestUtils.*;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(classes = NewsapiApplication.class)
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RestDocumentationExtension.class})
 @AutoConfigureTestDatabase
 @AutoConfigureMockMvc(addFilters = false) //addFilters = false disables authentication
+@AutoConfigureRestDocs(outputDir = "build/generated-snippets")
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NewsPutControllerIntegrationTest {
@@ -39,6 +54,7 @@ public class NewsPutControllerIntegrationTest {
 
     @Autowired
     NewsRepository newsRepository;
+
 
     @Test
     void whenUpdateNewsAndNewsNotFound_thenNotFoundResponse() throws Exception {
@@ -125,17 +141,28 @@ public class NewsPutControllerIntegrationTest {
 
     @Test
     void whenUpdateNewsAndValidTextAndTitleAreProvided_thenTextAndTitleAreChanged() throws Exception {
-        long id = 1;
+        long newsId = 1;
         UpdateNewsDTO requestedNews = new UpdateNewsDTO("new text", "new title");
 
-        News news = newsRepository.findById(id).get();
-        mockMvc.perform(putJson("/news/{id}", requestedNews, id))
+        News news = newsRepository.findById(newsId).get();
+
+        mockMvc.perform(putJson("/news/{newsId}", requestedNews, newsId))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text", is(requestedNews.getText())))
                 .andExpect(jsonPath("$.title", is(requestedNews.getTitle())))
-                .andExpect(jsonPath("$.date", is(news.getDate().toString())));
+                .andExpect(jsonPath("$.date", is(news.getDate().toString())))
+                .andDo(document("{class-name}/update-news-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("newsId").description("The id of the news")
+                        ),
+                        requestFields(
+                                fieldWithPath("text").optional().description("New text of the news")
+                                        .attributes(key("constraints").value("[Must not be blank]")),
+                                fieldWithPath("title").optional().description("New title of the news")
+                                        .attributes(key("constraints").value("[Must not be blank]"))
+                        )
+                ));
     }
-
-
 }

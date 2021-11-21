@@ -91,7 +91,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
         user.setRoles(roles);
 
-        return userRepository.save(user).getRoles().toString();
+        return userRepository.save(user)
+                .getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.joining(", "));
     }
 
     private Set<SimpleGrantedAuthority> getAuthorities(User user) {

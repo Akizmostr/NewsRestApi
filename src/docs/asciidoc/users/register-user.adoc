@@ -1,0 +1,16 @@
+[[register-user]]
+==== Register user
+Creates new user with provided credentials in system.
+
+===== Request Fields
+include::{snippets}/user-controller-integration-test/register-user-success/request-fields.adoc[]
+
+===== Returns
+If successful, returns corresponding message and OK(200) status code.
+If user with provided username already exists, returns
+<<errors, error>> with Conflict(409) status code.
+
+===== HTTP Request Example
+include::{snippets}/user-controller-integration-test/register-user-success/http-request.adoc[]
+===== HTTP Response Example
+include::{snippets}/user-controller-integration-test/register-user-success/http-response.adoc[]

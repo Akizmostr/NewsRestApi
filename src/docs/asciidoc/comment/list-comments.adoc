@@ -23,11 +23,16 @@ to provided search, paging and sorting parameters
 * pagination information
 * available pagination links.
 
+
 ===== HTTP Request Example
 include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/http-request.adoc[]
 
 ===== HTTP Response Example
 include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/http-response.adoc[]
+
+NOTE: If there are no comments under the news, or they were not found,
+the returned object doesn't contain _embedded attribute.
+Please see <<pagination-sorting, Pagination and Sorting>> section for more information.
 
 ===== Response fields
 include::{snippets}/comment-controller-integration-test/get-all-comments-with-page-success/response-fields.adoc[]
