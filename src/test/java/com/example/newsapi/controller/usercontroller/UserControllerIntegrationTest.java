@@ -77,7 +77,10 @@ class UserControllerIntegrationTest {
 
         mockMvc.perform(postJson("/users/login", user))
                 .andDo(print())
-                .andExpect(badCredentials());
+                .andExpect(badCredentials())
+                .andDo(document("{class-name}/login-user-wrong",
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test

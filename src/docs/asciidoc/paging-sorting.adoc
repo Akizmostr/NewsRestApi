@@ -1,2 +1,39 @@
 [[pagination-sorting]]
 == Pagination and Sorting
+
+=== Pagination
+All top-level API resources have support for bulk fetches via "list" API methods.
+For instance, you can list news and comments.
+These list API methods share a common structure,
+taking at least these two parameters: page and size.
+
+By default, the size of the page is 10, and the first page is always returned.
+In order to override this behaviour, you can add the page and size parameters in the query:
+----
+http://localhost:8080/news?size=20&page=2
+----
+
+Response body consists of 3 parts: _embedded (contains main content),
+links, page.
+
+NOTE:: if the page number is out of range, the response
+wouldn't contain _embedded section
+
+==== Links
+Links section contains available links to other pages.
+
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-body-beneath-_links.adoc[]
+
+==== Page
+Page section contains page information:
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-fields-beneath-page.adoc[]
+include::{snippets}/news-controller-integration-test/get-all-news-with-page-success/response-body-beneath-page.adoc[]
+
+=== Sorting
+By now, sorting only by date is available.
+All list methods return most recent resources first (descending order).
+If you want to change sorting order, provide "sort"
+query parameter and sorting direction(asc or desc) divided by a comma.
+----
+http://localhost:8080/news?sort=date,asc
+----

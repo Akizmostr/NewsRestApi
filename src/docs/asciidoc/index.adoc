@@ -4,7 +4,7 @@
 
 include::security.adoc[]
 
-include::errors.adoc[]
+include::response-codes.adoc[]
 
 include::paging-sorting.adoc[]
 

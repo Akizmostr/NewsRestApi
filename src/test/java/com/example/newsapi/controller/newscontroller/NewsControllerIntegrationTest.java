@@ -21,6 +21,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -44,6 +45,8 @@ import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.ha
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.beneathPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
@@ -110,6 +113,8 @@ class NewsControllerIntegrationTest {
                 .andExpect(jsonPath("$.page.number", is(pageNumber)))
                 .andDo(document("{class-name}/get-all-news-with-page-success",
                         responseBody(beneathPath("_embedded.news")),
+                        responseBody(beneathPath("_links")),
+                        responseBody(beneathPath("page")),
                         responseFields(
                                 beneathPath("_embedded.news"),
                                 fieldWithPath("date").description("The date when the news was originally published"),
@@ -125,6 +130,21 @@ class NewsControllerIntegrationTest {
                                         .description("Available links to other pages. See <<pagination-sorting, Pagination>>"),
                                 subsectionWithPath("page")
                                         .description("Page information. See <<pagination-sorting, Pagination>>")
+                        ),
+                        responseFields(
+                                subsectionWithPath("_embedded")
+                                        .description("Main content"),
+                                subsectionWithPath("_links")
+                                        .description("Available links to other pages."),
+                                subsectionWithPath("page")
+                                        .description("Page information.")
+                        ),
+                        responseFields(
+                                beneathPath("page"),
+                                fieldWithPath("size").description("The size of the page"),
+                                fieldWithPath("totalElements").description("The overall number of elements returned"),
+                                fieldWithPath("totalPages").description("The number of pages needed to list all elements"),
+                                fieldWithPath("number").description("The number of the current page")
                         )
                 ));
     }
@@ -260,7 +280,16 @@ class NewsControllerIntegrationTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/news/{id}", id)
                 .accept("application/json"))
                 .andDo(print())
-                .andExpect(newsNotFound(id));
+                .andExpect(newsNotFound(id))
+                .andDo(document("{class-name}/get-news-by-id-not-found",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("timestamp").description("The moment when the error occurred"),
+                                fieldWithPath("status").description("Status code"),
+                                fieldWithPath("error").description("The message of the error"),
+                                fieldWithPath("path").description("The request URI")
+                        )
+                ));
     }
 
     //getNewsById END -------------------------------------------------

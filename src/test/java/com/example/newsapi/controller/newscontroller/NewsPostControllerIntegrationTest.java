@@ -104,7 +104,10 @@ public class NewsPostControllerIntegrationTest {
         mockMvc.perform(postJson("/news", news))
                 .andDo(print())
                 .andExpect(invalidEntityStatus())
-                .andExpect(invalidTextAndTitleMessage());
+                .andExpect(invalidTextAndTitleMessage())
+                .andDo(document("{class-name}/create-news-invalid",
+                        preprocessResponse(prettyPrint())
+                ));
     }
 
     @Test
