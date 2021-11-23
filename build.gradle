@@ -8,6 +8,7 @@ plugins {
 asciidoctor {
     baseDir 'src/docs/asciidoc'
     sourceDir 'src/docs/asciidoc'
+    outputDir 'docs/asciidoc'
     attributes = [
             'snippets'          : file("build/generated-snippets"),
             'source-highlighter': 'highlightjs',
