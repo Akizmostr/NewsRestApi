@@ -1,0 +1,2 @@
+# NewsRestApi
+include::index.adoc[]
