@@ -9,4 +9,4 @@ In order to support these features, the web-service is thoroughly secured.
 
 If you want to see the reference documentation, follow the link below:
 
-[Reference documentation](https://akizmostr.github.io/NewsRestApi/)
+https://akizmostr.github.io/NewsRestApi/
