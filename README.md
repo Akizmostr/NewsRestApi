@@ -1,2 +1,2 @@
 # NewsRestApi
-include::index.adoc[]
+[Reference documentation]: https://akizmostr.github.io/NewsRestApi/
