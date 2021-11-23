@@ -10,3 +10,35 @@ The News API uses JWT token for authentication.
 You can get JWT token after logging in (see <<login-user, logging user>>).
 In order to log in successfully the user must be registered (see <<register-user, registration>>).
 
+=== Authorization
+In order to access secured endpoint, you must provide your JWT token
+in Authorization header:
+
+include::{snippets}/news-controller-integration-test/delete-news-success/http-request.adoc[]
+
+There are 3 roles of users:
+
+****
+[horizontal]
+
+subscriber::
+journalist::
+admin::
+
+****
+
+The user can have multiple roles.
+
+Only admin can assign new roles (<<add-roles-user, Add roles>>).
+
+==== Subscriber role
+The subscriber is allowed to post, update and delete only his own comments.
+
+After registration every user has the subscriber role assigned by default.
+
+
+==== Journalist role
+The journalist is allowed to post, update and delete only his own news.
+
+==== Admin role
+Admin has access to all private endpoints, including <<add-roles-user, Add roles>>.

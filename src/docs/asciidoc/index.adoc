@@ -2,50 +2,12 @@
 
 :source-highlighter: highlightjs
 
-include::security.adoc[]
-
 include::response-codes.adoc[]
-
 include::paging-sorting.adoc[]
+include::security.adoc[]
 
 [[resources]]
 == Resources
-
-[[resources-comment]]
-=== Comment
-
-Comment resource is used to describe comment information (including its author) posted under specific news.
-The API allows you to create, delete, and update your comments. You can retreive individual comment
-as well as the list of all comments related with the news.
-
-****
-Endpoints +
-[horizontal]
-<<list-comments,GET>>::         /news/{newsId}/comments
-<<create-comment,POST>>::       /news/{newsId}/comments
-<<get-comment,GET>>::           /news/{newsId}/comments/{commentId}
-<<update-comment,PUT>>::        /news/{newsId}/comments/{commentId}
-<<delete-comment, DELETE>>::    /news/{newsId}/comments/{commentId}
-
-****
-
-[[resources-comment-object]]
-==== The comment object
-
-Attributes
-include::{snippets}/comment-controller-integration-test/get-comment-success/response-fields.adoc[]
-Example:
-include::{snippets}/comment-controller-integration-test/get-comment-success/response-body.adoc[]
-
-[[resources-comment-links]]
-==== Comment links
-include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
-
-include::{docdir}/comment/list-comments.adoc[]
-include::{docdir}/comment/get-comment.adoc[]
-include::{docdir}/comment/create-comment.adoc[]
-include::{docdir}/comment/update-comment.adoc[]
-include::{docdir}/comment/delete-comment.adoc[]
 
 [[resources-news]]
 === News
@@ -94,6 +56,43 @@ include::{docdir}/news/create-news.adoc[]
 include::{docdir}/news/get-news.adoc[]
 include::{docdir}/news/update-news.adoc[]
 include::{docdir}/news/delete-news.adoc[]
+
+
+[[resources-comment]]
+=== Comment
+
+Comment resource is used to describe comment information (including its author) posted under specific news.
+The API allows you to create, delete, and update your comments. You can retreive individual comment
+as well as the list of all comments related with the news.
+
+****
+Endpoints +
+[horizontal]
+<<list-comments,GET>>::         /news/{newsId}/comments
+<<create-comment,POST>>::       /news/{newsId}/comments
+<<get-comment,GET>>::           /news/{newsId}/comments/{commentId}
+<<update-comment,PUT>>::        /news/{newsId}/comments/{commentId}
+<<delete-comment, DELETE>>::    /news/{newsId}/comments/{commentId}
+
+****
+
+[[resources-comment-object]]
+==== The comment object
+
+Attributes
+include::{snippets}/comment-controller-integration-test/get-comment-success/response-fields.adoc[]
+Example:
+include::{snippets}/comment-controller-integration-test/get-comment-success/response-body.adoc[]
+
+[[resources-comment-links]]
+==== Comment links
+include::{snippets}/comment-controller-integration-test/get-comment-success/links.adoc[]
+
+include::{docdir}/comment/list-comments.adoc[]
+include::{docdir}/comment/get-comment.adoc[]
+include::{docdir}/comment/create-comment.adoc[]
+include::{docdir}/comment/update-comment.adoc[]
+include::{docdir}/comment/delete-comment.adoc[]
 
 [[users-api]]
 == Users API
